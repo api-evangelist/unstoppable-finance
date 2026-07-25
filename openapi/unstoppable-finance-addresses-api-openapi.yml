@@ -1,0 +1,2480 @@
+openapi: 3.1.0
+info:
+  description: The Stablecoin Payment Network
+  title: Iron API - Sandbox Addresses API
+  version: 1.0-16988
+servers:
+- url: https://api.sandbox.iron.xyz/api
+tags:
+- description: 'Wallet and bank account registration
+
+
+    Every wallet address that interacts with Iron must be registered (linked) to a customer **before** it can be used in any flow — onramp, offramp, or swap. This is a regulatory requirement under the **Travel Rule**, which obliges Virtual Asset Service Providers to exchange originator and beneficiary information for crypto transfers.
+
+
+    Iron supports two wallet types:
+
+
+    - **Self-hosted wallets** — the customer controls the private key. Registration requires a signed proof-of-ownership message.
+
+    - **Hosted wallets** — the wallet is custodied by another VASP (e.g. Coinbase, Kraken). Registration requires the VASP''s DID so Iron can exchange travel-rule data with the custodian.
+
+
+    Similarly, fiat bank accounts must be registered before they can receive offramp payouts.'
+  name: Addresses
+paths:
+  /addresses/crypto/attested:
+    post:
+      description: 'Register a self-hosted wallet that the customer **declares** they control, without
+
+        providing a cryptographic signature. Intended for direct customers who cannot sign a
+
+        proof-of-ownership message from their custody UI (e.g. Fireblocks).
+
+
+        Like the signed self-hosted flow, the wallet must be registered before it can be used
+
+        in any flow — onramp, offramp, or swap — under the **Travel Rule**. This endpoint is
+
+        currently limited to customers in the **US** and **Rest of World** jurisdictions.'
+      operationId: registerAttestedWalletAddress
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an address is only registered once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the wallet address will be registered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/RegisterSelfAttestedWalletRequest'
+        description: The self-attested wallet registration request
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/VerifiedAddressResponse'
+          description: POST Self-Attested Wallet Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Attested Wallet Failed (Bad Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Attested Wallet Failed (Unauthorized)
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Attested Wallet Failed (Forbidden - e.g. region not supported, customer suspended)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Attested Wallet Failed (Not Found)
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Attested Wallet Failed (Conflict - Address Already Exists)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Attested Wallet Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Register a self-attested wallet address
+      tags:
+      - Addresses
+  /addresses/crypto/hosted:
+    post:
+      description: 'Register a wallet that is custodied by another VASP (e.g. Coinbase, Kraken) on behalf of the customer. This is required by the **Travel Rule** before the wallet can be used in **any** flow — onramp, offramp, or swap.
+
+
+        Provide the VASP''s DID (Decentralized Identifier) so Iron can exchange travel-rule data with the custodian. Use the [Search VASPs](#tag/Addresses/operation/searchHostedVasps) endpoint to look up the correct DID.
+
+        '
+      operationId: registerHostedWallet
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an address is only registered once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the wallet address will be registered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/RegisterHostedWalletRequest'
+        description: The hosted wallet registration request
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/VerifiedAddressResponse'
+          description: Registration successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad request (e.g. invalid data)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized (e.g. customer does not belong to partner)
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Conflict - Address already exists
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Failed to register the address
+      security:
+      - ApiKeyAuth: []
+      summary: Register a hosted wallet address
+      tags:
+      - Addresses
+  /addresses/crypto/hosted/vasps:
+    get:
+      description: Look up a VASP by name to find its DID (Decentralized Identifier). You need the DID when registering a hosted wallet via [Register Hosted Wallet](#tag/Addresses/operation/registerHostedWallet).
+      operationId: searchHostedVasps
+      parameters:
+      - deprecated: false
+        description: query string (min 2 chars)
+        explode: true
+        in: query
+        name: q
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: optional limit (default 20, max 50)
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: uint32
+          type: integer
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/VaspSuggestion'
+                type: array
+          description: Success
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad request (e.g. query too short)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal server error
+        '503':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: VASP search unavailable
+      security:
+      - ApiKeyAuth: []
+      summary: Search hosted wallet providers (VASPs)
+      tags:
+      - Addresses
+  /addresses/crypto/selfhosted:
+    post:
+      description: 'Register a wallet that the customer controls directly (i.e. they hold the private key). This is required by the **Travel Rule** before the wallet can be used in **any** flow — onramp, offramp, or swap.
+
+
+        Submit a proof of address ownership. **The message must be in the format**:
+
+
+        > I am verifying ownership of the wallet address [Wallet Address] as customer [CustomerId]. This message was signed on [DD/MM/YYYY] to confirm my control over this wallet.
+
+
+        The signature must be generated using the private key of the wallet address and is just the standard string format of standard ethereum / solana signatures:
+
+        ## Example message
+
+        ```ignore
+
+        I am verifying ownership of the wallet address GEhVdAGrGFvbAyj9ieZQt43mRAZZu4hRQ5MaKGgvpJMq as customer 7feaf33d-8551-4144-bfcb-01c86bcff857. This message was signed on 20/01/2024 to confirm my control over this wallet.
+
+        ```
+
+        ## Example signature
+
+        solana signature: 3Z3TWYMhq9vrA6K9ajQMQmVi1aXTmyASGLEvMpzNdS3BdWhNKeQGHtvF6cFNzR96tsnPPocJPjxfVsjtay9iWgTG
+
+        evm signature: 0x1234567890abcdef1234567890abcdef12345678900xa5f1751b75a28c12694f02590d29b8cdd68b4f5c783273a75823fc6cfeaa702f1a65fa7c1838ae799fe755c92443cb51631d000922329cdd2ce799eee75f42531babcdef1234567890abcdef
+
+        '
+      operationId: registerSelfHostedWalletAddress
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring a signature is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the wallet address will be registered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/RegisterSelfHostedWalletRequest'
+        description: The self-hosted wallet registration request
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SelfHostedWalletResponse'
+          description: POST Self-Hosted Wallet Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Hosted Wallet Failed (Bad Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Hosted Wallet Failed (Unauthorized)
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Hosted Wallet Failed (Forbidden - e.g. customer is suspended)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Hosted Wallet Failed (Not Found)
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Hosted Wallet Failed (Conflict - Address Already Exists)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Self-Hosted Wallet Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Register a self-hosted wallet address
+      tags:
+      - Addresses
+  /addresses/crypto/{customer_id}:
+    get:
+      description: Returns every wallet address a customer has registered (linked), including both hosted and self-hosted wallets. Use the `filter` query parameter to narrow by type.
+      operationId: getWalletAddresses
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the wallet addresses will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the customer
+        explode: true
+        in: path
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: Filter for which type of addresses to return
+        explode: false
+        in: query
+        name: filter
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/AddressFilter'
+          - default: All
+          default: All
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/VerifiedAddressResponse'
+                type: array
+          description: GET Wallets Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Wallets Failed (Bad Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Wallets Failed (Unauthorized)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Wallets Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get all registered wallet addresses
+      tags:
+      - Addresses
+  /addresses/crypto/{id}/disabled:
+    put:
+      description: 'Enable or disable a verified crypto address. Disabled addresses cannot be used for transactions.
+
+        Only addresses belonging to the customer of the authenticated partner can be modified.
+
+        '
+      operationId: updateDisabledStatus
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the wallet address will be updated for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: The ID of the verified crypto address
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/UpdateDisabledStatusRequest'
+        description: The request to update the disabled status
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/VerifiedAddressResponse'
+          description: PUT Disabled Status Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PUT Disabled Status Failed (Bad Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PUT Disabled Status Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PUT Disabled Status Failed (Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PUT Disabled Status Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Update the disabled status of a verified crypto address
+      tags:
+      - Addresses
+  /addresses/fiat:
+    get:
+      description: 'Get all fiat addresses with a specific status for the current partner
+
+        '
+      operationId: getFiatAddressesByStatus
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the fiat addresses will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: The Status to filter by. If not provided, defaults to `Registered`
+        explode: false
+        in: query
+        name: status
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/FiatAddressStatus'
+          - default: null
+          default: null
+      - deprecated: false
+        description: 'Paging: the cursor field from previous page'
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the requested page size (max 100)'
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          type: integer
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_FiatAddress'
+          description: GET Addresses Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Addresses Failed (Bad Request)
+        '401':
+          description: GET Addresses Failed (Unauthorized)
+        '404':
+          description: GET Addresses Failed (Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Addresses Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get all fiat addresses with status
+      tags:
+      - Addresses
+    post:
+      description: 'Register a bank account address for a customer.
+
+        '
+      operationId: registerFiatAddress
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an address is only registered once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the fiat address will be registered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/RegisterFiatAddressRequest'
+        description: The fiat address registration request
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FiatAddress'
+          description: Registration successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad request (e.g. invalid data)
+        '401':
+          description: Unauthorized (e.g. customer does not belong to partner)
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Forbidden (e.g. customer is suspended)
+        '404':
+          description: Not Found
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Conflict (e.g. address already exists for this customer)
+        '422':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Unprocessable Entity (e.g. customer does not have access to this rail)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Failed to register the address
+      security:
+      - ApiKeyAuth: []
+      summary: Register a fiat bank account for a customer.
+      tags:
+      - Addresses
+  /addresses/fiat/{customer_id}:
+    get:
+      description: 'Get all fiat addresses registered for a customer
+
+
+        Bank account structure can vary per country. Therefore, the `bank_account_identifier` is always the identifier
+
+        that matches how a user would identify it. For SEPA it would be the IBAN.
+
+
+        You can search by providing a `search_term` parameter. This will search the following fields:
+
+
+        - `bank_account_identifier`
+
+        - `label`
+
+        - `bank_name`'
+      operationId: getFiatAddresses
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the fiat addresses will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the customer
+        explode: true
+        in: path
+        name: customer_id
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field from previous page'
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field for backward pagination'
+        explode: false
+        in: query
+        name: prev_cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the requested page size (max 100)'
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          maximum: 100.0
+          type: integer
+      - deprecated: false
+        description: A search term to filter the addresses
+        explode: false
+        in: query
+        name: search_term
+        required: false
+        schema:
+          default: null
+          maxLength: 256
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_FiatAddress'
+          description: GET Addresses Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Addresses Failed (Bad Request)
+        '401':
+          description: GET Addresses Failed (Unauthorized)
+        '404':
+          description: GET Addresses Failed (Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Addresses Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get all fiat addresses / bank accounts
+      tags:
+      - Addresses
+  /addresses/fiat/{customer_id}/{fiat_address_id}:
+    delete:
+      description: 'Soft-delete a fiat address for a customer
+
+        '
+      operationId: deleteFiatAddress
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the fiat address will be deleted for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the customer
+        explode: true
+        in: path
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: the ID of the fiat address
+        explode: true
+        in: path
+        name: fiat_address_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          description: Delete Address Succeeded
+        '401':
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Forbidden (e.g. customer is suspended)
+        '404':
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Delete Address Failed (Internal Server Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a fiat address
+      tags:
+      - Addresses
+    get:
+      description: 'Get a specific fiat address by customer ID and address ID
+
+        '
+      operationId: getFiatAddress
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customer will be verified against the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the customer
+        explode: true
+        in: path
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: the ID of the fiat address
+        explode: true
+        in: path
+        name: fiat_address_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FiatAddress'
+          description: GET Address Succeeded
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Address Failed (Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Address Failed (Internal Server Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get a specific fiat address
+      tags:
+      - Addresses
+  /addresses/fiat/{id}/retry-auth:
+    post:
+      deprecated: true
+      description: 'Retry the authentication process on a failed fiat address
+
+
+        NOTE: This endpoint is not yet implemented
+
+        '
+      operationId: retryFiatAddressAuth
+      parameters:
+      - deprecated: false
+        description: the ID of the fiat address
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      security:
+      - ApiKeyAuth: []
+      summary: Retry Authentication
+      tags:
+      - Addresses
+  /addresses/pix:
+    post:
+      description: 'Registers a PIX payout destination (Brazil / BRL). Check the returned
+
+        `status` to determine whether the destination can be used for payouts.'
+      operationId: registerPixAddress
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an address is only registered once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/RegisterPixAddressRequest'
+        description: The PIX address registration request
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PixAddress'
+          description: Registration successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad request (e.g. invalid data)
+        '401':
+          description: Unauthorized (e.g. customer does not belong to partner)
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Forbidden (e.g. customer is suspended)
+        '404':
+          description: Not Found
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Conflict (e.g. address already exists for this customer)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Failed to register the address
+      security:
+      - ApiKeyAuth: []
+      summary: Register a PIX destination for a customer.
+      tags:
+      - Addresses
+  /addresses/pix/{customer_id}:
+    get:
+      operationId: getPixAddresses
+      parameters:
+      - deprecated: false
+        description: the ID of the customer
+        explode: true
+        in: path
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_PixAddress'
+          description: GET Addresses Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Addresses Failed (Bad Request)
+        '401':
+          description: GET Addresses Failed (Unauthorized)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Addresses Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get a customer's PIX destinations.
+      tags:
+      - Addresses
+  /addresses/pix/{customer_id}/{pix_address_id}:
+    delete:
+      description: Soft-deletes a PIX destination for a customer.
+      operationId: deletePixAddress
+      parameters:
+      - deprecated: false
+        description: the ID of the customer
+        explode: true
+        in: path
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: the ID of the PIX address
+        explode: true
+        in: path
+        name: pix_address_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          description: Delete Address Succeeded
+        '401':
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Forbidden (e.g. customer is suspended)
+        '404':
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Delete Address Failed (Internal Server Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a PIX destination.
+      tags:
+      - Addresses
+    get:
+      operationId: getPixAddress
+      parameters:
+      - deprecated: false
+        description: the ID of the customer
+        explode: true
+        in: path
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: the ID of the PIX address
+        explode: true
+        in: path
+        name: pix_address_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PixAddress'
+          description: GET Address Succeeded
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Address Failed (Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Address Failed (Internal Server Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get a specific PIX destination by ID.
+      tags:
+      - Addresses
+  /country_subdivisions/{country_code}:
+    get:
+      description: 'Utility endpoint to get a list of all accepted subdivisions (states, provinces, regions, etc.) for a given country
+
+        '
+      operationId: getCountrySubdivisions
+      parameters:
+      - deprecated: false
+        description: The ISO 3166-1 Alpha-2 country code
+        explode: true
+        in: path
+        name: country_code
+        required: true
+        schema:
+          description: ISO 3166-1 Alpha-2 country code (e.g. "DE", "US")
+          example: DE
+          maxLength: 2
+          minLength: 2
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CountrySubdivision'
+                type: array
+          description: GET Subdivisions Succeeded
+        '401':
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Country not found or has no subdivisions
+      security:
+      - ApiKeyAuth: []
+      summary: Get country subdivisions
+      tags:
+      - Addresses
+components:
+  schemas:
+    BankAccountIdentifier_BankAccountFedNowIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FEDNOW
+            example: FEDNOW
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountFedNowIdentifier'
+    PixAccountIdentifier_PixCpfKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CPF
+            example: CPF
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixCpfKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    RecipientPostalAddress:
+      description: 'RecipientPostalAddress
+
+
+        The account holder''s address.'
+      properties:
+        city:
+          description: The city
+          maxLength: 100
+          minLength: 2
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        postal_code:
+          description: The postal code
+          maxLength: 20
+          minLength: 3
+          type: string
+        state:
+          description: The state
+          type: string
+        street:
+          description: The street address
+          maxLength: 256
+          minLength: 2
+          type: string
+      required:
+      - street
+      - city
+      - state
+      - country
+      - postal_code
+      title: RecipientPostalAddress
+      type: object
+    PixAccountIdentifier_PixCnpjKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CNPJ
+            example: CNPJ
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixCnpjKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    Country:
+      description: A country
+      example:
+        code: DE
+      properties:
+        code:
+          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - code
+      title: Country
+      type: object
+    CountrySubdivision:
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+      required:
+      - code
+      - name
+      title: CountrySubdivision
+      type: object
+    BankAccountCHAPSIdentifier:
+      example:
+        account_number: '12345678'
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: BankAccountCHAPSIdentifier
+      type: object
+    BankAccountRTPIdentifier:
+      example:
+        account_number: '456789123'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountRTPIdentifier
+      type: object
+    PixAddressStatus:
+      description: PIX Address Status
+      enum:
+      - RegistrationPending
+      - Registered
+      - RegistrationFailed
+      type: string
+    BankAccountIdentifier_BankAccountACHIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - ACH
+            example: ACH
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountACHIdentifier'
+    RecipientName_IndividualName:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Individual
+            example: Individual
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IndividualName'
+    BankPostalAddress:
+      description: 'BankPostalAddress
+
+
+        The bank''s address. Only required for SWIFT accounts.'
+      properties:
+        city:
+          description: The city
+          maxLength: 100
+          minLength: 2
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        postal_code:
+          description: The postal code
+          maxLength: 20
+          minLength: 3
+          type: string
+        state:
+          description: The state
+          type: string
+        street:
+          description: The street address
+          maxLength: 256
+          minLength: 2
+          type: string
+      required:
+      - street
+      - city
+      - state
+      - country
+      - postal_code
+      title: BankPostalAddress
+      type: object
+    RecipientName_BusinessName:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Business
+            example: Business
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BusinessName'
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
+
+        Includes a trace_id that clients can reference when reporting issues.'
+      properties:
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
+          type: string
+      required:
+      - message
+      - trace_id
+      title: ApiError
+      type: object
+    VerifiedAddressResponse:
+      description: 'Verified Address Response
+
+
+        Response containing verified address details
+
+        '
+      example:
+        address_type: SelfHosted
+        blockchain: Solana
+        created_at: 2024-01-15 10:30:00+00:00
+        disabled: false
+        id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        is_self: true
+        name: Primary Solana wallet
+        proof_message: I hereby verify that I own this wallet address
+        proof_signature: 5J9qvKhKqYbpjhCkqDnKXSp7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp...
+        vasp_did: null
+        wallet_address: 7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
+      properties:
+        address_type:
+          $ref: '#/components/schemas/AddressType'
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        created_at:
+          description: When the address was verified
+          format: date-time
+          type: string
+        disabled:
+          description: Whether the address is disabled
+          type: boolean
+        id:
+          description: The ID of the verified address
+          format: uuid
+          type: string
+        is_self:
+          description: Whether the wallet belongs to the customer themselves (true) or a third party
+          type: boolean
+        name:
+          description: Optional display name for this wallet address
+          type: string
+        proof_message:
+          description: The proof message
+          type: string
+        proof_signature:
+          description: The proof signature
+          type: string
+        vasp_did:
+          description: The VASP DID (decentralized Identifier) for hosted wallets
+          type: string
+        wallet_address:
+          description: The wallet address
+          type: string
+      required:
+      - id
+      - created_at
+      - wallet_address
+      - address_type
+      - blockchain
+      - disabled
+      - is_self
+      title: VerifiedAddressResponse
+      type: object
+    SelfHostedWalletResponse:
+      description: 'Self-Hosted Wallet Response
+
+
+        Response containing self-hosted wallet details
+
+        '
+      properties:
+        address:
+          description: The address that was proven
+          type: string
+        created_at:
+          description: When the wallet was registered
+          format: date-time
+          type: string
+        customer_id:
+          description: The customer ID
+          type: string
+        disabled:
+          description: Whether the address is disabled
+          type: boolean
+        id:
+          description: The ID of the self-hosted wallet
+          type: string
+        name:
+          description: Optional display name for this wallet address
+          type: string
+        signature:
+          description: The signature that was submitted
+          type: string
+      required:
+      - id
+      - address
+      - signature
+      - created_at
+      - customer_id
+      - disabled
+      title: SelfHostedWalletResponse
+      type: object
+    PixBankDetails:
+      description: 'PixBankDetails
+
+
+        Full Brazilian bank account details identifying the recipient''s account,
+
+        for recipients without a registered PIX key.'
+      example:
+        account_number: '5678901'
+        account_type: CHECKING
+        bank_code: '341'
+        branch_code: '1234'
+      properties:
+        account_number:
+          description: 'Account number including the verification (check) digit, with no
+
+            separator, e.g. `7140025418`.'
+          maxLength: 20
+          minLength: 1
+          type: string
+        account_type:
+          $ref: '#/components/schemas/PixAccountType'
+        bank_code:
+          description: 3-digit COMPE bank code or 8-digit ISPB, distinguished by length
+          pattern: ^([0-9]{3}|[0-9]{8})$
+          type: string
+        branch_code:
+          description: Branch number without the verification digit
+          pattern: ^[0-9]{1,4}$
+          type: string
+      required:
+      - bank_code
+      - branch_code
+      - account_number
+      - account_type
+      title: PixBankDetails
+      type: object
+    BankAccountIdentifier_BankAccountRTPIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - RTP
+            example: RTP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountRTPIdentifier'
+    EmailAddress:
+      description: 'EmailAddress
+
+
+        An email address
+
+        An email address
+
+        '
+      example:
+        email: john.doe@example.com
+      properties:
+        email:
+          description: The email address
+          type: string
+      required:
+      - email
+      title: EmailAddress
+      type: object
+    RegisterSelfHostedWalletRequest:
+      description: 'Self-hosted wallet registration request
+
+
+        Proof of wallet ownership to register a self-hosted wallet for Travel Rule compliance
+
+        '
+      properties:
+        address:
+          description: The address of the wallet
+          type: string
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        message:
+          description: The message that was signed
+          type: string
+        name:
+          description: Optional display name for this wallet address
+          type: string
+        signature:
+          description: The signature of the message
+          type: string
+      required:
+      - blockchain
+      - customer_id
+      - address
+      - signature
+      - message
+      title: RegisterSelfHostedWalletRequest
+      type: object
+    BankAccountIdentifier_BankAccountCHAPSIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CHAPS
+            example: CHAPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountCHAPSIdentifier'
+    RecipientPix:
+      description: 'RecipientPix
+
+
+        A PIX payout recipient.'
+      example:
+        account:
+          key: '+5511987654321'
+          type: PHONE
+        recipient:
+          family_name: Turing
+          given_name: Alan
+          type: Individual
+        tax_id: '12345678909'
+      properties:
+        account:
+          $ref: '#/components/schemas/PixAccountIdentifier'
+        recipient:
+          $ref: '#/components/schemas/RecipientName'
+        tax_id:
+          description: 'The recipient''s CPF (11 digits) or CNPJ (14 digits), with or without
+
+            the usual `.`/`-`/`/` formatting. The payout is rejected if the
+
+            destination account is not registered to this tax ID.'
+          pattern: ^([0-9]{11}|[0-9]{14}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+          type: string
+      required:
+      - recipient
+      - tax_id
+      - account
+      title: RecipientPix
+      type: object
+    PixEvpKey:
+      description: 'PixEvpKey
+
+
+        A random PIX DICT key (EVP) generated by the recipient''s bank.'
+      example:
+        key: 123e4567-e89b-12d3-a456-426614174000
+      properties:
+        key:
+          description: A lowercase UUID, e.g. 123e4567-e89b-12d3-a456-426614174000
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+          type: string
+      required:
+      - key
+      title: PixEvpKey
+      type: object
+    AddressFilter:
+      description: 'Filter for address types when retrieving signatures
+
+
+        Specifies which type of addresses to return
+
+        '
+      enum:
+      - Hosted
+      - SelfHosted
+      - All
+      type: string
+    BankAccountIdentifier_BankAccountWireIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Wire
+            example: Wire
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountWireIdentifier'
+    BankAccountIdentifier_Iban:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SEPA
+            example: SEPA
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Iban'
+    FiatAddress:
+      description: 'Fiat Address
+
+
+        Response containing fiat address details
+
+        '
+      example:
+        bank_account_identifier:
+          iban: DE89370400440532013000
+          type: SEPA
+        bank_details:
+          account_identifier:
+            iban: DE89370400440532013000
+            type: SEPA
+          address:
+            city: London
+            country:
+              code: GB
+            postal_code: SW1A 2AA
+            state: England
+            street: 10 Downing Street
+          bank_address: null
+          email_address:
+            email: john.doe@example.com
+          is_third_party: false
+          phone_number: +49-30-12345678
+          provider_country:
+            code: DE
+          provider_name: Iron Bank
+          recipient:
+            name: Aperture Science
+            type: Business
+        bank_name: Iron Bank
+        country: DE
+        created_at: 2024-01-15 10:30:00+00:00
+        currency: EUR
+        customer_id: 123e4567-e89b-12d3-a456-426614174000
+        id: 550e8400-e29b-41d4-a716-446655440000
+        is_third_party: false
+        label: Primary Business Account
+        ownership_verified: true
+        status: Registered
+        updated_at: 1970-01-01 00:00:00+00:00
+      properties:
+        bank_account_identifier:
+          $ref: '#/components/schemas/BankAccountIdentifier'
+        bank_details:
+          $ref: '#/components/schemas/RecipientBankAccount'
+        bank_name:
+          description: The bank name
+          type: string
+        country:
+          description: The country code
+          type: string
+        created_at:
+          description: When the address was created
+          format: date-time
+          type: string
+        currency:
+          description: The currency of the bank account
+          type: string
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        id:
+          description: The ID of the address
+          format: uuid
+          type: string
+        is_third_party:
+          description: Is this a third party fiat address
+          type: boolean
+        label:
+          description: Optional label for the address
+          type: string
+        ownership_verified:
+          description: Has the customer verified their ownership of this account
+          type: boolean
+        status:
+          $ref: '#/components/schemas/FiatAddressStatus'
+        updated_at:
+          description: When the address was last updated
+          format: date-time
+          type: string
+      required:
+      - id
+      - created_at
+      - updated_at
+      - customer_id
+      - bank_details
+      - status
+      - currency
+      - bank_account_identifier
+      - country
+      - bank_name
+      - ownership_verified
+      - is_third_party
+      title: FiatAddress
+      type: object
+    BankAccountIdentifier_BankAccountFPSIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FPS
+            example: FPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountFPSIdentifier'
+    PixAccountIdentifier:
+      anyOf:
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+      discriminator:
+        mapping:
+          BANK_DETAILS: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
+          CNPJ: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
+          CPF: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
+          EMAIL: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
+          EVP: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
+          PHONE: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
+        propertyName: type
+      type: object
+    PixPhoneKey:
+      description: 'PixPhoneKey
+
+
+        A PIX DICT key that is the recipient''s phone number.'
+      example:
+        key: '+5511987654321'
+      properties:
+        key:
+          description: International format with leading `+`, e.g. +5511987654321
+          pattern: ^\+[1-9][0-9]{1,14}$
+          type: string
+      required:
+      - key
+      title: PixPhoneKey
+      type: object
+    PixCpfKey:
+      description: 'PixCpfKey
+
+
+        A PIX DICT key that is the recipient''s CPF.'
+      example:
+        key: '12345678909'
+      properties:
+        key:
+          description: 11-digit CPF, with or without the `XXX.XXX.XXX-XX` formatting
+          pattern: ^([0-9]{11}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})$
+          type: string
+      required:
+      - key
+      title: PixCpfKey
+      type: object
+    BankAccountFedNowIdentifier:
+      example:
+        account_number: '456789123'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountFedNowIdentifier
+      type: object
+    RegisterSelfAttestedWalletRequest:
+      description: 'Self-attested wallet registration request
+
+
+        Register a self-hosted wallet the customer declares as their own, **without** a
+
+        cryptographic signature. For direct customers who can''t sign from a custody UI
+
+        (e.g. Fireblocks). Scoped to US and RoW customers.'
+      properties:
+        address:
+          description: The address of the wallet
+          type: string
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        name:
+          description: Optional display name for this wallet address
+          type: string
+      required:
+      - blockchain
+      - customer_id
+      - address
+      title: RegisterSelfAttestedWalletRequest
+      type: object
+    PixEmailKey:
+      description: 'PixEmailKey
+
+
+        A PIX DICT key that is the recipient''s email address.'
+      example:
+        key: joao.silva@example.com
+      properties:
+        key:
+          maxLength: 77
+          pattern: ^[^@\s]+@[^@\s]+$
+          type: string
+      required:
+      - key
+      title: PixEmailKey
+      type: object
+    RegisterHostedWalletRequest:
+      description: 'Hosted wallet registration request
+
+
+        Register a VASP-custodied wallet address for Travel Rule compliance
+
+        '
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        name:
+          description: Optional display name for this wallet address
+          type: string
+        vasp_did:
+          description: The VASP DID (decentraliced Identifier) that hosts the wallet
+          type: string
+        wallet_address:
+          description: The wallet address at the institution
+          type: string
+      required:
+      - customer_id
+      - wallet_address
+      - vasp_did
+      - blockchain
+      title: RegisterHostedWalletRequest
+      type: object
+    PixAccountIdentifier_PixEmailKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - EMAIL
+            example: EMAIL
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixEmailKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    RecipientName:
+      anyOf:
+      - $ref: '#/components/schemas/RecipientName_IndividualName'
+      - $ref: '#/components/schemas/RecipientName_BusinessName'
+      discriminator:
+        mapping:
+          Business: '#/components/schemas/RecipientName_BusinessName'
+          Individual: '#/components/schemas/RecipientName_IndividualName'
+        propertyName: type
+      type: object
+    BankAccountFPSIdentifier:
+      example:
+        account_number: '55779911'
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: BankAccountFPSIdentifier
+      type: object
+    BankAccountACHIdentifier:
+      example:
+        account_number: '123456789'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountACHIdentifier
+      type: object
+    PixAccountIdentifier_PixBankDetails:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - BANK_DETAILS
+            example: BANK_DETAILS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixBankDetails'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    FiatAddressStatus:
+      description: 'Verification Status
+
+
+        The status of the verification of a fiat address
+
+        '
+      enum:
+      - AuthorizationRequired
+      - AuthorizationFailed
+      - RegistrationPending
+      - RegistrationFailed
+      - Registered
+      type: string
+    PixCnpjKey:
+      description: 'PixCnpjKey
+
+
+        A PIX DICT key that is the recipient''s CNPJ.'
+      example:
+        key: '12345678000195'
+      properties:
+        key:
+          description: 14-digit CNPJ, with or without the `XX.XXX.XXX/XXXX-XX` formatting
+          pattern: ^([0-9]{14}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+          type: string
+      required:
+      - key
+      title: PixCnpjKey
+      type: object
+    AddressType:
+      enum:
+      - Hosted
+      - SelfHosted
+      type: string
+    Fiat:
+      description: A fiat currency
+      example:
+        code: USD
+      properties:
+        code:
+          description: The code of the currency e.g. 'USD'
+          type: string
+      required:
+      - code
+      title: Fiat
+      type: object
+    RecipientBankAccount:
+      description: 'RecipientBankAccount
+
+
+        A recipient fiat bank account
+
+        '
+      example:
+        account_identifier:
+          iban: DE89370400440532013000
+          type: SEPA
+        address:
+          city: London
+          country:
+            code: GB
+          postal_code: SW1A 2AA
+          state: England
+          street: 10 Downing Street
+        bank_address: null
+        email_address:
+          email: john.doe@example.com
+        is_third_party: false
+        phone_number: +49-30-12345678
+        provider_country:
+          code: DE
+        provider_name: Iron Bank
+        recipient:
+          name: Aperture Science
+          type: Business
+      properties:
+        account_identifier:
+          $ref: '#/components/schemas/BankAccountIdentifier'
+        address:
+          $ref: '#/components/schemas/RecipientPostalAddress'
+        bank_address:
+          $ref: '#/components/schemas/BankPostalAddress'
+        email_address:
+          $ref: '#/components/schemas/EmailAddress'
+        is_third_party:
+          description: Is this a users fiat bank account or a third party fiat bank account
+          type: boolean
+        phone_number:
+          description: The recipient's phone number. Required for USD accounts.
+          type: string
+        provider_country:
+          $ref: '#/components/schemas/Country'
+        provider_name:
+          description: The name of the provider of the recipient's account
+          type: string
+        recipient:
+          $ref: '#/components/schemas/RecipientName'
+      required:
+      - recipient
+      - provider_name
+      - provider_country
+      - account_identifier
+      - address
+      - is_third_party
+      title: RecipientBankAccount
+      type: object
+    BankAccountSWIFTIdentifier:
+      example:
+        account_number: '1234567890'
+        bic: CHASUS33XXX
+      properties:
+        account_number:
+          type: string
+        bic:
+          type: string
+        intermediary_bic:
+          description: 'BIC of an intermediary correspondent bank in the SWIFT routing chain,
+
+            when the sender wants to override the auto-selected intermediary.
+
+            Optional — most senders leave this unset and let their provider pick.'
+          type: string
+      required:
+      - bic
+      - account_number
+      title: BankAccountSWIFTIdentifier
+      type: object
+    PagedList_FiatAddress:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/FiatAddress'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_FiatAddress
+      type: object
+    BankAccountIdentifier:
+      anyOf:
+      - $ref: '#/components/schemas/BankAccountIdentifier_Iban'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
+      discriminator:
+        mapping:
+          ACH: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
+          CHAPS: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
+          FEDNOW: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
+          FPS: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
+          RTP: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
+          SEPA: '#/components/schemas/BankAccountIdentifier_Iban'
+          SWIFT: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
+          Wire: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
+        propertyName: type
+      type: object
+    Iban:
+      example:
+        iban: DE89370400440532013000
+      properties:
+        iban:
+          type: string
+      required:
+      - iban
+      title: Iban
+      type: object
+    PagedList_PixAddress:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/PixAddress'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_PixAddress
+      type: object
+    RegisterFiatAddressRequest:
+      description: 'Register Fiat Address Request
+
+
+        Request to register a fiat (bank) address
+
+        '
+      properties:
+        bank_details:
+          $ref: '#/components/schemas/RecipientBankAccount'
+        currency:
+          $ref: '#/components/schemas/Fiat'
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        label:
+          description: Optional label for the address
+          type: string
+      required:
+      - customer_id
+      - bank_details
+      - currency
+      title: RegisterFiatAddressRequest
+      type: object
+    PixAccountType:
+      description: 'PixAccountType
+
+
+        The type of a Brazilian bank account.'
+      enum:
+      - CHECKING
+      - SAVINGS
+      - SALARY
+      - TRANSACTION
+      type: string
+    BankAccountIdentifier_BankAccountSWIFTIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SWIFT
+            example: SWIFT
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountSWIFTIdentifier'
+    BusinessName:
+      example:
+        name: Aperture Science
+      properties:
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+      required:
+      - name
+      title: BusinessName
+      type: object
+    PixAccountIdentifier_PixPhoneKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - PHONE
+            example: PHONE
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixPhoneKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    PixAddress:
+      description: 'PIX Address
+
+
+        Response containing PIX destination details.'
+      example:
+        created_at: 2024-01-15 10:30:00+00:00
+        customer_id: 123e4567-e89b-12d3-a456-426614174000
+        id: 550e8400-e29b-41d4-a716-446655440000
+        label: Primary PIX
+        recipient:
+          account:
+            key: '+5511987654321'
+            type: PHONE
+          recipient:
+            family_name: Turing
+            given_name: Alan
+            type: Individual
+          tax_id: '12345678909'
+        status: Registered
+        updated_at: 1970-01-01 00:00:00+00:00
+      properties:
+        created_at:
+          description: When the address was created
+          format: date-time
+          type: string
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        id:
+          description: The ID of the address
+          format: uuid
+          type: string
+        label:
+          description: Optional label for the address
+          type: string
+        recipient:
+          $ref: '#/components/schemas/RecipientPix'
+        status:
+          $ref: '#/components/schemas/PixAddressStatus'
+        updated_at:
+          description: When the address was last updated
+          format: date-time
+          type: string
+      required:
+      - id
+      - created_at
+      - updated_at
+      - customer_id
+      - recipient
+      - status
+      title: PixAddress
+      type: object
+    PixAccountIdentifier_PixEvpKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - EVP
+            example: EVP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixEvpKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    UpdateDisabledStatusRequest:
+      description: Request to update the disabled status of a verified crypto address
+      properties:
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        disabled:
+          description: Whether to disable the address
+          type: boolean
+      required:
+      - customer_id
+      - disabled
+      title: UpdateDisabledStatusRequest
+      type: object
+    VaspSuggestion:
+      description: Minimal VASP suggestion for hosted wallet providers
+      properties:
+        country:
+          description: Country if available
+          type: string
+        did:
+          description: Notabene DID of the VASP
+          type: string
+        name:
+          description: Display name
+          type: string
+        website:
+          description: Website URL
+          type: string
+      required:
+      - did
+      - name
+      title: VaspSuggestion
+      type: object
+    RegisterPixAddressRequest:
+      description: 'Register PIX Address Request
+
+
+        Request to register a PIX payout destination (Brazil / BRL).'
+      properties:
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        label:
+          description: Optional label for the address
+          type: string
+        recipient:
+          $ref: '#/components/schemas/RecipientPix'
+      required:
+      - customer_id
+      - recipient
+      title: RegisterPixAddressRequest
+      type: object
+    IndividualName:
+      example:
+        family_name: Turing
+        given_name: Alan
+      properties:
+        family_name:
+          maxLength: 50
+          minLength: 1
+          type: string
+        given_name:
+          maxLength: 50
+          minLength: 1
+          type: string
+      required:
+      - given_name
+      - family_name
+      title: IndividualName
+      type: object
+    BankAccountWireIdentifier:
+      example:
+        account_number: '987654321'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountWireIdentifier
+      type: object
+    Blockchain:
+      description: 'Blockchain
+
+
+        A type of blockchain
+
+        '
+      enum:
+      - Solana
+      - Ethereum
+      - Polygon
+      - Arbitrum
+      - Base
+      - Stellar
+      - Citrea
+      - Plasma
+      - Avalanche
+      - Moca
+      - Tempo
+      - Tron
+      - Bsc
+      type: string
+  parameters:
+    XApiVersion:
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      in: header
+      name: X-API-Version
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    ApiKeyAuth:
+      description: API Key
+      in: header
+      name: X-API-Key
+      type: apiKey

@@ -1,0 +1,3781 @@
+openapi: 3.1.0
+info:
+  description: The Stablecoin Payment Network
+  title: Iron API - Sandbox Addresses Customer API
+  version: 1.0-16988
+servers:
+- url: https://api.sandbox.iron.xyz/api
+tags:
+- description: Operations on Customers
+  name: Customer
+paths:
+  /authentication-codes/entity/{id}:
+    get:
+      description: 'Get the pending authentication code for an entity by ID
+
+        e.g. ID of Autoramp or FiatAddress (entity in AuhorizationRequired state)
+
+        if no pending code is found, retry flow will have to be triggered
+
+        '
+      operationId: getPendingAuthenticationCode
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the authentication code will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: The ID of the entity to get the pending authentication code for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/AuthenticationCode'
+          description: GET Authentication Code Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Authentication Code Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Authentication Code Failed (Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Authentication Code Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get the pending authentication code for an entity
+      tags:
+      - Customer
+  /authentication-codes/{id}:
+    put:
+      description: 'Submit the code for a given authentication
+
+        '
+      operationId: submitAuthenticationCode
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the authentication code will be submitted under scope of the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: The ID of the authentication code to submit
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/SubmitAuthenticationCodeParams'
+        description: The authentication code to submit
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/AuthenticationCode'
+          description: PUT Authentication Code Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PUT Authentication Code Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PUT Authentication Code Failed (Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: PUT Authentication Code Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Submit an authentication code
+      tags:
+      - Customer
+  /customers:
+    get:
+      description: 'Get all customers for a particular partner. The partner ID does not need to be provided as it
+
+        is provided by the API Key.
+
+
+        An optional `search_term` can be provided to filter by name, id, email, or external id.
+
+        '
+      operationId: getAllCustomers
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customers will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field from previous page'
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field for backward pagination'
+        explode: false
+        in: query
+        name: prev_cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the requested page size (max 100)'
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          maximum: 100.0
+          type: integer
+      - deprecated: false
+        description: A search term to filter the customers
+        explode: false
+        in: query
+        name: search_term
+        required: false
+        schema:
+          default: null
+          maxLength: 256
+          type: string
+      - deprecated: false
+        description: Filter by customer status (comma-separated or repeated values)
+        explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          default: null
+          items:
+            $ref: '#/components/schemas/CustomerStatus'
+          type: array
+      - deprecated: false
+        description: Filter by the customer's most-recent identification status
+        explode: true
+        in: query
+        name: identification_status
+        required: false
+        schema:
+          default: null
+          items:
+            $ref: '#/components/schemas/IdentificationStatus'
+          type: array
+      - deprecated: false
+        description: Filter by customer type (Person or Business)
+        explode: true
+        in: query
+        name: customer_type
+        required: false
+        schema:
+          default: null
+          items:
+            $ref: '#/components/schemas/CustomerType'
+          type: array
+      - deprecated: false
+        description: 'When true, only customers with at least one transaction; when
+
+          false, only customers without any. Omit to disable the filter.'
+        explode: false
+        in: query
+        name: has_transactions
+        required: false
+        schema:
+          default: null
+          type: boolean
+      - deprecated: false
+        description: 'Sort order: "asc" for oldest first, "desc" for newest first (default)'
+        explode: false
+        in: query
+        name: sort_order
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/SortOrder'
+          - default: null
+          default: null
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_Customer'
+          description: GET ALL Customer Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET ALL Customer Failed (Unauthorized)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET ALL Customer Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get all Customers
+      tags:
+      - Customer
+    post:
+      description: 'Create a new **business** or **legal person** customer.
+
+        '
+      operationId: createCustomer
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an Customer operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customer will be created for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerParams'
+        description: Parameters required to create a new Customer
+        required: true
+      responses:
+        '201':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: POST Customer Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Customer Failed (Bad Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Customer Failed (Unauthorized)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: POST Customer Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new customer
+      tags:
+      - Customer
+  /customers/{external_id}/external:
+    get:
+      description: 'Retrieve a specific customer by external ID
+
+        '
+      operationId: getCustomerByExternalId
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customer will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the external ID of the Customer to GET
+        explode: true
+        in: path
+        name: external_id
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: GET Customer Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Failed (Resource Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Customer Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get a customer by external ID
+      tags:
+      - Customer
+  /customers/{id}:
+    get:
+      description: 'Retrieve a specific customer by ID
+
+        '
+      operationId: getCustomerById
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customer will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to GET
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: GET Customer Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Failed (Resource Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Customer Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get a customer by ID
+      tags:
+      - Customer
+    put:
+      description: 'Update a customer by ID
+
+        '
+      operationId: updateCustomer
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the wallet address will be registered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to update
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerParams'
+        description: The customer data to be used for the update
+        required: true
+      responses:
+        '204':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: PUT Customer Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PUT Customer Failed (Bad Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PUT Customer Failed (Unauthorized)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: PUT Customer Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Update a customer
+      tags:
+      - Customer
+  /customers/{id}/abilities:
+    get:
+      description: 'Retrieve the abilities/capabilities for a specific customer by ID
+
+        '
+      operationId: getCustomerAbilities
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customer will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to GET abilities for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CustomerAbilities'
+          description: GET Customer Abilities Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Abilities Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Abilities Failed (Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Customer Abilities Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get customer abilities
+      tags:
+      - Customer
+  /customers/{id}/archive:
+    put:
+      description: 'Archive a customer and all of their identifications. This is terminal and
+
+        cannot be undone: the customer is completely and permanently blocked from
+
+        using any services.
+
+        '
+      operationId: archiveCustomer
+      parameters:
+      - deprecated: false
+        description: the ID of the Customer to archive
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: Customer Archived
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Archive Customer Failed (Bad Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Archive Customer Failed (Unauthorized)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Archive Customer Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Archive a customer
+      tags:
+      - Customer
+  /customers/{id}/identifications:
+    get:
+      description: 'Retrieve all identifications for this customer
+
+        '
+      operationId: getAllCustomerIdentifications
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the identifications will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to get Identifications for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field from previous page'
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the requested page size (max 100)'
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          type: integer
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_Identification'
+          description: GET ALL Identification Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET ALL Identification Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET ALL Identification Failed (Resource Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET ALL Identification Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get all customer Identifications
+      tags:
+      - Customer
+  /customers/{id}/identifications/v2:
+    post:
+      description: 'This will create a new identification for the customer, dependent on the customer type a KYC or KYB will be created for the customer to complete.
+
+        we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request'
+      operationId: createCustomerIdentificationV2
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an Customer Identification operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the identification will be created under scope of the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to create an Identification for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/IdentificationCreateParamsV2'
+        description: The Identification data to be used for the identification
+        required: true
+      responses:
+        '201':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Identification'
+          description: POST Customer Identification Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Customer Identification Failed (Invalid Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Customer Identification Failed (Unauthorized)
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Customer Identification Failed (Forbidden)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Customer Identification Failed (Resource Not Found)
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Customer Idenfication Failed (Has Pending Identification)
+        '429':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Customer Identification Failed (Creation Rate Limit Exceeded)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: POST Customer Identification Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Create Customer Identification V2
+      tags:
+      - Customer
+  /customers/{id}/microdeposits:
+    get:
+      description: 'Retrieve all microdeposits for a specific customer by ID
+
+        '
+      operationId: getCustomerMicrodeposits
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customer will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to GET microdeposits for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Microdeposit'
+                type: array
+          description: GET Microdeposits Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Microdeposits Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Microdeposits Failed (Resource Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Microdeposits Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get customer microdeposits
+      tags:
+      - Customer
+  /customers/{id}/required-signings:
+    get:
+      description: 'Get all required signings for a customer
+
+        '
+      operationId: getCustomerRequiredSignings
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the required signings will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to get required signings for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/TermsAndConditionsLink'
+                type: array
+          description: GET Required Signings Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Required Signings Failed (Unauthorized)
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Required Signings Failed (Forbidden)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Required Signings Failed (Not Found)
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Required Signings Failed (Conflict)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Required Signings Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get customer required signings
+      tags:
+      - Customer
+  /customers/{id}/requirements:
+    get:
+      description: 'Retrieve a requirements view of a customer:
+
+        four buckets — `complete`, `pending`, `missing`, `issues` — plus a
+
+        coarse `requirements_due` summary of categories that still need
+
+        attention. Each requirement carries a stable typed `code` (switch on
+
+        this) and, when available, a verbatim `description` from the upstream
+
+        KYC provider''s moderation comment. **NOTE**: The `description` field is subject to change without notice.
+
+
+        Computed on demand from the customer''s identifications and
+
+        customer-level state; no separate ingestion step is needed.'
+      operationId: getCustomerRequirements
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customer will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to GET requirements for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CustomerRequirements'
+          description: GET Customer Requirements Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Requirements Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Requirements Failed (Resource Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Customer Requirements Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get customer requirements
+      tags:
+      - Customer
+  /customers/{id}/signings:
+    get:
+      description: 'Retrieve all signings for a customer, representing the various legal agreements and consents gathered from the customer.
+
+        See The KYC/Compliance section of our documentation for more info.
+
+        '
+      operationId: getSignings
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the signings will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to get Signings for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field from previous page'
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the requested page size (max 100)'
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          type: integer
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_Signing'
+          description: GET Signings Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Signings Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Signings Resource Not found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Signings Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get all customer Signings
+      tags:
+      - Customer
+    post:
+      description: 'This will create a signing for the customer, representing the legal consent to a specific Document.
+
+        See The KYC/Compliance section of our documentation for more info.
+
+
+        '
+      operationId: createCustomerSigning
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an Signing operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the signing will be created under scope of the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to create a Signing for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/SigningCreateParams'
+        description: Parameters required to create a new Signing
+        required: true
+      responses:
+        '201':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Signing'
+          description: POST Signing Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Signing Failed (Unauthorized)
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Signing Failed (Forbidden)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Signing Failed (Not Found)
+        '422':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Signing Failed (Validation Error)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: POST Signing Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new Customer signing
+      tags:
+      - Customer
+  /customers/{id}/spending-limit:
+    get:
+      description: 'Retrieve the current spending limit usage for a specific customer,
+
+        split by direction (fiat on-ramp and crypto off-ramp).
+
+
+        Amounts are returned in **EUR cents** as strings.
+
+
+        `threshold_eur` (and therefore `remaining_eur`) is `null` for Business
+
+        customers and persons with `ThresholdKind::Regulated`. `null` means
+
+        "no enforced cap"'
+      operationId: getCustomerSpendingLimit
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the customer will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to GET the spending limit for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CustomerSpendingLimit'
+          description: GET Customer Spending Limit Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Spending Limit Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Customer Spending Limit Failed (Resource Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Customer Spending Limit Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get customer spending limit usage
+      tags:
+      - Customer
+  /identifications/{id}:
+    get:
+      description: 'Retrieve a specific Identification by ID
+
+        '
+      operationId: getIdentificationById
+      parameters:
+      - deprecated: false
+        description: the ID of the Identification to GET
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Identification'
+          description: GET Identification Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Identification Failed (Unauthorized)
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Identification Failed (Forbidden)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Identification Failed (ResourceNotFound)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Identification Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Get an Identification by ID
+      tags:
+      - Customer
+  /identifications/{id}/archive:
+    put:
+      description: 'Archive an identification. This is terminal and cannot be undone: the
+
+        identification is permanently invalidated and can no longer be used to
+
+        verify the customer.
+
+        '
+      operationId: archiveIdentification
+      parameters:
+      - deprecated: false
+        description: the ID of the Identification to archive
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Identification'
+          description: Identification Archived
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Archive Identification Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Archive Identification Failed (ResourceNotFound)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Archive Identification Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Archive an identification
+      tags:
+      - Customer
+  /identifications/{id}/compliance-questionnaire:
+    get:
+      description: 'Fetch the compliance questionnaire for an identification
+
+        '
+      operationId: getIdentificationComplianceQuestionnaire
+      parameters:
+      - deprecated: false
+        description: the ID of the Identification to get compliance questions for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ComplianceQuestionaire'
+          description: GET Compliance Question Succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Compliance Question Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: GET Compliance Question Failed (Resource Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: GET Compliance Question Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Fetch identification compliance questionnaire
+      tags:
+      - Customer
+components:
+  schemas:
+    BusinessQuestionnaire_GenericBusinessQuestionnaire:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Generic
+            example: Generic
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/GenericBusinessQuestionnaire'
+      description: 'KYB compliance questionnaire
+
+
+        Use `GenericBusinessQuestionnaire` for all company types except sole proprietorships.
+
+        Use `SolePropBusinessQuestionnaire` for sole proprietorships.
+
+        '
+    Customer:
+      description: 'Customer
+
+
+        The customer object in Iron
+
+        '
+      properties:
+        active_email:
+          description: Active email for receiving transaction emails (if different from primary email)
+          type: string
+        created_at:
+          description: Created at timestamp of Customer
+          format: date-time
+          type: string
+        customer_type:
+          $ref: '#/components/schemas/CustomerType'
+        email:
+          description: Email of Customer, collected during identification process
+          type: string
+        external_id:
+          description: External ID for the customer, provided by the partner
+          type: string
+        id:
+          description: Unique ID of Customer
+          format: uuid
+          type: string
+        identification_ids:
+          description: Identifications associated with Customer
+          items:
+            format: uuid
+            type: string
+          type: array
+        identification_status:
+          $ref: '#/components/schemas/IdentificationStatus'
+        name:
+          description: Name of Customer
+          type: string
+        partner_id:
+          description: Partner ID of the customer
+          format: uuid
+          type: string
+        signing_ids:
+          description: Signings associated with Customer
+          items:
+            format: uuid
+            type: string
+          type: array
+        spending_limit_euro:
+          deprecated: true
+          description: 'Deprecated — always null. Spending limits are dynamic per customer and per
+
+            direction; use `GET /customers/{id}/spending-limit` (`threshold_eur`) instead.'
+          type: string
+        status:
+          $ref: '#/components/schemas/CustomerStatus'
+        updated_at:
+          description: Updated at timestamp of Customer
+          format: date-time
+          type: string
+      required:
+      - id
+      - customer_type
+      - identification_ids
+      - signing_ids
+      - created_at
+      - updated_at
+      - status
+      - name
+      - email
+      - partner_id
+      title: Customer
+      type: object
+    CustomerRequirements:
+      description: 'Bridge-style requirements view of a customer. All four buckets are
+
+        always present (may be empty). `requirements_due` is a quick coarse
+
+        summary — partners can use it to decide whether any action is needed
+
+        before drilling into the detail buckets.'
+      properties:
+        complete:
+          description: Requirements the customer has satisfied.
+          items:
+            $ref: '#/components/schemas/RequirementItem'
+          type: array
+        issues:
+          description: Terminal blockers the customer cannot self-remediate.
+          items:
+            $ref: '#/components/schemas/RequirementItem'
+          type: array
+        missing:
+          description: Requirements the customer can still satisfy (resubmittable).
+          items:
+            $ref: '#/components/schemas/RequirementItem'
+          type: array
+        pending:
+          description: Requirements the customer has submitted, awaiting review.
+          items:
+            $ref: '#/components/schemas/RequirementItem'
+          type: array
+        requirements_due:
+          description: 'Sorted, deduplicated set of categories that have at least one
+
+            non-complete item. Empty for fully-onboarded customers.'
+          items:
+            $ref: '#/components/schemas/RequirementCategory'
+          type: array
+      required:
+      - requirements_due
+      - complete
+      - pending
+      - missing
+      - issues
+      title: CustomerRequirements
+      type: object
+    Currency_Fiat:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fiat
+            example: Fiat
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    IdentificationCreateParamsV2_IdentificationTokenParams:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Token
+            example: Token
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IdentificationTokenParams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+    SolePropBusinessDetails:
+      description: 'Sole Prop Business Details Section
+
+        '
+      properties:
+        business_model_description:
+          description: Description of business model and target clients
+          type: string
+        estimated_annual_revenue:
+          $ref: '#/components/schemas/BusinessEstimatedAnnualRevenue'
+        industry_type:
+          $ref: '#/components/schemas/BusinessIndustryType'
+        main_business_countries:
+          description: Main countries of business operation (ISO 3166-1 alpha-2 codes)
+          items:
+            type: string
+          type: array
+      required:
+      - industry_type
+      - business_model_description
+      - main_business_countries
+      - estimated_annual_revenue
+      title: SolePropBusinessDetails
+      type: object
+    SolePropSourceOfFunds:
+      description: 'Sole Prop Source of Funds Section
+
+        '
+      properties:
+        source_of_funds:
+          $ref: '#/components/schemas/RevenueSource'
+      required:
+      - source_of_funds
+      title: SolePropSourceOfFunds
+      type: object
+    IdentificationBusinessParams:
+      description: 'Business Identification Params
+
+
+        The params required to create an identification
+
+        '
+      properties:
+        company_data:
+          $ref: '#/components/schemas/CompanyData'
+        ip_address:
+          description: The IP address of the device used to submit the identification
+          type: string
+        phone:
+          description: The phone number of the company
+          type: string
+        questionnaire:
+          $ref: '#/components/schemas/BusinessQuestionnaire'
+      required:
+      - company_data
+      - phone
+      - ip_address
+      - questionnaire
+      title: IdentificationBusinessParams
+      type: object
+    IdentificationCreateParamsV2_IdentificationBusinessParams:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Business
+            example: Business
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IdentificationBusinessParams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+    Identification:
+      description: 'Identification
+
+
+        The entity wrapping our KYC/KYB process and underlying providers
+
+        '
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        customer_id:
+          description: Absent on a referral partner's identification (partner-keyed record)
+          format: uuid
+          type: string
+        id:
+          format: uuid
+          type: string
+        partner_id:
+          description: The owning partner for partner-keyed (referral) records
+          format: uuid
+          type: string
+        residence_country:
+          description: 'ISO 3166-1 alpha-2 (2 letter) country code of the verified residence
+
+            address; only set on the customer''s most recent identification while it
+
+            is approved'
+          type: string
+        review_comment:
+          type: string
+        status:
+          $ref: '#/components/schemas/IdentificationStatus'
+        step_status:
+          $ref: '#/components/schemas/IdentificationStepStatus'
+        updated_at:
+          format: date-time
+          type: string
+        url:
+          type: string
+        with_edd:
+          type: boolean
+      required:
+      - id
+      - status
+      - created_at
+      - updated_at
+      title: Identification
+      type: object
+    SigningCreateParams:
+      description: Params for Creating a Signing
+      example:
+        content_id: 019f846a-8d21-7813-8e60-80211898ca9f
+        signed: true
+      properties:
+        content_id:
+          description: unique UUID of the content signed by Customer
+          format: uuid
+          type: string
+        signed:
+          description: Explicit signing consent
+          type: boolean
+      required:
+      - signed
+      title: SigningCreateParams
+      type: object
+    RejectReason:
+      description: 'A Sumsub rejection reason: the stable code paired with a human-readable
+
+        description, so partners can display the reason without maintaining their
+
+        own code→text mapping.'
+      properties:
+        code:
+          description: Stable Sumsub reject-label code, e.g. `UNSATISFACTORY_PHOTOS`.
+          type: string
+        description:
+          description: Human-readable description of the code.
+          type: string
+      required:
+      - code
+      - description
+      title: RejectReason
+      type: object
+    PersonProfileSourceOfWealth:
+      description: 'Source of Wealth
+
+
+        The source of wealth of the person
+
+        '
+      enum:
+      - Salary
+      - Savings
+      - Investments
+      - CryptoTrading
+      - Other
+      type: string
+    CustomerStatus:
+      description: 'The status of the Customer
+
+        '
+      enum:
+      - UserRequired
+      - SigningsRequired
+      - IdentificationRequired
+      - Active
+      - Suspended
+      - Archived
+      type: string
+    AuthenticationCode:
+      description: 'An authentication code
+
+
+        used to confirm a 2FA action
+
+        '
+      properties:
+        attempts:
+          description: attempts to submit the authentication code
+          format: int32
+          type: integer
+        entity_id:
+          description: the ID of the entity the authentication is related to
+          format: uuid
+          type: string
+        expires_at:
+          description: the time of expiry for the authentication code
+          format: date-time
+          type: string
+        id:
+          description: The ID of the authentication code
+          format: uuid
+          type: string
+        status:
+          $ref: '#/components/schemas/AuthenticationCodeStatus'
+      required:
+      - id
+      - status
+      - expires_at
+      - attempts
+      - entity_id
+      title: AuthenticationCode
+      type: object
+    BusinessQuestionnaireBusinessDetails:
+      description: 'Business Details Section
+
+
+        Industry classification and operational information about the company
+
+        '
+      properties:
+        business_model_description:
+          description: Description of business model and target clients
+          type: string
+        estimated_annual_revenue:
+          $ref: '#/components/schemas/BusinessEstimatedAnnualRevenue'
+        has_licenses_or_registrations:
+          description: Does the company maintain any licenses or registrations
+          type: boolean
+        industry_type:
+          $ref: '#/components/schemas/BusinessIndustryType'
+        main_business_countries:
+          description: Main countries of business operation (ISO 3166-1 alpha-2 codes)
+          items:
+            type: string
+          type: array
+        requires_aml_program:
+          description: Is the company required to have an AML/CFT compliance program
+          type: boolean
+      required:
+      - industry_type
+      - business_model_description
+      - main_business_countries
+      - has_licenses_or_registrations
+      - requires_aml_program
+      - estimated_annual_revenue
+      title: BusinessQuestionnaireBusinessDetails
+      type: object
+    Occupation:
+      description: 'Occupation
+
+
+        The occupation of the person
+
+        '
+      enum:
+      - Agriculture
+      - ArtsAndEntertainment
+      - Construction
+      - Education
+      - FinancialServices
+      - InformationAndTechnology
+      - Retail
+      - RealEstate
+      - Other
+      - BusinessOwner
+      - Healthcare
+      - Industrial
+      - LegalServices
+      - PublicSector
+      - SeniorManagement
+      type: string
+    Signing:
+      description: 'Signing
+
+
+        A signing of a document by a customer
+
+        '
+      properties:
+        content_id:
+          description: unique UUID of the content signed by Customer
+          format: uuid
+          type: string
+        created_at:
+          description: created_at timestamp of Signing
+          format: date-time
+          type: string
+        customer_id:
+          description: unique UUID of the Customer who signed
+          format: uuid
+          type: string
+        document_id:
+          description: unique UUID of the Document signed by Customer (Soon to be deprecated, use content_id & content_type instead)
+          format: uuid
+          type: string
+        id:
+          description: unique UUID of Signing
+          format: uuid
+          type: string
+        updated_at:
+          description: updated_at timestamp of Signing
+          format: date-time
+          type: string
+      required:
+      - id
+      - customer_id
+      - created_at
+      - updated_at
+      title: Signing
+      type: object
+    GenericBusinessQuestionnaire:
+      description: 'KYB compliance questionnaire for standard company types
+
+        '
+      properties:
+        business_details:
+          $ref: '#/components/schemas/BusinessQuestionnaireBusinessDetails'
+        planned_activities:
+          $ref: '#/components/schemas/BusinessQuestionnairePlannedActivities'
+        source_of_funds:
+          $ref: '#/components/schemas/BusinessQuestionnaireSourceOfFunds'
+      required:
+      - planned_activities
+      - source_of_funds
+      - business_details
+      title: GenericBusinessQuestionnaire
+      type: object
+    BusinessBeneficiaryInfo:
+      description: 'Business Beneficiary Info
+
+
+        A company that itself owns or controls the parent business. Carries the
+
+        same `ApiCompanyData` as the root identification: company info, its own
+
+        beneficiaries (which may include further nested businesses up to the
+
+        configured depth limit), and supporting documents.
+
+        '
+      properties:
+        company_data:
+          $ref: '#/components/schemas/CompanyData'
+      required:
+      - company_data
+      title: BusinessBeneficiaryInfo
+      type: object
+    CustomerType:
+      description: 'CustomerType
+
+
+        Customers can either be a commercial business or a natural person
+
+        '
+      enum:
+      - Business
+      - Person
+      type: string
+    BeneficiaryIdentity:
+      description: 'Beneficiary Identity Document
+
+
+        Identity document and biometric information for a person beneficiary.
+
+        Mirrors ApiPersonIdentity but excludes ip_address (collected at the business level).
+
+        '
+      properties:
+        identity_country_code:
+          description: ISO 3166-1 alpha-2 country code of the person's identity document
+          type: string
+        identity_document_back:
+          description: Base64 encoded image of identity document back (10MB max)
+          type: string
+        identity_document_front:
+          description: Base64 encoded image of identity document front (10MB max)
+          type: string
+        identity_document_type:
+          $ref: '#/components/schemas/IdentityDocumentType'
+        identity_number:
+          description: The identity number of the document being submitted
+          type: string
+        nationality:
+          description: ISO 3166-1 alpha-2 nationality country code
+          type: string
+        selfie:
+          description: 'Base64 encoded selfie image (10MB max).
+
+            Required for beneficiaries with Director or Representative roles; omit for UBO-only.'
+          type: string
+        selfie_collected_at:
+          description: 'timestamp in ISO 8601 format when the selfie was captured.
+
+            Required when selfie is provided.'
+          type: string
+      required:
+      - identity_country_code
+      - identity_document_type
+      - identity_document_front
+      - nationality
+      title: BeneficiaryIdentity
+      type: object
+    EddQuestionnaire:
+      description: 'EDD Questionnaire
+
+
+        The questionnaire for a reliance person residing in a country considered high risk
+
+        '
+      properties:
+        approximate_net_worth:
+          $ref: '#/components/schemas/ApproximateNetWorth'
+        occupation:
+          $ref: '#/components/schemas/Occupation'
+        source_of_funds_proof:
+          description: 'Source of funds proof document, provided as a base64-encoded string.
+
+            Supported formats: jpg, png, pdf, doc, docx, xls, xlsx, odt, ods, txt.
+
+            Maximum size: 10MB'
+          type: string
+      required:
+      - occupation
+      - approximate_net_worth
+      - source_of_funds_proof
+      title: EddQuestionnaire
+      type: object
+    Crypto:
+      description: A cryptocurrency
+      example:
+        blockchain: Solana
+        token: USDC
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        token:
+          description: The ticker of the token e.g. 'USDC'
+          type: string
+      required:
+      - token
+      - blockchain
+      title: Crypto
+      type: object
+    Currency:
+      anyOf:
+      - $ref: '#/components/schemas/Currency_Crypto'
+      - $ref: '#/components/schemas/Currency_Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Currency_Crypto'
+          Fiat: '#/components/schemas/Currency_Fiat'
+        propertyName: type
+      type: object
+    CompanyBeneficiary:
+      description: 'Company Beneficial Owner
+
+
+        The beneficial owner of the company
+
+        '
+      properties:
+        attested_at:
+          description: 'When the beneficiary certified the information (RFC 3339, in the past).
+
+            Required when attesting_party is true.'
+          type: string
+        attesting_party:
+          description: 'Marks this beneficiary as certifying the beneficial-ownership information
+
+            (31 CFR 1010.230). Root-level person holding a Director role only.
+
+            Before setting this flag, present the collected beneficial-ownership
+
+            information to this beneficiary and obtain their confirmation that it is
+
+            complete and correct — Iron renders a certification naming them from the
+
+            submitted data. For US non-sole-props the generated form is always
+
+            submitted to the provider; when no IncorporationArticles document is
+
+            supplied it also satisfies the legal-presence document requirement.
+
+            Limited to simple ownership structures (at most two levels of
+
+            beneficiaries); deeper structures cannot self-attest and must attach
+
+            the legal presence document instead.'
+          type: boolean
+        beneficiary_info:
+          $ref: '#/components/schemas/CompanyBeneficiaryInfo'
+        roles:
+          description: The primary role of the beneficial owner
+          items:
+            $ref: '#/components/schemas/CompanyPrimaryBeneficiaryRole'
+          type: array
+        share_percentage:
+          description: 'Share percentage of the beneficial owner (0-100). The combined shares of
+
+            UltimateBeneficialOwner beneficiaries must not exceed 100 per company.'
+          format: decimal
+          type: string
+      required:
+      - roles
+      - beneficiary_info
+      title: CompanyBeneficiary
+      type: object
+    PersonBeneficiaryInfo:
+      description: 'Company Person Beneficiary Info
+
+
+        The beneficiary info of the person
+
+        '
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        birth_place:
+          $ref: '#/components/schemas/BirthPlace'
+        date_of_birth:
+          description: date of birth in YYYY-MM-DD format
+          type: string
+        email_address:
+          description: email address of the person
+          type: string
+        first_name:
+          description: first name
+          type: string
+        identity:
+          $ref: '#/components/schemas/BeneficiaryIdentity'
+        last_name:
+          description: last name
+          type: string
+        middle_name:
+          description: middle name
+          type: string
+        phone_number:
+          description: phone number of the person (international format with leading +)
+          type: string
+        proof_of_address:
+          description: 'Base64 encoded proof of address document (10MB max).
+
+            Optional at submission: where policy requires one, a missing POA returns the
+
+            identification as Pending with a resume URL to collect it via resubmission.'
+          type: string
+        tax_identification_number:
+          description: 'tax identification number (SSN for US residents, national TIN otherwise).
+
+            Required for the UltimateBeneficialOwner of a sole proprietorship regardless of country.'
+          type: string
+        tax_jurisdiction_country_code:
+          description: ISO 3166-1 alpha-2 country code of the person's tax jurisdiction
+          type: string
+      required:
+      - first_name
+      - last_name
+      - date_of_birth
+      - address
+      - email_address
+      - phone_number
+      - tax_jurisdiction_country_code
+      - birth_place
+      - identity
+      title: PersonBeneficiaryInfo
+      type: object
+    BusinessPurposeAndIntendedUse:
+      description: 'Purpose and Intended Use
+
+
+        The intended purpose of the business account
+
+        '
+      enum:
+      - ReceivingBusinessIncome
+      - BusinessPurchasesAndExpenses
+      - EmployeeAndContractorPayouts
+      - EcommerceSales
+      - TreasuryManagement
+      - PaymentIntermediary
+      - Investments
+      - TaxPlanning
+      - AssetProtection
+      - Other
+      type: string
+    IdentificationPersonParams:
+      description: 'Person Identification Params
+
+
+        The params required to create an identification
+
+        '
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        consent_collected_at:
+          description: 'Date and time when explicit consent was given to share identity
+
+            timestamp must be UTC timestamp e.g. 2025-02-01T15:38:21.775210Z'
+          type: string
+        date_of_birth:
+          description: date of birth in YYYY-MM-DD format
+          type: string
+        documents:
+          description: documents associated with the person
+          items:
+            $ref: '#/components/schemas/IdentityDocument'
+          type: array
+        edd_questionnaire:
+          $ref: '#/components/schemas/EddQuestionnaire'
+        email_address:
+          description: email address of the person
+          type: string
+        first_name:
+          description: first name
+          type: string
+        full_name:
+          description: full name
+          type: string
+        identity:
+          $ref: '#/components/schemas/PersonIdentity'
+        intended_use:
+          $ref: '#/components/schemas/IntendedUse'
+        kyc_questionnaire:
+          $ref: '#/components/schemas/KycQuestionnaire'
+        last_name:
+          description: last name
+          type: string
+        phone_number:
+          description: phone number of the person (E.164 format)
+          type: string
+        sharing_consent:
+          description: explicitly given consent to share identity information with iron
+          type: boolean
+        tax_identification_number:
+          description: 'tax identification number (US residents only: SSN or TIN)'
+          type: string
+      required:
+      - sharing_consent
+      - consent_collected_at
+      - first_name
+      - last_name
+      - full_name
+      - date_of_birth
+      - phone_number
+      - email_address
+      - address
+      - identity
+      - intended_use
+      - kyc_questionnaire
+      title: IdentificationPersonParams
+      type: object
+    PersonProfileExpectedMonthlyTransactionCount:
+      description: 'Expected Monthly Transaction Count
+
+
+        The expected monthly transaction volume of the person
+
+        '
+      enum:
+      - LessThan5
+      - Between5And10
+      - MoreThan10
+      type: string
+    IdentificationStepStatus:
+      anyOf:
+      - $ref: '#/components/schemas/BusinessIdentificationStepStatus'
+      - $ref: '#/components/schemas/PersonIdentificationStepStatus'
+      type: object
+    CurrencyAbility:
+      description: 'What a customer can do with a single currency.
+
+
+        `currency` reuses the shared `ApiCurrency` type; `flows` reuses `AutorampType`.
+
+        The flow rules live in `currency_abilities.rs` (assembled there).'
+      properties:
+        counterparts:
+          description: 'Valid mint/redeem counterpart currencies (the other side of the pair).
+
+            Populated only for mint-only brand tokens (PYUSDx, M0 extensions); empty
+
+            for every other currency. Mint and redeem are symmetric — same set.'
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+        currency:
+          $ref: '#/components/schemas/Currency'
+        flows:
+          description: The flows available for this currency.
+          items:
+            $ref: '#/components/schemas/AutorampType'
+          type: array
+      required:
+      - currency
+      - flows
+      - counterparts
+      title: CurrencyAbility
+      type: object
+    BusinessEstimatedMonthlyVolume:
+      description: 'Estimated Monthly Transaction Volume
+
+
+        Expected monthly transaction volume in EUR
+
+        '
+      enum:
+      - TenToTwentyFiveThousand
+      - TwentyFiveToFiftyThousand
+      - FiftyToOneHundredThousand
+      - OneHundredToTwoHundredFiftyThousand
+      - TwoHundredFiftyToFiveHundredThousand
+      - MoreThanFiveHundredThousand
+      type: string
+    AutorampType:
+      description: 'Autoramp type
+
+
+        The type (onramp, offramp, swap) of an autoramp'
+      enum:
+      - Onramp
+      - Offramp
+      - Swap
+      - Mint
+      - Redeem
+      type: string
+    RequirementCode:
+      description: 'Stable, switchable identifier for a single requirement. Partners should
+
+        branch on this rather than parsing `description`, which holds the
+
+        verbatim text from Sumsub (and is subject to change without notice).'
+      enum:
+      - kyc_selfie
+      - kyc_identity
+      - kyc_proof_of_residence
+      - kyc_questionnaire
+      - kyb_company_data
+      - kyb_company_beneficiaries
+      - kyb_company_documents
+      - kyb_questionnaire
+      - identification_kyc
+      - identification_kyb
+      - kyc_data_missing
+      - kyc_data_invalid
+      - kyb_data_missing
+      - kyb_data_invalid
+      type: string
+    IdentificationTokenParams:
+      description: 'Token Identification Params
+
+
+        The params required to create an identification
+
+        '
+      properties:
+        edd_questionnaire:
+          $ref: '#/components/schemas/EddQuestionnaire'
+        intended_use:
+          $ref: '#/components/schemas/IntendedUse'
+        ip_address:
+          description: 'The IP address of the customer associated with the token
+
+            Not required if IP address is passed by token provided'
+          type: string
+        kyc_questionnaire:
+          $ref: '#/components/schemas/KycQuestionnaire'
+        token:
+          description: The shareable token generated by the third party provider
+          type: string
+      required:
+      - token
+      - intended_use
+      title: IdentificationTokenParams
+      type: object
+    IdentityDocumentType:
+      description: 'Identity Document Type
+
+
+        The type of identity document useful to KYB process
+
+        '
+      enum:
+      - Passport
+      - NationalId
+      - DriverLicense
+      - ResidencePermit
+      type: string
+    BusinessQuestionnaire_SolePropBusinessQuestionnaire:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SoleProp
+            example: SoleProp
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/SolePropBusinessQuestionnaire'
+      description: 'KYB compliance questionnaire
+
+
+        Use `GenericBusinessQuestionnaire` for all company types except sole proprietorships.
+
+        Use `SolePropBusinessQuestionnaire` for sole proprietorships.
+
+        '
+    SortOrder:
+      enum:
+      - asc
+      - desc
+      type: string
+    UsdAbilities:
+      properties:
+        ach:
+          $ref: '#/components/schemas/AbilityStatus'
+        ach_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        fednow:
+          $ref: '#/components/schemas/AbilityStatus'
+        fednow_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        rtp:
+          $ref: '#/components/schemas/AbilityStatus'
+        rtp_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        wire:
+          $ref: '#/components/schemas/AbilityStatus'
+        wire_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+      required:
+      - ach
+      - ach_thirdparty
+      - wire
+      - wire_thirdparty
+      - swift
+      - swift_thirdparty
+      - rtp
+      - rtp_thirdparty
+      - fednow
+      - fednow_thirdparty
+      title: UsdAbilities
+      type: object
+    CompanyBeneficiaryInfo:
+      anyOf:
+      - $ref: '#/components/schemas/PersonBeneficiaryInfo'
+      - $ref: '#/components/schemas/BusinessBeneficiaryInfo'
+      description: 'Company Beneficiary Info
+
+
+        The beneficiary info of the company
+
+        '
+      type: object
+    Blockchain:
+      description: 'Blockchain
+
+
+        A type of blockchain
+
+        '
+      enum:
+      - Solana
+      - Ethereum
+      - Polygon
+      - Arbitrum
+      - Base
+      - Stellar
+      - Citrea
+      - Plasma
+      - Avalanche
+      - Moca
+      - Tempo
+      - Tron
+      - Bsc
+      type: string
+    AuthenticationCodeStatus:
+      description: The status of the Authentication Code
+      enum:
+      - Pending
+      - Expired
+      - Confirmed
+      - Rejected
+      type: string
+    BusinessQuestionnaire:
+      anyOf:
+      - $ref: '#/components/schemas/BusinessQuestionnaire_GenericBusinessQuestionnaire'
+      - $ref: '#/components/schemas/BusinessQuestionnaire_SolePropBusinessQuestionnaire'
+      description: 'KYB compliance questionnaire
+
+
+        Use `GenericBusinessQuestionnaire` for all company types except sole proprietorships.
+
+        Use `SolePropBusinessQuestionnaire` for sole proprietorships.
+
+        '
+      discriminator:
+        mapping:
+          Generic: '#/components/schemas/BusinessQuestionnaire_GenericBusinessQuestionnaire'
+          SoleProp: '#/components/schemas/BusinessQuestionnaire_SolePropBusinessQuestionnaire'
+        propertyName: type
+      type: object
+    BusinessIdentificationStepStatus:
+      properties:
+        company_beneficiaries:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        company_data:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        company_documents:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        questionnaire:
+          $ref: '#/components/schemas/VerificationStepDetail'
+      title: BusinessIdentificationStepStatus
+      type: object
+    CompanyPrimaryBeneficiaryRole:
+      description: 'Beneficial Owner Role
+
+
+        The role of the beneficial owner in the company
+
+        '
+      enum:
+      - UltimateBeneficialOwner
+      - Representative
+      - Director
+      - Shareholder
+      type: string
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
+
+        Includes a trace_id that clients can reference when reporting issues.'
+      properties:
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
+          type: string
+      required:
+      - message
+      - trace_id
+      title: ApiError
+      type: object
+    IntendedUse:
+      description: 'Intended Purpose
+
+
+        The intended purpose the person wants to use the account for
+
+        '
+      enum:
+      - Investing
+      - PaymentToFriendsFamilyorOthers
+      - PurchaseDigitalAssets
+      - OnlinePurchasesOfGoodsOrServices
+      - Trading
+      type: string
+    BusinessQuestionnaireSourceOfFunds:
+      description: 'Source of Funds Section
+
+
+        Information about where the company''s funds originate
+
+        '
+      properties:
+        customer_funds_handling_details:
+          description: Details on how customer funds are handled, including business model and transaction flow (required)
+          type: string
+        source_of_funds:
+          $ref: '#/components/schemas/RevenueSource'
+        source_of_funds_description:
+          description: Detailed description of source of funds (required)
+          type: string
+      required:
+      - source_of_funds
+      - source_of_funds_description
+      - customer_funds_handling_details
+      title: BusinessQuestionnaireSourceOfFunds
+      type: object
+    BusinessEstimatedMonthlyTransactions:
+      description: 'Estimated Monthly Transaction Count
+
+
+        Expected number of transactions per month
+
+        '
+      enum:
+      - LessThanTen
+      - TenToTwentyFive
+      - TwentyFiveToFifty
+      - FiftyToOneHundred
+      - MoreThanOneHundred
+      type: string
+    CustomerAbilities:
+      description: 'Customer Abilities
+
+
+        Represents the abilities/capabilities that a customer has
+
+        '
+      properties:
+        currencies:
+          description: 'What the customer can do with each currency (mint / redeem / onramp /
+
+            offramp / swap). Only currencies the customer can currently use are listed.'
+          items:
+            $ref: '#/components/schemas/CurrencyAbility'
+          type: array
+        fiat_deposit:
+          $ref: '#/components/schemas/ApiFiatAbilities'
+        fiat_payout:
+          $ref: '#/components/schemas/ApiFiatAbilities'
+      required:
+      - fiat_deposit
+      - fiat_payout
+      - currencies
+      title: CustomerAbilities
+      type: object
+    UpdateCustomerParams:
+      description: 'Update Customer Params
+
+
+        Parameters for updating a customer
+
+        '
+      properties:
+        email:
+          description: The email address of the customer
+          type: string
+        external_id:
+          description: Optional external ID for the customer. Provide to update; omit to leave unchanged.
+          type: string
+      required:
+      - email
+      title: UpdateCustomerParams
+      type: object
+    PersonProfileSourceOfFunds:
+      description: 'Source of Funds
+
+
+        The sources of funds for a person
+
+        '
+      enum:
+      - SalaryAndWages
+      - PersonalSavings
+      - PensionOrRetirementPayments
+      - ProceedsFromSellingAssets
+      - CryptocurrencyTradingOrInvestment
+      - InvestmentReturns
+      - GamblingOrLotteryWinnings
+      - GiftOrInheritanceReceived
+      - LoanFromBankOrOtherFinancialInstitution
+      type: string
+    PersonProfileYearlyGrossIncome:
+      description: 'Yearly Gross Income
+
+
+        The yearly gross income of the person
+
+        '
+      enum:
+      - LessThan20000
+      - From20001To30000
+      - From30001To40000
+      - From40001To50000
+      - From50001To60000
+      - From60001To70000
+      - From70001To80000
+      - From80001To90000
+      - From90001To100000
+      - From100001To110000
+      - From110001To120000
+      - From120001To130000
+      - From130001To140000
+      - From140001To150000
+      - MoreThan150000
+      - From150001To200000
+      - From200001To500000
+      - MoreThan500000
+      type: string
+    PersonIdentity:
+      description: 'Person Identity
+
+
+        The required identity information of a person
+
+        '
+      properties:
+        identity_country_code:
+          description: country (2-character ISO 3166)
+          type: string
+        identity_document_back:
+          description: Base64 encoded image of ident document back without prefix (10MB max)
+          type: string
+        identity_document_front:
+          description: Base64 encoded image of ident document front without prefix (10MB max)
+          type: string
+        identity_document_type:
+          $ref: '#/components/schemas/IdentityDocumentType'
+        identity_number:
+          description: The identity number or identity document being submitted.
+          type: string
+        ip_address:
+          description: ip address of device used to collect selfie
+          type: string
+        nationality:
+          description: nationality (2-character ISO 3166 country code)
+          type: string
+        selfie:
+          description: Base64 encoded image of selfie without prefix (10MB max)
+          type: string
+        selfie_collected_at:
+          description: timestamp in ISO 8601 format
+          type: string
+      required:
+      - identity_country_code
+      - identity_document_type
+      - identity_document_front
+      - selfie
+      - selfie_collected_at
+      - ip_address
+      - nationality
+      title: PersonIdentity
+      type: object
+    ComplianceQuestionaire:
+      description: 'V1 Compliance Questionnaire
+
+
+        Legacy compliance questionnaire format
+
+        '
+      properties:
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatus'
+        expected_monthly_volume:
+          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionVolume'
+        id:
+          format: uuid
+          type: string
+        intended_use:
+          $ref: '#/components/schemas/IntendedUse'
+        monthly_income:
+          $ref: '#/components/schemas/PersonProfileMonthlyIncome'
+        occupation:
+          $ref: '#/components/schemas/Occupation'
+        source_of_funds:
+          $ref: '#/components/schemas/PersonProfileSourceOfFunds'
+        source_of_funds_proof:
+          type: string
+      required:
+      - id
+      - intended_use
+      title: ComplianceQuestionaire
+      type: object
+    ApiFiatAbilities:
+      description: 'Fiat rails
+
+        Customer''s ability to use fiat deposit and payout rails'
+      properties:
+        eur:
+          $ref: '#/components/schemas/EurAbilities'
+        gbp:
+          $ref: '#/components/schemas/GbpAbilities'
+        usd:
+          $ref: '#/components/schemas/UsdAbilities'
+      required:
+      - eur
+      - gbp
+      - usd
+      title: ApiFiatAbilities
+      type: object
+    CompanyDocParams:
+      description: 'Company document params
+
+
+        The params required to create a company document
+
+        '
+      properties:
+        country:
+          description: ISO 3166-1 alpha-2 (2 letter) country code of the country that issued the document
+          type: string
+        file:
+          description: Base64 encoded document without prefix (10MB max)
+          type: string
+        type:
+          $ref: '#/components/schemas/CompanyDocType'
+      required:
+      - type
+      - country
+      - file
+      title: CompanyDocParams
+      type: object
+    CreateCustomerParams:
+      description: 'Customer Params
+
+
+        Parameters for creating a customer
+
+        '
+      properties:
+        customer_type:
+          $ref: '#/components/schemas/CustomerType'
+        email:
+          description: 'The primary point of contact email address for the customer
+
+            Note that this email address will be used for all API authorization (e.g. 2FA)'
+          type: string
+        external_id:
+          description: External ID for the customer, provided by the partner
+          type: string
+        name:
+          description: The name of the customer
+          type: string
+      required:
+      - customer_type
+      - email
+      title: CreateCustomerParams
+      type: object
+    BusinessQuestionnairePlannedActivities:
+      description: 'Planned Activities Section
+
+
+        Information about the company''s intended account use and transaction patterns
+
+        '
+      properties:
+        estimated_monthly_transactions:
+          $ref: '#/components/schemas/BusinessEstimatedMonthlyTransactions'
+        estimated_monthly_volume:
+          $ref: '#/components/schemas/BusinessEstimatedMonthlyVolume'
+        flow_of_funds_diagram:
+          description: Base64 encoded flow of funds diagram (required when sends_funds_on_customer_behalf is true)
+          type: string
+        purpose_and_intended_use:
+          $ref: '#/components/schemas/BusinessPurposeAndIntendedUse'
+        sends_funds_on_customer_behalf:
+          description: Does the company send funds on behalf of customers/third parties
+          type: boolean
+        sends_funds_on_customer_behalf_description:
+          description: Description of how funds are sent on customer behalf (required if sends_funds_on_customer_behalf is true)
+          type: string
+        source_of_funds_document:
+          description: Base64 encoded source of funds supporting document (required when sends_funds_on_customer_behalf is true)
+          type: string
+      required:
+      - purpose_and_intended_use
+      - estimated_monthly_volume
+      - estimated_monthly_transactions
+      - sends_funds_on_customer_behalf
+      title: BusinessQuestionnairePlannedActivities
+      type: object
+    CustomerSpendingLimit:
+      description: 'Customer Spending Limit
+
+
+        Current usage of the rolling 52-week spending limit split by direction.'
+      properties:
+        crypto_offramp:
+          $ref: '#/components/schemas/CustomerSpendingLimitSection'
+        fiat_onramp:
+          $ref: '#/components/schemas/CustomerSpendingLimitSection'
+      required:
+      - fiat_onramp
+      - crypto_offramp
+      title: CustomerSpendingLimit
+      type: object
+    EurAbilities:
+      properties:
+        sepa:
+          $ref: '#/components/schemas/AbilityStatus'
+        sepa_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+      required:
+      - sepa
+      - sepa_thirdparty
+      - swift
+      - swift_thirdparty
+      title: EurAbilities
+      type: object
+    PagedList_Signing:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Signing'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_Signing
+      type: object
+    PersonProfileMonthlyIncome:
+      description: 'Monthly Income
+
+
+        The monthly income of the person
+
+        '
+      enum:
+      - Between1000And2000
+      - Between2000And3000
+      - Between3000And5000
+      - Between5000And10000
+      - Over10000
+      type: string
+    MissingQuestion:
+      description: 'A required questionnaire question the customer has left unanswered, resolved
+
+        against the Sumsub questionnaire definition.'
+      properties:
+        id:
+          description: Sumsub questionnaire item id, e.g. `sourceOfFunds`.
+          type: string
+        section_id:
+          description: The questionnaire section the question belongs to, when known.
+          type: string
+        title:
+          description: Human-readable question text the applicant saw.
+          type: string
+      required:
+      - id
+      - title
+      title: MissingQuestion
+      type: object
+    PagedList_Customer:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Customer'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_Customer
+      type: object
+    Fiat:
+      description: A fiat currency
+      example:
+        code: USD
+      properties:
+        code:
+          description: The code of the currency e.g. 'USD'
+          type: string
+      required:
+      - code
+      title: Fiat
+      type: object
+    AbilityStatus:
+      description: The current status of the ability
+      enum:
+      - Active
+      - Pending
+      - Unavailable
+      - Blocked
+      - Maintenance
+      type: string
+    IdentificationCreateParamsV2_IdentificationPersonParams:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Person
+            example: Person
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IdentificationPersonParams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+    SolePropBusinessQuestionnaire:
+      description: 'KYB compliance questionnaire for sole proprietorships
+
+        '
+      properties:
+        business_details:
+          $ref: '#/components/schemas/SolePropBusinessDetails'
+        planned_activities:
+          $ref: '#/components/schemas/SolePropPlannedActivities'
+        source_of_funds:
+          $ref: '#/components/schemas/SolePropSourceOfFunds'
+      required:
+      - planned_activities
+      - source_of_funds
+      - business_details
+      title: SolePropBusinessQuestionnaire
+      type: object
+    GbpAbilities:
+      properties:
+        chaps:
+          $ref: '#/components/schemas/AbilityStatus'
+        chaps_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        fps:
+          $ref: '#/components/schemas/AbilityStatus'
+        fps_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+      required:
+      - fps
+      - fps_thirdparty
+      - chaps
+      - chaps_thirdparty
+      - swift
+      - swift_thirdparty
+      title: GbpAbilities
+      type: object
+    Address:
+      description: Address
+      properties:
+        city:
+          description: city
+          type: string
+        country:
+          description: country (2-character ISO 3166)
+          type: string
+        state:
+          description: state/province/region
+          type: string
+        street_1:
+          description: street address
+          type: string
+        street_2:
+          description: street address (additional)
+          type: string
+        zip_code:
+          description: zip code
+          type: string
+      required:
+      - street_1
+      - city
+      - zip_code
+      - country
+      title: Address
+      type: object
+    CompanyDocType:
+      description: 'Company document type
+
+
+        The type of company document
+
+        '
+      enum:
+      - PowerOfAttorney
+      - TransparencyRegistryExtract
+      - DirectorsRegistry
+      - GoodStandingCert
+      - IncorporationArticles
+      - IncorporationCert
+      - IncumbencyCert
+      - InformationStatement
+      - PartnershipAgreement
+      - ProofOfAddress
+      - ProofOfNatureOfBusiness
+      - RegulatoryLicense
+      - SelfDeclarationForm
+      - ShareholderRegistry
+      - StateRegistry
+      - TradeLicense
+      - TrustAgreement
+      - Other
+      type: string
+    DocumentType:
+      description: 'Document Type
+
+
+        The type of document used in the KYB process
+
+        '
+      enum:
+      - BusinessRegistrationDocument
+      - MemorandumOfAssociation
+      - ShareholdersRegistry
+      - Other
+      - ProofOfAddress
+      type: string
+    IdentityDocument:
+      description: 'Identity Document
+
+
+        A base64 document that can be used to identify the business
+
+        '
+      properties:
+        file:
+          description: Base64 encoded document without prefix (10MB max)
+          type: string
+        name:
+          description: The name of the document with the file extension
+          type: string
+        type:
+          $ref: '#/components/schemas/DocumentType'
+      required:
+      - name
+      - file
+      - type
+      title: IdentityDocument
+      type: object
+    CompanyType:
+      description: 'Company Type
+
+
+        The type of company
+
+        '
+      enum:
+      - LimitedLiabilityCompany
+      - PubliclyListedCompany
+      - SoleProprietorship
+      - Partnership
+      - Corporation
+      - Trust
+      - PrivateFoundation
+      - Charity
+      - NonprofitCorporation
+      - NonprofitOrganization
+      - PublicAgenciesOrAuthorities
+      - StockCorporationOutOfStock
+      - GeneralCorporation
+      type: string
+    EmploymentStatus:
+      description: 'Employment Status
+
+
+        The employment status of the person
+
+        '
+      enum:
+      - Employed
+      - SelfEmployed
+      - Unemployed
+      - Retired
+      - Student
+      type: string
+    ApproximateNetWorth:
+      description: 'Approximate Net Worth
+
+
+        The approximate net worth of the person
+
+        '
+      enum:
+      - UpTo25000
+      - Between25001And50000
+      - Between50001And100000
+      - Between100001And300000
+      - Between300001And500000
+      - Between500001And1000000
+      - Over1000001
+      type: string
+    RevenueSource:
+      description: 'Revenue Source
+
+
+        Primary source of company funds
+
+        '
+      enum:
+      - BusinessRevenue
+      - ShareholderFunds
+      - VcPrivateEquity
+      - AssetSale
+      - IcoProceeds
+      - CryptoActivityProceeds
+      - LoanProceeds
+      - Other
+      type: string
+    CompanyData:
+      description: 'Company Data
+
+
+        Full company submission: identifying info, beneficiaries, and supporting
+
+        documents. Reused by the root identification request and by each nested
+
+        business beneficiary.
+
+        '
+      properties:
+        beneficiaries:
+          description: 'The beneficiaries of the company. Each level (root or nested business)
+
+            requires at least one Director; UBOs and Representatives are also
+
+            permitted at every level.'
+          items:
+            $ref: '#/components/schemas/CompanyBeneficiary'
+          type: array
+        company_info:
+          $ref: '#/components/schemas/CompanyInfo'
+        documents:
+          description: 'The company documents (max 4). Optional at submission: when the set is
+
+            incomplete for the company''s region, the identification is returned as
+
+            Pending with a resume URL to collect the missing documents.'
+          items:
+            $ref: '#/components/schemas/CompanyDocParams'
+          type: array
+      required:
+      - company_info
+      - beneficiaries
+      - documents
+      title: CompanyData
+      type: object
+    CustomerSpendingLimitSection:
+      description: 'Customer Spending Limit Section
+
+
+        Usage of the rolling 52-week spending limit for a single direction
+
+        (fiat on-ramp or crypto off-ramp).
+
+
+        Amounts are returned in **EUR cents** as strings
+
+
+        `threshold_eur` (and therefore `remaining_eur`) is `null` when the customer
+
+        has no enforced cap — for example Business customers or persons with
+
+        `ThresholdKind::Regulated`. A `null` threshold does **not** mean "unknown";'
+      properties:
+        period_end:
+          description: End of the current rolling window for this direction (now).
+          format: date-time
+          type: string
+        period_start:
+          description: 'Start of the current rolling window for this direction. This is the
+
+            later of "52 weeks ago" and the last `Reset` event for this volume
+
+            kind — fiat and crypto windows are tracked independently and can
+
+            differ if compliance has reset only one bucket.'
+          format: date-time
+          type: string
+        remaining_eur:
+          description: '`threshold_eur - used_eur`, floored at zero, in EUR cents as a string.
+
+            `null` iff `threshold_eur` is `null`.'
+          type: string
+        threshold_eur:
+          description: Enforced limit in EUR cents as a string. `null` when no cap applies.
+          type: string
+        used_eur:
+          description: Volume consumed in the window in EUR cents as a string. Always returned.
+          type: string
+      required:
+      - period_start
+      - period_end
+      - used_eur
+      title: CustomerSpendingLimitSection
+      type: object
+    PagedList_Identification:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Identification'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_Identification
+      type: object
+    SolePropPlannedActivities:
+      description: 'Sole Prop Planned Activities Section
+
+        '
+      properties:
+        estimated_monthly_transactions:
+          $ref: '#/components/schemas/BusinessEstimatedMonthlyTransactions'
+        estimated_monthly_volume:
+          $ref: '#/components/schemas/BusinessEstimatedMonthlyVolume'
+        purpose_and_intended_use:
+          $ref: '#/components/schemas/BusinessPurposeAndIntendedUse'
+      required:
+      - purpose_and_intended_use
+      - estimated_monthly_volume
+      - estimated_monthly_transactions
+      title: SolePropPlannedActivities
+      type: object
+    RequirementItem:
+      description: 'A single requirement entry returned in one of the four buckets on
+
+        `ApiCustomerRequirements`.'
+      properties:
+        code:
+          $ref: '#/components/schemas/RequirementCode'
+        description:
+          description: 'Human-readable reason from Sumsub — the moderation comment and the
+
+            applicant-facing client comment combined (moderator note first,
+
+            deduped), a list of the specific unanswered questionnaire questions, or
+
+            a synthesized note for the identification-level codes. May be `null`.
+
+            *IMPORTANT*: This field is subject to change without notice — switch
+
+            on `code` (and `reject_labels`), not on this string.'
+          type: string
+        identification_id:
+          description: The identification that produced this item, when applicable.
+          format: uuid
+          type: string
+        missing_questions:
+          description: 'Required questionnaire questions the customer left unanswered, resolved
+
+            against the Sumsub questionnaire definition (so `title` is the question
+
+            text the applicant saw). Only populated for the questionnaire codes
+
+            (`kyc_questionnaire` / `kyb_questionnaire`); empty otherwise.'
+          items:
+            $ref: '#/components/schemas/MissingQuestion'
+          type: array
+        reject_labels:
+          description: 'Coded Sumsub rejection reasons for this step (e.g. `SCREENSHOTS`,
+
+            `UNSATISFACTORY_PHOTOS`) — the pills shown in the Sumsub dashboard.
+
+            Empty when the step carries no labels.'
+          items:
+            type: string
+          type: array
+        reject_reasons:
+          description: 'Same reasons as `reject_labels`, each paired with a human-readable
+
+            description. Prefer this for display; `reject_labels` stays the stable
+
+            set of codes to switch on. Empty when the step carries no labels.'
+          items:
+            $ref: '#/components/schemas/RejectReason'
+          type: array
+        retryable:
+          description: '`true` if the customer can resubmit to clear this item
+
+            (Sumsub `reject_type == Retry`). `false` for terminal/Final
+
+            rejections. `null` for `complete`/`pending` items, where retry
+
+            semantics don''t apply.'
+          type: boolean
+      required:
+      - code
+      - reject_labels
+      - reject_reasons
+      - missing_questions
+      title: RequirementItem
+      type: object
+    PersonProfileExpectedMonthlyTransactionVolume:
+      description: 'Expected Monthly Transaction Volume
+
+
+        The expected monthly transaction volume of the person
+
+        '
+      enum:
+      - LessThan1000
+      - Between1000And5000
+      - Between5000And10000
+      - Between10000And20000
+      - Over20000
+      type: string
+    KycQuestionnaire:
+      description: 'KYC Questionnaire
+
+
+        The questionnaire for a person
+
+        '
+      properties:
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatus'
+        expected_monthly_transaction_count:
+          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionCount'
+        expected_monthly_transaction_volume:
+          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionVolumeV2'
+        source_of_wealth:
+          $ref: '#/components/schemas/PersonProfileSourceOfWealth'
+        yearly_gross_income:
+          $ref: '#/components/schemas/PersonProfileYearlyGrossIncome'
+      required:
+      - employment_status
+      - yearly_gross_income
+      - source_of_wealth
+      - expected_monthly_transaction_count
+      - expected_monthly_transaction_volume
+      title: KycQuestionnaire
+      type: object
+    SubmitAuthenticationCodeParams:
+      description: 'Authentication Code Params
+
+
+        Parameters for submitting an authentication code
+
+        '
+      properties:
+        code:
+          description: The code to submit
+          format: int32
+          type: integer
+      required:
+      - code
+      title: SubmitAuthenticationCodeParams
+      type: object
+    IdentificationLinkparams:
+      description: 'Direct Identification Params
+
+
+        The params required to create an identification
+
+        '
+      properties:
+        with_edd:
+          description: whether to initialize the identification with the full EDD process
+          type: boolean
+      title: IdentificationLinkparams
+      type: object
+    Currency_Crypto:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Crypto'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    Microdeposit:
+      description: 'Microdeposit
+
+
+        A microdeposit record for account verification
+
+        '
+      properties:
+        amount:
+          description: Amount of the microdeposit
+          format: decimal
+          type: string
+        counterparty_name:
+          description: Name of the counterparty
+          type: string
+        created_at:
+          description: When the microdeposit was created
+          format: date-time
+          type: string
+        currency_code:
+          description: Currency code of the microdeposit
+          type: string
+      required:
+      - amount
+      - currency_code
+      - created_at
+      title: Microdeposit
+      type: object
+    BirthPlace:
+      description: 'Birth place
+
+
+        The place of birth of the person
+
+        '
+      properties:
+        country:
+          description: ISO 3166-1 alpha-2 (2 letter) country code of the place of birth
+          type: string
+        place:
+          description: place of birth
+          type: string
+        state:
+          description: state of birth
+          type: string
+      required:
+      - place
+      - state
+      - country
+      title: BirthPlace
+      type: object
+    IdentificationStatus:
+      description: 'The Process status of the identification
+
+
+        The various state transitions an identification can go through.
+
+        '
+      enum:
+      - Pending
+      - Processed
+      - PendingReview
+      - Approved
+      - Declined
+      - Expired
+      - Archived
+      type: string
+    TermsAndConditionsLink:
+      description: A terms and conditions link
+      example:
+        display_name: Terms and Conditions
+        id: 019f846a-8d21-7813-8e60-8014904dbceb
+        url: https://www.google.com/terms-and-conditions
+      properties:
+        display_name:
+          description: the display name of the terms and conditions
+          type: string
+        id:
+          description: The unique identifier for the terms and conditions url
+          format: uuid
+          type: string
+        url:
+          description: The URL of the terms and conditions
+          type: string
+      required:
+      - id
+      - url
+      - display_name
+      title: TermsAndConditionsLink
+      type: object
+    PersonIdentificationStepStatus:
+      properties:
+        identity:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        proof_of_residence:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        questionnaire:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        selfie:
+          $ref: '#/components/schemas/VerificationStepDetail'
+      title: PersonIdentificationStepStatus
+      type: object
+    VerificationStepDetail:
+      properties:
+        comment:
+          type: string
+        result:
+          $ref: '#/components/schemas/IdentificationStatus'
+        retry:
+          type: boolean
+      required:
+      - result
+      - retry
+      title: VerificationStepDetail
+      type: object
+    RequirementCategory:
+      description: 'Coarse summary of which areas of the customer''s Sumsub KYC/KYB process
+
+        still need attention. Used as a quick filter — full detail lives in the
+
+        four `complete`/`pending`/`missing`/`issues` buckets.'
+      enum:
+      - kyc
+      - kyb
+      type: string
+    PersonProfileExpectedMonthlyTransactionVolumeV2:
+      enum:
+      - LessThan500
+      - MoreThan500LessThan2000
+      - MoreThan2000
+      type: string
+    CompanyInfo:
+      description: 'Company Info
+
+
+        Identifying details about a company. Shared between the root identification
+
+        request and any nested business beneficiaries so the same fields are
+
+        collected at every level of the corporate structure.
+
+        '
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        alternative_names:
+          description: The list of alternative names for the company
+          items:
+            type: string
+          type: array
+        company_name:
+          description: The legal name of the company
+          type: string
+        company_type:
+          $ref: '#/components/schemas/CompanyType'
+        country:
+          description: The ISO 3166-1 alpha-2 (2 letter) country code where the company is legally registered
+          type: string
+        email:
+          description: The email address of the company
+          type: string
+        incorporation_date:
+          description: The date of legal incorporation in YYYY-MM-DD format
+          type: string
+        legal_address:
+          description: The address used during legal registration
+          type: string
+        postal_address:
+          description: The postal address of the company
+          type: string
+        registration_number:
+          description: The unique number assigned to the company when legally registered
+          type: string
+        tax_identification_number:
+          description: The tax identification number of the company
+          type: string
+        website:
+          description: The website of the company
+          type: string
+      required:
+      - company_name
+      - registration_number
+      - country
+      - incorporation_date
+      - legal_address
+      - postal_address
+      - address
+      - email
+      - tax_identification_number
+      - website
+      - company_type
+      title: CompanyInfo
+      type: object
+    IdentificationCreateParamsV2:
+      anyOf:
+      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationLinkparams'
+      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationTokenParams'
+      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationPersonParams'
+      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationBusinessParams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+      discriminator:
+        mapping:
+          Business: '#/components/schemas/IdentificationCreateParamsV2_IdentificationBusinessParams'
+          Link: '#/components/schemas/IdentificationCreateParamsV2_IdentificationLinkparams'
+          Person: '#/components/schemas/IdentificationCreateParamsV2_IdentificationPersonParams'
+          Token: '#/components/schemas/IdentificationCreateParamsV2_IdentificationTokenParams'
+        propertyName: type
+      type: object
+    BusinessEstimatedAnnualRevenue:
+      description: 'Estimated Annual Revenue
+
+
+        Company''s estimated annual revenue in EUR
+
+        '
+      enum:
+      - Under100K
+      - From100KTo1M
+      - From1MTo10M
+      - From10MTo50M
+      - From50MTo250M
+      - Over250M
+      type: string
+    IdentificationCreateParamsV2_IdentificationLinkparams:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Link
+            example: Link
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IdentificationLinkparams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+    BusinessIndustryType:
+      description: 'Industry Type
+
+
+        Business industry/sector classification
+
+        '
+      enum:
+      - Agriculture
+      - Automotive
+      - BankingAndFinancialServices
+      - ConstructionAndRealEstate
+      - CryptocurrencyAndBlockchain
+      - CryptocurrencyMining
+      - DecentralisedFinance
+      - NftPlatforms
+      - CryptoPaymentProcessors
+      - CryptoWalletProviders
+      - CryptoExchanges
+      - CryptoCustodyServices
+      - EcommerceAndOnlineMarketplaces
+      - EducationAndTraining
+      - EnergyAndUtilities
+      - EntertainmentAndMedia
+      - GamingAndEsports
+      - HealthcareAndPharmaceuticals
+      - HospitalityAndTourism
+      - InformationTechnologyAndSoftware
+      - Insurance
+      - LegalAndProfessionalServices
+      - LogisticsAndTransportation
+      - ManufacturingAndIndustrial
+      - MetaversePlatforms
+      - MiningAndNaturalResources
+      - NonProfitAndCharitable
+      - RetailAndWholesaleTrade
+      - Telecommunications
+      - VentureCapitalAndPrivateEquity
+      - CasinosAndGambling
+      - MoneyServiceBusinesses
+      - SocialMediaAndNetworking
+      - CrowdfundingPlatforms
+      - RegTech
+      - Other
+      type: string
+  parameters:
+    XApiVersion:
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      in: header
+      name: X-API-Version
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    ApiKeyAuth:
+      description: API Key
+      in: header
+      name: X-API-Key
+      type: apiKey

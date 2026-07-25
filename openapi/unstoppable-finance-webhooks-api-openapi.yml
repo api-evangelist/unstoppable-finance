@@ -1,0 +1,367 @@
+openapi: 3.1.0
+info:
+  description: The Stablecoin Payment Network
+  title: Iron API - Sandbox Addresses Webhooks API
+  version: 1.0-16988
+servers:
+- url: https://api.sandbox.iron.xyz/api
+tags:
+- description: Operations on Webhooks
+  name: Webhooks
+paths:
+  /webhooks:
+    get:
+      description: 'Lists all webhooks for the currently authenticated partner
+
+        '
+      operationId: listWebhooks
+      parameters:
+      - deprecated: false
+        description: 'Paging: the cursor field from previous page'
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the requested page size (max 100)'
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          type: integer
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_Webhook'
+          description: Listing successful
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Failed to list webhooks
+      security:
+      - ApiKeyAuth: []
+      summary: List all webhooks
+      tags:
+      - Webhooks
+  /webhooks/{id}:
+    patch:
+      description: 'Updates an existing webhook for the currently authenticated partner
+
+        '
+      operationId: updateWebhook
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the webhook will be updated under scope of the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: The ID of the webhook to update
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/UpdateWebhookRequest'
+        description: The webhook update request
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+          description: Update successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad request (e.g. invalid data)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Failed to update the webhook
+      security:
+      - ApiKeyAuth: []
+      summary: Update a webhook
+      tags:
+      - Webhooks
+  /webhooks/{id}/ping:
+    post:
+      description: Sends a test ping event to a webhook for testing purposes
+      operationId: pingWebhook
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring the ping operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the webhook will be pinged under scope of the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the webhook to ping
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/PingWebhookParams'
+        description: Parameters required to ping a webhook
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: boolean
+          description: Successfully pinged webhook
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Webhook not found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal server error
+      security:
+      - ApiKeyAuth: []
+      summary: Ping webhook
+      tags:
+      - Webhooks
+components:
+  schemas:
+    PingWebhookParams:
+      properties:
+        customer_id:
+          description: Customer ID to use for the webhook ping
+          format: uuid
+          type: string
+      required:
+      - customer_id
+      title: PingWebhookParams
+      type: object
+    PagedList_Webhook:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Webhook'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_Webhook
+      type: object
+    Webhook:
+      description: 'Webhook
+
+
+        Response containing webhook details
+
+        '
+      properties:
+        created_at:
+          description: When the webhook was created
+          format: date-time
+          type: string
+        enabled:
+          description: Whether the webhook is enabled
+          type: boolean
+        id:
+          description: The ID of the webhook
+          format: uuid
+          type: string
+        label:
+          description: A descriptive label for the webhook
+          type: string
+        last_failure:
+          description: The last time the webhook was executed with an error
+          format: date-time
+          type: string
+        last_failure_reason:
+          description: The reason for the last failure
+          type: string
+        partner_id:
+          description: The partner ID that owns this webhook
+          format: uuid
+          type: string
+        topics:
+          description: The topics this webhook subscribes to
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+        updated_at:
+          description: When the webhook was last updated
+          format: date-time
+          type: string
+        url:
+          description: The URL to send webhook events to
+          type: string
+      required:
+      - id
+      - label
+      - url
+      - partner_id
+      - topics
+      - created_at
+      - updated_at
+      - enabled
+      title: Webhook
+      type: object
+    WebhookEventType:
+      description: 'Webhook Event Types
+
+
+        Represents the different types of webhook events that can be sent
+
+        '
+      enum:
+      - Transaction
+      - NewBankAccount
+      - NewAutoramp
+      - DepositAddressCreated
+      - RegisterFiatAddressStatus
+      - RegisterAutorampStatus
+      - TransactionStatus
+      - CustomerCreated
+      - CustomerStatus
+      - IdentificationStatus
+      - Ping
+      type: string
+    UpdateWebhookRequest:
+      description: 'Update Webhook Request
+
+
+        Request to update an existing webhook
+
+        '
+      properties:
+        enabled:
+          description: Optional enabled status
+          type: boolean
+        label:
+          description: Optional new label for the webhook
+          type: string
+        topics:
+          description: Optional new topics for the webhook
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+        url:
+          description: Optional new URL for the webhook
+          type: string
+      title: UpdateWebhookRequest
+      type: object
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
+
+        Includes a trace_id that clients can reference when reporting issues.'
+      properties:
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
+          type: string
+      required:
+      - message
+      - trace_id
+      title: ApiError
+      type: object
+  parameters:
+    XApiVersion:
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      in: header
+      name: X-API-Version
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    ApiKeyAuth:
+      description: API Key
+      in: header
+      name: X-API-Key
+      type: apiKey

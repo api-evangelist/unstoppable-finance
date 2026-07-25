@@ -1,0 +1,133 @@
+openapi: 3.1.0
+info:
+  description: The Stablecoin Payment Network
+  title: Iron API - Sandbox Addresses Currencies API
+  version: 1.0-16988
+servers:
+- url: https://api.sandbox.iron.xyz/api
+tags:
+- description: Operations on Currencies
+  name: Currencies
+paths:
+  /cryptocurrencies:
+    get:
+      description: 'A list of all crypto currencies which are currently supported by Iron
+
+        '
+      operationId: listCryptoCurrencies
+      parameters:
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CryptoCurrency'
+                type: array
+          description: GET crypto currencies succeeded
+        '401':
+          description: GET crypto currencies failed (Unauthorized)
+        '500':
+          description: GET crypto currencies failed (Internal Server Error)
+      security:
+      - ApiKeyAuth: []
+      summary: List all available crypto currencies
+      tags:
+      - Currencies
+  /fiatcurrencies:
+    get:
+      description: 'A list of all fiat currencies which are currently supported by Iron
+
+        '
+      operationId: listFiatCurrencies
+      parameters:
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/FiatCurrency'
+                type: array
+          description: GET fiat currencies succeeded
+        '401':
+          description: GET fiat currencies failed (Unauthorized)
+      security:
+      - ApiKeyAuth: []
+      summary: List all available fiat currencies
+      tags:
+      - Currencies
+components:
+  schemas:
+    CryptoCurrency:
+      properties:
+        address:
+          description: The address that this currency has on the `chain`
+          type: string
+        chain:
+          description: The chain for this currency
+          type: string
+        code:
+          description: The ticker of the cryptocurrency. E.g. USDC
+          type: string
+        mint_only:
+          description: Whether this currency can only be minted (not autoramped)
+          type: boolean
+        name:
+          description: An optional name of the cryptocurrency. E.g. `USD Coin`
+          type: string
+      required:
+      - code
+      - chain
+      - mint_only
+      title: CryptoCurrency
+      type: object
+    FiatCurrency:
+      properties:
+        code:
+          description: The ISO 4217 code of a currency. E.g. `EUR`
+          type: string
+        countries:
+          description: A list of all the countries where this currency is supported
+          items:
+            $ref: '#/components/schemas/Country'
+          type: array
+        name:
+          description: The user readable name of a currency. E.g. `Euro`
+          type: string
+      required:
+      - code
+      - name
+      - countries
+      title: FiatCurrency
+      type: object
+    Country:
+      description: A country
+      example:
+        code: DE
+      properties:
+        code:
+          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - code
+      title: Country
+      type: object
+  parameters:
+    XApiVersion:
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      in: header
+      name: X-API-Version
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    ApiKeyAuth:
+      description: API Key
+      in: header
+      name: X-API-Key
+      type: apiKey

@@ -1,0 +1,4990 @@
+openapi: 3.1.0
+info:
+  description: The Stablecoin Payment Network
+  title: Iron API - Sandbox Addresses Autoramp API
+  version: 1.0-16988
+servers:
+- url: https://api.sandbox.iron.xyz/api
+tags:
+- description: Operations on Autoramp
+  name: Autoramp
+paths:
+  /autoramp-transactions:
+    get:
+      description: 'Returns a list of transactions, optionally filtered by autoramp ID or customer ID
+
+
+        An optional `search_term` parameter can be provided that will search the following fields:
+
+
+        - Bank Account Name
+
+        - Bank Account Provider Name
+
+        - Wallet Address
+
+        - Transaction ID'
+      operationId: getAutorampTransactions
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the autoramps will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional autoramp ID
+        explode: false
+        in: query
+        name: autoramp_id
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: Optional customer ID
+        explode: false
+        in: query
+        name: customer_id
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field from previous page'
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field for backward pagination'
+        explode: false
+        in: query
+        name: prev_cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the requested page size'
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          maximum: 500.0
+          type: integer
+      - deprecated: false
+        description: A search term to filter the transactions (searches bank account name, provider, wallet address, transaction ID, deposit transaction hash)
+        explode: false
+        in: query
+        name: search_term
+        required: false
+        schema:
+          default: null
+          maxLength: 256
+          type: string
+      - deprecated: false
+        description: Type of the autoramp (onramp, offramp or crypto-to-crypto swap)
+        explode: false
+        in: query
+        name: ramp_type
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/AutorampType'
+          - default: null
+          default: null
+      - deprecated: false
+        description: Filter by start date (inclusive). Only transactions created on or after this date will be returned.
+        explode: false
+        in: query
+        name: from_date
+        required: false
+        schema:
+          default: null
+          format: date-time
+          type: string
+      - deprecated: false
+        description: Filter by end date (inclusive). Only transactions created on or before this date will be returned.
+        explode: false
+        in: query
+        name: to_date
+        required: false
+        schema:
+          default: null
+          format: date-time
+          type: string
+      - deprecated: false
+        description: Filter by transaction status. Multiple statuses can be provided as comma-separated values.
+        explode: false
+        in: query
+        name: status
+        required: false
+        schema:
+          default: null
+          items:
+            $ref: '#/components/schemas/AutorampTransactionStatus'
+          type: array
+      - deprecated: false
+        description: Sort order for results. "asc" for oldest first, "desc" for newest first (default).
+        explode: false
+        in: query
+        name: sort_order
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/SortOrder'
+          - default: null
+          default: null
+      - deprecated: false
+        description: Filter by batch payout flag. If true, only batch payout transactions are returned. If false, only non-batch payout. If omitted, all transactions are returned.
+        explode: false
+        in: query
+        name: is_batch_payout
+        required: false
+        schema:
+          default: null
+          type: boolean
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_AutorampTransaction'
+          description: Autoramp Transaction List
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: List autoramp transactions
+      tags:
+      - Autoramp
+  /autoramp-transactions/ids:
+    get:
+      description: 'Return a subset of transactions by ID.
+
+        This can be used to query multiple transactions for updated states without having to go through all transactions.
+
+
+        You have to provide at least one transaction ID
+
+
+        Returns at most 100 transactions'
+      operationId: getAutorampTransactionsByIds
+      parameters:
+      - deprecated: false
+        description: Ids of the transactions to get
+        explode: false
+        in: query
+        name: ids
+        required: false
+        schema:
+          default: []
+          items:
+            format: uuid
+            type: string
+          type: array
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_AutorampTransaction'
+          description: Autoramp Transaction List
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get autoramp transactions by transaction IDs
+      tags:
+      - Autoramp
+  /autoramps:
+    get:
+      description: 'Returns a paginated list of autoramps for all customers
+
+
+        If customer ID is provided, returns all autoramps for the specified customer
+
+
+        If status is provided, returns all autoramps with the specified status'
+      operationId: getAutoramps
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the autoramps will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: The optional Customer ID to filter autoramps by. If not provided, returns autoramps for all customers
+        explode: false
+        in: query
+        name: customer_id
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: Filter by autoramp status. Multiple statuses can be provided as comma-separated values.
+        explode: false
+        in: query
+        name: status
+        required: false
+        schema:
+          default: null
+          items:
+            $ref: '#/components/schemas/AutorampStatus'
+          type: array
+      - deprecated: false
+        description: autoramp type filter
+        explode: true
+        in: query
+        name: autoramp_type
+        required: false
+        schema:
+          $ref: '#/components/schemas/AutorampType'
+      - deprecated: false
+        description: 'Paging: the cursor field from previous page'
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the cursor field for backward pagination'
+        explode: false
+        in: query
+        name: prev_cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: 'Paging: the requested page size'
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          maximum: 100.0
+          type: integer
+      - deprecated: false
+        description: Sort order for results. "asc" for oldest first, "desc" for newest first (default).
+        explode: false
+        in: query
+        name: sort_order
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/SortOrder'
+          - default: null
+          default: null
+      - deprecated: false
+        description: Filter by batch payout flag. If true, only batch payout autoramps are returned. If false, only non-batch payout. If omitted, all autoramps are returned.
+        explode: false
+        in: query
+        name: is_batch_payout
+        required: false
+        schema:
+          default: null
+          type: boolean
+      - deprecated: false
+        description: Filter by autoramp source. "Standalone" returns only market autoramps (with no attached quotes). "Quote" returns only autoramps with at least one attached quote. If omitted, all sources are returned.
+        explode: true
+        in: query
+        name: source
+        required: false
+        schema:
+          $ref: '#/components/schemas/AutorampSource'
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_Autoramp'
+          description: Get autoramps successful
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Forbidden
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: List Autoramps for a Customer
+      tags:
+      - Autoramp
+    post:
+      description: Creates a new autoramp, with a specified recipient account, source and destination currency
+      operationId: createAutoramp
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an Autoramp operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the autoramp will be created for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/CreateAutoramp'
+        description: The request parameters for creating an autoramp
+        required: true
+      responses:
+        '201':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Autoramp'
+          description: Create autoramp successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Forbidden (e.g. customer is suspended)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '422':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unprocessable Content
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new Autoramp
+      tags:
+      - Autoramp
+  /autoramps/check-limit:
+    get:
+      description: Checks if a customer has reached their limit for creating new autoramps based on the deposit account type and whether it's a third-party ramp.
+      operationId: checkAutorampLimit
+      parameters:
+      - deprecated: false
+        description: The customer ID
+        explode: true
+        in: query
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: The type of deposit account intended (e.g., Iban, Wallet)
+        explode: true
+        in: query
+        name: deposit_account_type
+        required: true
+        schema:
+          $ref: '#/components/schemas/DepositAccountType'
+      - deprecated: false
+        description: Whether the intended autoramp is for a third party
+        explode: true
+        in: query
+        name: is_third_party
+        required: true
+        schema:
+          type: boolean
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiCanCreateAutorampResponse'
+          description: Check successful
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Check if a customer can create more autoramps
+      tags:
+      - Autoramp
+  /autoramps/payments/open-banking/{payment_id}:
+    get:
+      description: 'Get the autoramp open banking payment for a given autoramp
+
+        '
+      operationId: getAutorampOpenBankingPayment
+      parameters:
+      - deprecated: false
+        description: The payment ID
+        explode: false
+        in: path
+        name: payment_id
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '201':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiAutorampOpenBankingPayment'
+          description: Create autoramp successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get the autoramp open banking payment for existing payment
+      tags:
+      - Autoramp
+  /autoramps/quote:
+    get:
+      description: Get a quote for an autoramp with fixed conversion rate, exact amount out or amount in
+      operationId: getAutorampQuote
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the autoramps will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: 'The parameters for the quote
+
+          The customer id'
+        explode: true
+        in: query
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: The source currency code
+        explode: true
+        in: query
+        name: source_currency_code
+        required: true
+        schema:
+          maxLength: 32
+          type: string
+      - deprecated: false
+        description: The source currency chain
+        explode: true
+        in: query
+        name: source_currency_chain
+        required: false
+        schema:
+          $ref: '#/components/schemas/Blockchain'
+      - deprecated: false
+        description: The destination currency code
+        explode: true
+        in: query
+        name: destination_currency_code
+        required: true
+        schema:
+          maxLength: 32
+          type: string
+      - deprecated: false
+        description: The destination currency chain
+        explode: true
+        in: query
+        name: destination_currency_chain
+        required: false
+        schema:
+          $ref: '#/components/schemas/Blockchain'
+      - deprecated: false
+        description: 'The recipient account ID (fiat_address or verified_crypto_address ID)
+
+          Use this parameter instead of recipient_account. This is the preferred way to provide the recipient account and will be used if both are provided.'
+        explode: true
+        in: query
+        name: recipient_account_id
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: true
+        description: '**DEPRECATED**: The recipient account, either a fiat iban or a crypto wallet address
+
+          Use recipient_account_id instead'
+        explode: true
+        in: query
+        name: recipient_account
+        required: false
+        schema:
+          default: null
+          maxLength: 256
+          type: string
+      - deprecated: false
+        description: The source amount
+        explode: true
+        in: query
+        name: amount_in
+        required: false
+        schema:
+          default: null
+          format: decimal
+          type: string
+      - deprecated: false
+        description: The destination amount
+        explode: true
+        in: query
+        name: amount_out
+        required: false
+        schema:
+          default: null
+          format: decimal
+          type: string
+      - deprecated: false
+        description: The rate lock duration in minutes
+        explode: true
+        in: query
+        name: rate_lock_duration_minutes
+        required: false
+        schema:
+          default: null
+          format: int64
+          type: integer
+      - deprecated: false
+        description: The rate expiry policy
+        explode: true
+        in: query
+        name: rate_expiry_policy
+        required: true
+        schema:
+          $ref: '#/components/schemas/RateExpiryPolicy'
+      - deprecated: false
+        description: The slippage tolerance in bips
+        explode: true
+        in: query
+        name: slippage_tolerance_in_bips
+        required: false
+        schema:
+          default: null
+          format: decimal
+          type: string
+      - deprecated: false
+        description: The autoramp expiry time in hours. Maximum is 24 hours. It is limited to rate lock duration if rate expiry policy is Return
+        explode: true
+        in: query
+        name: expiry_in_hours
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - deprecated: false
+        description: Is this a third party autoramp
+        explode: true
+        in: query
+        name: is_third_party
+        required: true
+        schema:
+          type: boolean
+      - deprecated: false
+        description: Sender Account Number is required when the source currency is African & payment type is Bank transfer
+        explode: true
+        in: query
+        name: sender_account_number
+        required: false
+        schema:
+          default: null
+          maxLength: 256
+          type: string
+      - deprecated: false
+        description: Sender Mobile Number is required when the source currency is African & payment type is Mobile Money
+        explode: true
+        in: query
+        name: sender_mobile_number
+        required: false
+        schema:
+          default: null
+          maxLength: 256
+          type: string
+      - deprecated: false
+        description: Sender Account Financial Institution/Bank is required when the source currency is African
+        explode: true
+        in: query
+        name: sender_bank
+        required: false
+        schema:
+          $ref: '#/components/schemas/Bank'
+      - deprecated: false
+        description: The external id
+        explode: true
+        in: query
+        name: external_id
+        required: false
+        schema:
+          default: null
+          type: string
+      - deprecated: false
+        description: wire_message
+        explode: true
+        in: query
+        name: wire_message
+        required: false
+        schema:
+          default: null
+          type: string
+      - deprecated: false
+        description: swift_payment_reference
+        explode: true
+        in: query
+        name: swift_payment_reference
+        required: false
+        schema:
+          default: null
+          type: string
+      - deprecated: false
+        description: sepa_payment_reference
+        explode: true
+        in: query
+        name: sepa_payment_reference
+        required: false
+        schema:
+          default: null
+          type: string
+      - deprecated: false
+        description: ach_payment_reference
+        explode: true
+        in: query
+        name: ach_payment_reference
+        required: false
+        schema:
+          default: null
+          type: string
+      - deprecated: false
+        description: fps_payment_reference
+        explode: true
+        in: query
+        name: fps_payment_reference
+        required: false
+        schema:
+          default: null
+          type: string
+      - deprecated: false
+        description: The fee profile id to use for the autoramp
+        explode: true
+        in: query
+        name: fee_profile_id
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: Whether payouts for this autoramp are batched daily
+        explode: true
+        in: query
+        name: batch_payout
+        required: false
+        schema:
+          default: null
+          type: boolean
+      - deprecated: false
+        description: 'Additional input currency codes to allow on the autoramp beyond
+
+          `source_currency_code`. Used to enable later per-currency quotes via
+
+          `POST /autoramps/:id/quotes` on a quote-type autoramp.
+
+
+          Must have the same length as `additional_in_currency_chains` and be
+
+          index-aligned: the chain at position `i` describes the code at
+
+          position `i`.'
+        explode: false
+        in: query
+        name: additional_in_currency_codes
+        required: false
+        schema:
+          default: []
+          items:
+            type: string
+          maxItems: 16
+          type: array
+      - deprecated: false
+        description: 'Chains for each entry in `additional_in_currency_codes`, index-aligned.
+
+          Must have the same length as `additional_in_currency_codes`.'
+        explode: false
+        in: query
+        name: additional_in_currency_chains
+        required: false
+        schema:
+          default: []
+          items:
+            $ref: '#/components/schemas/Blockchain'
+          maxItems: 16
+          type: array
+      - deprecated: false
+        description: 'If true, a payment reference will be generated for the autoramp on
+
+          inbound matching (pay-by-reference). Defaults to false if not provided.'
+        explode: true
+        in: query
+        name: pay_by_reference
+        required: false
+        schema:
+          default: null
+          type: boolean
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SignedAutorampQuote'
+          description: Get Quote successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Forbidden
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get a quote for an autoramp
+      tags:
+      - Autoramp
+  /autoramps/quotes-preview:
+    get:
+      description: 'Price a prospective autoramp knowing only the currencies — before a recipient
+
+        wallet or bank account is selected. Prices identically to `getAutorampQuote`;
+
+        banking fees assume the destination currency''s default payout rail (USD→ACH,
+
+        EUR→SEPA, GBP→FPS; see `assumed_payout_rail` in the response). The result is an
+
+        estimate and cannot be submitted; fetch a signed quote once a recipient is chosen.'
+      operationId: getAutorampQuotePreview
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the quote preview is scoped to the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: The customer id
+        explode: true
+        in: query
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: The source currency code
+        explode: true
+        in: query
+        name: source_currency_code
+        required: true
+        schema:
+          maxLength: 32
+          type: string
+      - deprecated: false
+        description: The source currency chain
+        explode: true
+        in: query
+        name: source_currency_chain
+        required: false
+        schema:
+          $ref: '#/components/schemas/Blockchain'
+      - deprecated: false
+        description: The destination currency code
+        explode: true
+        in: query
+        name: destination_currency_code
+        required: true
+        schema:
+          maxLength: 32
+          type: string
+      - deprecated: false
+        description: The destination currency chain
+        explode: true
+        in: query
+        name: destination_currency_chain
+        required: false
+        schema:
+          $ref: '#/components/schemas/Blockchain'
+      - deprecated: false
+        description: The source amount. Provide exactly one of amount_in / amount_out.
+        explode: true
+        in: query
+        name: amount_in
+        required: false
+        schema:
+          default: null
+          format: decimal
+          type: string
+      - deprecated: false
+        description: The destination amount. Provide exactly one of amount_in / amount_out.
+        explode: true
+        in: query
+        name: amount_out
+        required: false
+        schema:
+          default: null
+          format: decimal
+          type: string
+      - deprecated: false
+        description: Price against this fee profile; resolved automatically when omitted
+        explode: true
+        in: query
+        name: fee_profile_id
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        description: Is this a third party autoramp (defaults to false)
+        explode: true
+        in: query
+        name: is_third_party
+        required: false
+        schema:
+          default: null
+          type: boolean
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiAutorampQuotePreview'
+          description: Preview successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Forbidden
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get autoramp quote preview
+      tags:
+      - Autoramp
+  /autoramps/{autoramp_id}:
+    delete:
+      description: Cancel the execution of an autoramp. After this, the given autoramp will not perform any transactions anymore.
+      operationId: cancelAutoramp
+      parameters:
+      - deprecated: false
+        description: The autoramp ID
+        explode: false
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '204':
+          description: Autoramp cancelled successfully
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Cancel an Autoramp
+      tags:
+      - Autoramp
+    get:
+      description: Get a single autoramp by ID
+      operationId: getAutorampById
+      parameters:
+      - deprecated: false
+        description: The autoramp ID
+        explode: false
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Autoramp'
+          description: Get autoramp successful
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get an Autoramp by ID
+      tags:
+      - Autoramp
+    patch:
+      description: 'Patch the autoramp market by ID
+
+        '
+      operationId: patchAutorampMarketById
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the autoramps will be filtered for the sub-partner
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: The autoramp ID
+        explode: false
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/PatchAutorampMarketParameters'
+        description: Parameters for updating the autoramp market
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Autoramp'
+          description: Update autoramp successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Forbidden (e.g. customer is suspended)
+        '404':
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Patch an autoramp market
+      tags:
+      - Autoramp
+  /autoramps/{autoramp_id}/payments/open-banking:
+    get:
+      description: 'Returns a paginated list of all open banking payment attempts for the
+
+        autoramp, ordered by most recent first. Statuses are refreshed from the
+
+        provider on every call (skipping payments already in terminal states).
+
+
+        Pagination follows the standard cursor pattern: pass `cursor` =
+
+        `iron_payment_id` of the last item in the previous page to fetch the
+
+        next (older) page, or `prev_cursor` to walk backward (newer).'
+      operationId: listAutorampOpenBankingPayments
+      parameters:
+      - deprecated: false
+        explode: true
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        explode: false
+        in: query
+        name: prev_cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          maximum: 10.0
+          type: integer
+      - deprecated: false
+        explode: false
+        in: query
+        name: sort_order
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/SortOrder'
+          - default: null
+          default: null
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_ApiAutorampOpenBankingPayment'
+          description: ''
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: ''
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: ''
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: ''
+      security:
+      - ApiKeyAuth: []
+      summary: List open banking payments for an autoramp
+      tags:
+      - Autoramp
+    post:
+      description: 'Create an open banking payment link for a given autoramp
+
+        '
+      operationId: createAutorampOpenBankingPayment
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an Autoramp operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: The autoramp ID
+        explode: false
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/CreateAutorampOpenBankingPayment'
+        description: Open banking payment parameters
+        required: true
+      responses:
+        '201':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiAutorampOpenBankingPayment'
+          description: Create autoramp successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Create an open banking payment link
+      tags:
+      - Autoramp
+  /autoramps/{autoramp_id}/quote:
+    get:
+      description: 'Generates a signed rate quote for an existing quote-type autoramp.
+
+        The autoramp''s currencies, recipient, and fee profile are used automatically.'
+      operationId: getAutorampRateQuote
+      parameters:
+      - deprecated: false
+        explode: true
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        description: The source currency code — must be one of the autoramp's input currencies
+        explode: true
+        in: query
+        name: source_currency_code
+        required: true
+        schema:
+          maxLength: 32
+          type: string
+      - deprecated: false
+        description: The source currency chain (required for crypto source currencies)
+        explode: true
+        in: query
+        name: source_currency_chain
+        required: false
+        schema:
+          $ref: '#/components/schemas/Blockchain'
+      - deprecated: false
+        explode: true
+        in: query
+        name: amount_in
+        required: false
+        schema:
+          format: decimal
+          type: string
+      - deprecated: false
+        explode: true
+        in: query
+        name: amount_out
+        required: false
+        schema:
+          format: decimal
+          type: string
+      - deprecated: false
+        explode: true
+        in: query
+        name: rate_lock_duration_minutes
+        required: false
+        schema:
+          format: int64
+          type: integer
+      - deprecated: false
+        explode: true
+        in: query
+        name: rate_expiry_policy
+        required: true
+        schema:
+          $ref: '#/components/schemas/RateExpiryPolicy'
+      - deprecated: false
+        explode: true
+        in: query
+        name: slippage_tolerance_in_bips
+        required: false
+        schema:
+          format: decimal
+          type: string
+      - deprecated: false
+        explode: true
+        in: query
+        name: expiry_in_hours
+        required: true
+        schema:
+          format: int64
+          maximum: 24.0
+          type: integer
+      - deprecated: false
+        description: 'An optional payout reference applied when paying out transactions
+
+          matched to this quote. Overrides the autoramp''s payment reference.'
+        explode: true
+        in: query
+        name: payment_reference
+        required: false
+        schema:
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SignedAutorampRateQuote'
+          description: Get rate quote successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Forbidden
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get a rate quote for an existing autoramp
+      tags:
+      - Autoramp
+  /autoramps/{autoramp_id}/quotes:
+    post:
+      description: Attaches a signed rate quote to an existing quote-type autoramp.
+      operationId: attachQuoteToAutoramp
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring the operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        explode: true
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/SignedAutorampRateQuote'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Autoramp'
+          description: Attach quote successful
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '403':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Forbidden (e.g. customer is suspended)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Conflict (e.g. quote already attached)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Attach a quote to an existing autoramp
+      tags:
+      - Autoramp
+  /autoramps/{autoramp_id}/retry-auth:
+    post:
+      deprecated: true
+      description: 'Retry the authentication process on a failed autoramp
+
+        '
+      operationId: retryAutorampAuth
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an Autoramp operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: the autoramp ID
+        explode: false
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '201':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/AuthenticationCode'
+          description: Authorization of autoramp succeeded
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      summary: Retry authentication
+      tags:
+      - Autoramp
+  /autoramps/{external_id}/external:
+    get:
+      description: Get a single autoramp by external ID
+      operationId: getAutorampByExternalId
+      parameters:
+      - deprecated: false
+        description: The autoramp external ID
+        explode: false
+        in: path
+        name: external_id
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Autoramp'
+          description: Get autoramp successful
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get an Autoramp by external ID
+      tags:
+      - Autoramp
+components:
+  schemas:
+    Country:
+      description: A country
+      example:
+        code: DE
+      properties:
+        code:
+          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - code
+      title: Country
+      type: object
+    PagedList_Autoramp:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Autoramp'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_Autoramp
+      type: object
+    BankAccountCHAPSIdentifier:
+      example:
+        account_number: '12345678'
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: BankAccountCHAPSIdentifier
+      type: object
+    SwiftDepositInfo:
+      example:
+        account_number: '1234567890'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        bic: CHASUS33XXX
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        bic:
+          type: string
+        memo:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+      required:
+      - bic
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: SwiftDepositInfo
+      type: object
+    DepositAccount_MobileMoneyDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - MobileMoney
+            example: MobileMoney
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/MobileMoneyDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    Account_CryptoWallet:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/CryptoWallet'
+      description: 'Account
+
+
+        The account for the autoramp
+
+        '
+    PixEvpKey:
+      description: 'PixEvpKey
+
+
+        A random PIX DICT key (EVP) generated by the recipient''s bank.'
+      example:
+        key: 123e4567-e89b-12d3-a456-426614174000
+      properties:
+        key:
+          description: A lowercase UUID, e.g. 123e4567-e89b-12d3-a456-426614174000
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+          type: string
+      required:
+      - key
+      title: PixEvpKey
+      type: object
+    Currency_Fiat:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fiat
+            example: Fiat
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    RampTransactionSource:
+      anyOf:
+      - $ref: '#/components/schemas/ApiWalletDepositSource'
+      - $ref: '#/components/schemas/ApiBankAccountSource'
+      description: The source of the autoramp transaction
+      type: object
+    PixCpfKey:
+      description: 'PixCpfKey
+
+
+        A PIX DICT key that is the recipient''s CPF.'
+      example:
+        key: '12345678909'
+      properties:
+        key:
+          description: 11-digit CPF, with or without the `XXX.XXX.XXX-XX` formatting
+          pattern: ^([0-9]{11}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})$
+          type: string
+      required:
+      - key
+      title: PixCpfKey
+      type: object
+    PixAccountIdentifier:
+      anyOf:
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+      discriminator:
+        mapping:
+          BANK_DETAILS: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
+          CNPJ: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
+          CPF: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
+          EMAIL: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
+          EVP: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
+          PHONE: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
+        propertyName: type
+      type: object
+    PixPhoneKey:
+      description: 'PixPhoneKey
+
+
+        A PIX DICT key that is the recipient''s phone number.'
+      example:
+        key: '+5511987654321'
+      properties:
+        key:
+          description: International format with leading `+`, e.g. +5511987654321
+          pattern: ^\+[1-9][0-9]{1,14}$
+          type: string
+      required:
+      - key
+      title: PixPhoneKey
+      type: object
+    AutorampStatus:
+      enum:
+      - Created
+      - EditPending
+      - Authorized
+      - DepositAccountAdded
+      - Approved
+      - Rejected
+      - Cancelled
+      type: string
+    ApiBankAccountSource:
+      description: A bank account source of an autoramp transaction
+      example:
+        account_number: null
+        bank_name: Iron Bank
+        bic: COBADEFFXXX
+        iban: DE89370400440532013000
+        name: Alan Turing
+        routing_number: null
+        sort_code: null
+      properties:
+        account_number:
+          description: The account number for US accounts
+          type: string
+        bank_name:
+          description: The bank name
+          type: string
+        bic:
+          description: The bic
+          type: string
+        iban:
+          description: The iban
+          type: string
+        name:
+          description: The name of the account holder
+          type: string
+        routing_number:
+          description: The routing number of the bank, for US accounts
+          type: string
+        sort_code:
+          description: The sort code of the bank, for UK accounts
+          type: string
+      required:
+      - bank_name
+      - iban
+      - bic
+      - name
+      title: ApiBankAccountSource
+      type: object
+    SpeiDepositInfo:
+      properties:
+        clabe:
+          type: string
+        instruction:
+          type: string
+      required:
+      - clabe
+      - instruction
+      title: SpeiDepositInfo
+      type: object
+    AutorampTransactionState:
+      description: 'Autoramp Transaction State
+
+
+        The state of the autoramp transaction
+
+        '
+      enum:
+      - Pending
+      - PayoutPending
+      - Payout
+      - PayoutCompleted
+      - Completed
+      - Failed
+      - InAmlReview
+      - AmlRejected
+      - AmountRejected
+      - FraudRejected
+      type: string
+    AuthenticationCode:
+      description: 'An authentication code
+
+
+        used to confirm a 2FA action
+
+        '
+      properties:
+        attempts:
+          description: attempts to submit the authentication code
+          format: int32
+          type: integer
+        entity_id:
+          description: the ID of the entity the authentication is related to
+          format: uuid
+          type: string
+        expires_at:
+          description: the time of expiry for the authentication code
+          format: date-time
+          type: string
+        id:
+          description: The ID of the authentication code
+          format: uuid
+          type: string
+        status:
+          $ref: '#/components/schemas/AuthenticationCodeStatus'
+      required:
+      - id
+      - status
+      - expires_at
+      - attempts
+      - entity_id
+      title: AuthenticationCode
+      type: object
+    DepositAccountType:
+      enum:
+      - Iban
+      - Wallet
+      - AchWire
+      - Pix
+      - Spei
+      - AfricanBankTransfer
+      - MobileMoney
+      - ChapsFps
+      type: string
+    AchWireDepositInfo:
+      example:
+        account_number: '123456789'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+        routing_number:
+          type: string
+      required:
+      - routing_number
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: AchWireDepositInfo
+      type: object
+    DepositRail_SpeiDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Spei
+            example: Spei
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/SpeiDepositInfo'
+    PartnerFee:
+      description: 'Partner Fee
+
+
+        A partner fee
+
+        '
+      properties:
+        fee:
+          $ref: '#/components/schemas/Amount'
+        label:
+          description: The label of the partner fee
+          type: string
+        settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+      required:
+      - label
+      - fee
+      - settlement
+      title: PartnerFee
+      type: object
+    AutorampQuote:
+      description: 'Autoramp Quote
+
+
+        The autoramp quote used to create an autoramp
+
+        '
+      properties:
+        amount_in:
+          $ref: '#/components/schemas/Amount'
+        amount_out:
+          $ref: '#/components/schemas/Amount'
+        fee:
+          $ref: '#/components/schemas/Fee'
+        fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        partner_fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        quote_id:
+          description: The id of the quote
+          format: uuid
+          type: string
+        rate:
+          description: The rate
+          format: decimal
+          type: string
+        rate_expiry_policy:
+          $ref: '#/components/schemas/RateExpiryPolicy'
+        rate_lock_valid_until:
+          description: The rate lock valid until
+          format: date-time
+          type: string
+        slippage_tolerance_in_bips:
+          description: The slippage tolerance in bips
+          format: decimal
+          type: string
+        valid_until:
+          description: The valid until
+          format: date-time
+          type: string
+      required:
+      - quote_id
+      - amount_in
+      - amount_out
+      - rate
+      - rate_lock_valid_until
+      - rate_expiry_policy
+      - fee
+      - fee_settlement
+      - partner_fee_settlement
+      - valid_until
+      title: AutorampQuote
+      type: object
+    RateExpiryPolicy:
+      description: 'Rate Expiry Policy
+
+
+        The policy for the rate expiry
+
+        '
+      enum:
+      - Return
+      - Slippage
+      type: string
+    DepositAccount_IbanDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SEPA
+            example: SEPA
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IbanDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    BankAccountIdentifier_BankAccountSWIFTIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SWIFT
+            example: SWIFT
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountSWIFTIdentifier'
+    FpsDepositInfo:
+      example:
+        account_number: '55779911'
+        bank_address: 2 Thomas More Square, London, E1W 1YN
+        bank_name: Banking Circle UK
+        beneficiary_name: Alan Turing
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        beneficiary_name:
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: FpsDepositInfo
+      type: object
+    ACHDepositInfo:
+      example:
+        account_number: '123456789'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+        routing_number:
+          type: string
+      required:
+      - routing_number
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: ACHDepositInfo
+      type: object
+    ApiAutorampQuotePreview:
+      description: 'Autoramp Quote Preview
+
+
+        A recipient-free pricing preview, shaped like a signed quote but not
+
+        submittable: no quote_id, signature, or validity window.
+
+        '
+      properties:
+        amount_in:
+          $ref: '#/components/schemas/Amount'
+        amount_out:
+          $ref: '#/components/schemas/Amount'
+        assumed_payout_rail:
+          $ref: '#/components/schemas/PaymentNetwork'
+        customer_id:
+          description: The customer id
+          format: uuid
+          type: string
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        fee:
+          $ref: '#/components/schemas/Fee'
+        fee_profile_id:
+          description: The fee profile this preview was priced against
+          format: uuid
+          type: string
+        fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        rate:
+          description: The rate (destination per 1 source)
+          format: decimal
+          type: string
+        source_currency:
+          $ref: '#/components/schemas/Currency'
+      required:
+      - source_currency
+      - destination_currency
+      - customer_id
+      - amount_in
+      - amount_out
+      - rate
+      - fee
+      - fee_settlement
+      - fee_profile_id
+      title: ApiAutorampQuotePreview
+      type: object
+    Recipient_RecipientBankAccount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - BankAccount
+            example: BankAccount
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/RecipientBankAccount'
+      description: 'Recipient
+
+
+        The recipient of the payment
+
+        '
+    DepositAccount_SpeiDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Spei
+            example: Spei
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/SpeiDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    BankAccountIdentifier_BankAccountFedNowIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FEDNOW
+            example: FEDNOW
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountFedNowIdentifier'
+    RecipientPostalAddress:
+      description: 'RecipientPostalAddress
+
+
+        The account holder''s address.'
+      properties:
+        city:
+          description: The city
+          maxLength: 100
+          minLength: 2
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        postal_code:
+          description: The postal code
+          maxLength: 20
+          minLength: 3
+          type: string
+        state:
+          description: The state
+          type: string
+        street:
+          description: The street address
+          maxLength: 256
+          minLength: 2
+          type: string
+      required:
+      - street
+      - city
+      - state
+      - country
+      - postal_code
+      title: RecipientPostalAddress
+      type: object
+    PixAccountIdentifier_PixCnpjKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CNPJ
+            example: CNPJ
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixCnpjKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    PixAccount:
+      description: 'PIX Account
+
+
+        References a previously-registered PIX destination by its id.'
+      properties:
+        id:
+          description: The id of a previously-registered PIX destination
+          format: uuid
+          type: string
+      required:
+      - id
+      title: PixAccount
+      type: object
+    DepositRail_MobileMoneyDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - MobileMoney
+            example: MobileMoney
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/MobileMoneyDepositInfo'
+    BankAccountIdentifier_BankAccountACHIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - ACH
+            example: ACH
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountACHIdentifier'
+    Currency:
+      anyOf:
+      - $ref: '#/components/schemas/Currency_Crypto'
+      - $ref: '#/components/schemas/Currency_Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Currency_Crypto'
+          Fiat: '#/components/schemas/Currency_Fiat'
+        propertyName: type
+      type: object
+    Crypto:
+      description: A cryptocurrency
+      example:
+        blockchain: Solana
+        token: USDC
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        token:
+          description: The ticker of the token e.g. 'USDC'
+          type: string
+      required:
+      - token
+      - blockchain
+      title: Crypto
+      type: object
+    DepositRail_FedNowDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FedNow
+            example: FedNow
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/FedNowDepositInfo'
+      description: Available from API version 2026-07-01.
+    RecipientName_IndividualName:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Individual
+            example: Individual
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IndividualName'
+    DepositRail:
+      anyOf:
+      - $ref: '#/components/schemas/DepositRail_IbanDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_AfricanBankTransferDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_PixDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_SpeiDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_MobileMoneyDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_CryptoWallet'
+      - $ref: '#/components/schemas/DepositRail_FpsDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_ChapsDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_ACHDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_WireDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_RtpDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_FedNowDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_SwiftDepositInfo'
+      discriminator:
+        mapping:
+          ACH: '#/components/schemas/DepositRail_ACHDepositInfo'
+          AfricanBankTransfer: '#/components/schemas/DepositRail_AfricanBankTransferDepositInfo'
+          CHAPS: '#/components/schemas/DepositRail_ChapsDepositInfo'
+          Crypto: '#/components/schemas/DepositRail_CryptoWallet'
+          FPS: '#/components/schemas/DepositRail_FpsDepositInfo'
+          FedNow: '#/components/schemas/DepositRail_FedNowDepositInfo'
+          MobileMoney: '#/components/schemas/DepositRail_MobileMoneyDepositInfo'
+          Pix: '#/components/schemas/DepositRail_PixDepositInfo'
+          RTP: '#/components/schemas/DepositRail_RtpDepositInfo'
+          SEPA: '#/components/schemas/DepositRail_IbanDepositInfo'
+          SWIFT: '#/components/schemas/DepositRail_SwiftDepositInfo'
+          Spei: '#/components/schemas/DepositRail_SpeiDepositInfo'
+          Wire: '#/components/schemas/DepositRail_WireDepositInfo'
+        propertyName: type
+      type: object
+    DepositRail_AfricanBankTransferDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - AfricanBankTransfer
+            example: AfricanBankTransfer
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/AfricanBankTransferDepositInfo'
+    NetworkFee:
+      anyOf:
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      description: 'Network Fee
+
+
+        The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
+
+        '
+      discriminator:
+        mapping:
+          AchIn: '#/components/schemas/NetworkFee_Amount'
+          AchOut: '#/components/schemas/NetworkFee_Amount'
+          CitreaGas: '#/components/schemas/NetworkFee_Amount'
+          EthereumGas: '#/components/schemas/NetworkFee_Amount'
+          RailFee: '#/components/schemas/NetworkFee_Amount'
+          SepaIn: '#/components/schemas/NetworkFee_Amount'
+          SepaOut: '#/components/schemas/NetworkFee_Amount'
+          SolanaTransactionFee: '#/components/schemas/NetworkFee_Amount'
+          StellarTransactionFee: '#/components/schemas/NetworkFee_Amount'
+          SwiftIn: '#/components/schemas/NetworkFee_Amount'
+          SwiftOut: '#/components/schemas/NetworkFee_Amount'
+          WireIn: '#/components/schemas/NetworkFee_Amount'
+          WireOut: '#/components/schemas/NetworkFee_Amount'
+        propertyName: type
+      type: object
+    IbanDepositInfo:
+      example:
+        address: 10 Downing Street, London, SW1A 2AA, GB
+        beneficiary_name: Alan Turing
+        bic: COBADEFFXXX
+        iban: DE89370400440532013000
+        name: Iron Bank
+        phone: +44-20-1234-5678
+      properties:
+        address:
+          type: string
+        beneficiary_name:
+          description: The beneficiary name for the IBAN (account holder). For Monerium/Fiat Republic this is always the customer name.
+          type: string
+        bic:
+          type: string
+        iban:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+      required:
+      - iban
+      title: IbanDepositInfo
+      type: object
+    BankAccountIdentifier_BankAccountCHAPSIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CHAPS
+            example: CHAPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountCHAPSIdentifier'
+    ApiAutorampOpenBankingPayment:
+      description: 'Autoramp Open Banking Payment with link to initiate flow
+
+
+        One payment attempt against a provider for an autoramp''s open-banking flow.'
+      properties:
+        id:
+          description: 'The provider''s payment ID (e.g. tokenio''s payment ID). Use this with
+
+            the GET-by-id endpoint to look up the latest status.'
+          type: string
+        iron_payment_id:
+          description: 'Iron''s internal identifier for this open banking payment. Use this
+
+            as the pagination cursor when listing payments.'
+          format: uuid
+          type: string
+        payment_link:
+          type: string
+        settlement_status:
+          $ref: '#/components/schemas/ApiAutorampOpenBankingPaymentSettlementStatus'
+        status:
+          $ref: '#/components/schemas/ApiAutorampOpenBankingPaymentStatus'
+      required:
+      - id
+      - iron_payment_id
+      - status
+      title: ApiAutorampOpenBankingPayment
+      type: object
+    BankAccountIdentifier_BankAccountFPSIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FPS
+            example: FPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountFPSIdentifier'
+    DepositRail_RtpDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - RTP
+            example: RTP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/RtpDepositInfo'
+    CryptoWallet:
+      description: 'Crypto Wallet
+
+
+        The crypto wallet for the autoramp
+
+        '
+      properties:
+        address:
+          description: The address of the crypto account
+          type: string
+        chain:
+          $ref: '#/components/schemas/Blockchain'
+      required:
+      - chain
+      - address
+      title: CryptoWallet
+      type: object
+    DepositRail_ACHDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - ACH
+            example: ACH
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/ACHDepositInfo'
+    AutorampType:
+      description: 'Autoramp type
+
+
+        The type (onramp, offramp, swap) of an autoramp'
+      enum:
+      - Onramp
+      - Offramp
+      - Swap
+      - Mint
+      - Redeem
+      type: string
+    AfricanBankTransferDepositInfo:
+      properties:
+        account_name:
+          type: string
+        account_number:
+          type: string
+        amount:
+          format: decimal
+          type: string
+        bank_name:
+          type: string
+        currency:
+          type: string
+        financial_institution:
+          $ref: '#/components/schemas/Bank'
+        instruction:
+          type: string
+        reference_id:
+          type: string
+      title: AfricanBankTransferDepositInfo
+      type: object
+    PixEmailKey:
+      description: 'PixEmailKey
+
+
+        A PIX DICT key that is the recipient''s email address.'
+      example:
+        key: joao.silva@example.com
+      properties:
+        key:
+          maxLength: 77
+          pattern: ^[^@\s]+@[^@\s]+$
+          type: string
+      required:
+      - key
+      title: PixEmailKey
+      type: object
+    NetworkFee_Amount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SwiftOut
+            example: SwiftOut
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Amount'
+      description: 'Network Fee
+
+
+        The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
+
+        '
+    DepositAccount_ChapsFpsDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CHAPSFPS
+            example: CHAPSFPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/ChapsFpsDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    PixDepositInfo:
+      properties:
+        instruction:
+          type: string
+        pix_key:
+          type: string
+      required:
+      - pix_key
+      - instruction
+      title: PixDepositInfo
+      type: object
+    RecipientName:
+      anyOf:
+      - $ref: '#/components/schemas/RecipientName_IndividualName'
+      - $ref: '#/components/schemas/RecipientName_BusinessName'
+      discriminator:
+        mapping:
+          Business: '#/components/schemas/RecipientName_BusinessName'
+          Individual: '#/components/schemas/RecipientName_IndividualName'
+        propertyName: type
+      type: object
+    BankAccountFPSIdentifier:
+      example:
+        account_number: '55779911'
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: BankAccountFPSIdentifier
+      type: object
+    PagedList_AutorampTransaction:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/AutorampTransaction'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_AutorampTransaction
+      type: object
+    ApiCanCreateAutorampResponse:
+      description: 'Can Create Autoramp Response
+
+
+        Indicates whether a customer can create a new autoramp.
+
+        '
+      properties:
+        can_create:
+          description: Whether the customer can create a new autoramp based on the provided parameters.
+          type: boolean
+      required:
+      - can_create
+      title: ApiCanCreateAutorampResponse
+      type: object
+    Bank:
+      enum:
+      - 9JAPAY MICROFINANCE
+      - ABSA Bank Botswana
+      - ACCESS BANK
+      - AFRICAN BANKING CORPORATION
+      - AIRTELMONEYTZ
+      - AZAMPESA
+      - Absa Bank
+      - Absa Bank Kenya Plc
+      - Absa Bank Tanzania Limited
+      - Access Bank
+      - Access Bank (Diamond)
+      - AccessBank Tanzania
+      - African Bank
+      - Airtel
+      - Akiba Commercial Bank
+      - Albaraka Bank
+      - Amana Bank
+      - Azania Bank
+      - BANK OF AFRICA KENYA LTD
+      - BANK OF BARODA
+      - BANK OF INDIA
+      - BARCLAYS BANK
+      - BancABC Tanzania
+      - Bank Gaborone Limited
+      - Bank Of Baroda Botswana
+      - Bank Of Namibia
+      - Bank of Africa Tanzania Limited
+      - Bank of Athens
+      - Bank of Baroda Tanzania Limited
+      - Bank of Tanzania
+      - Barclays Bank
+      - Bidvest Bank
+      - CENTRAL BANK OF KENYA
+      - CHARTERHOUSE BANK LTD
+      - CITIBANK N.A.
+      - CO-OPERATIVE BANK
+      - COMMERCIAL BANK OF AFRICA LTD
+      - CONSOLIDATED BANK OF KENYA LTD
+      - CRDB Bank
+      - CREDIT BANK LTD
+      - Capitec Bank
+      - Central Bank Of Lesotho
+      - China Commercial Bank Limited
+      - Citi Bank
+      - Citibank Nigeria
+      - Citibank Tanzania Ltd
+      - DCB Commercial Bank
+      - DEVELOPMENT BANK OF KENYA
+      - DIAMOND TRUST BANK
+      - DUBAI BANK OF KENYA LTD
+      - Diamond Trust Bank Tanzania
+      - Discovery Bank Limited
+      - ECOBANK KENYA LTD
+      - EQUITORIAL COMMERCIAL BANK LTD
+      - EQUITY BANK
+      - Ecobank
+      - Ecobank Nigeria
+      - Enterprise Bank
+      - Equity Bank (Tanzania)
+      - Exim Bank (Tanzania)
+      - FAMILY BANK LTD
+      - FIDELITY COMMERCIAL BANK
+      - FIRST COMMUNITY BANK
+      - Fairmoney Microfinance Bank Ltd
+      - Fidelity Bank
+      - Finbond Mutual Bank
+      - First Bank of Nigeria
+      - First Capital Bank Botswana
+      - First City Monument Bank
+      - First National Bank
+      - First National Bank (South Africa)
+      - First National Bank Lesotho
+      - First National Bank Namibia
+      - First National Bank Swaziland
+      - First National Bank of Tanzania
+      - FirstRand Bank Limited
+      - GIRO BANK LTD
+      - GT Bank
+      - GUARANTY TRUST (KENYA) LTD
+      - GUARDIAN BANK
+      - GULF AFRICAN BANK LTD
+      - GoMoney
+      - Grinrod Bank
+      - Guaranty Trust Bank
+      - Guaranty Trust Bank (Tanzania) Limited
+      - HABIB BANK A.G.
+      - HABIB BANK LTD
+      - HALOPESA
+      - HOUSING FINANCE CORPORATION OF KENYA
+      - Habib African Bank
+      - Heritage Bank
+      - Hsbc Bank
+      - I&M Bank (Tanzania)
+      - IMPERIAL BANK LIMITED
+      - INVESTMENTS AND MORTGAGES
+      - International Commercial Bank Tanzania
+      - Investec Bank
+      - JAMII BORA BANK LTD
+      - Jaiz Bank
+      - Jp Morgan Chase Bank
+      - K-REP BANK
+      - KENYA COMMERCIAL BANK LTD
+      - Kcb Bank Tanzania Limited
+      - Keystone Bank
+      - Kuda Microfinance Bank
+      - Letshego Bank Tanzania
+      - Lotus Bank
+      - MIDDLE EAST BANK (K) LIMITED
+      - MTN
+      - Maendeleo Bank Ltd
+      - Mainstreet Bank
+      - Meeg Bank
+      - Mercantile Bank Limited
+      - Mkombozi Commercial Bank
+      - MoMo PSB
+      - Mobile Wallet
+      - Mobile Wallet (M-PESA)
+      - Moniepoint Microfinance Bank
+      - Moov money
+      - Mtn Banking
+      - Mtn Mobile Money
+      - Mwalimu Commercial Bank
+      - NATIONAL BANK OF KENYA
+      - NCBA Bank
+      - NCBA Bank Tanzania
+      - NET MFB
+      - National Bank of Commerce (Tanzania)
+      - National Microfinance Bank
+      - Nedbank (South Africa)
+      - Nownow（Contec Global)
+      - OPay
+      - ORIENTAL COMMERCIAL BANK
+      - Old Mutual
+      - Orange Money
+      - PARAMOUNT UNIVERSAL BANK LTD
+      - PRIME BANK LIMITED
+      - Paga
+      - PalmPay
+      - Peach
+      - People's Bank of Zanzibar
+      - Polaris Bank
+      - Postbank
+      - Premium Trust bank
+      - Providus Bank
+      - RMB Private Bank
+      - Rand Merchant Bank
+      - SA Post Bank (Post Office)
+      - STANBIC BANK
+      - STANBIC BANK KENYA LIMITED
+      - STANDARD CHARTERED
+      - Sasfin Bank Limited
+      - South African Bank of Athens Limited
+      - Stanbic Bank Tanzania Limited
+      - Stanbic Ibtc Bank
+      - Standard Bank (South Africa)
+      - Standard Bank Namibia
+      - Standard Chartered Bank
+      - Standard Chartered Bank Botswana Limited
+      - State Bank Of India
+      - Sterling Bank
+      - TIGO
+      - TNM
+      - TPB Bank Plc
+      - TRANS-NATIONAL BANK
+      - Taj Bank
+      - Titan-Paystack
+      - Tyme Bank
+      - UBA KENYA LTD
+      - Ubank
+      - Unibank
+      - Union Bank of Nigeria
+      - United Bank for Africa
+      - Unity Bank
+      - VFD Microfinance Bank
+      - VICTORIA COMMERCIAL BANK LTD
+      - VISA/MasterCard
+      - VODACOM
+      - Vbs Mutual Bank
+      - Wave
+      - Wema Bank
+      - Zamtel
+      - Zenith Bank
+      type: string
+    DepositAccount_AchWireDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - ACHWire
+            example: ACHWire
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/AchWireDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    SortOrder:
+      enum:
+      - asc
+      - desc
+      type: string
+    RecipientBankAccount:
+      description: 'RecipientBankAccount
+
+
+        A recipient fiat bank account
+
+        '
+      example:
+        account_identifier:
+          iban: DE89370400440532013000
+          type: SEPA
+        address:
+          city: London
+          country:
+            code: GB
+          postal_code: SW1A 2AA
+          state: England
+          street: 10 Downing Street
+        bank_address: null
+        email_address:
+          email: john.doe@example.com
+        is_third_party: false
+        phone_number: +49-30-12345678
+        provider_country:
+          code: DE
+        provider_name: Iron Bank
+        recipient:
+          name: Aperture Science
+          type: Business
+      properties:
+        account_identifier:
+          $ref: '#/components/schemas/BankAccountIdentifier'
+        address:
+          $ref: '#/components/schemas/RecipientPostalAddress'
+        bank_address:
+          $ref: '#/components/schemas/BankPostalAddress'
+        email_address:
+          $ref: '#/components/schemas/EmailAddress'
+        is_third_party:
+          description: Is this a users fiat bank account or a third party fiat bank account
+          type: boolean
+        phone_number:
+          description: The recipient's phone number. Required for USD accounts.
+          type: string
+        provider_country:
+          $ref: '#/components/schemas/Country'
+        provider_name:
+          description: The name of the provider of the recipient's account
+          type: string
+        recipient:
+          $ref: '#/components/schemas/RecipientName'
+      required:
+      - recipient
+      - provider_name
+      - provider_country
+      - account_identifier
+      - address
+      - is_third_party
+      title: RecipientBankAccount
+      type: object
+    RtpDepositInfo:
+      example:
+        account_number: '456789123'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+        routing_number:
+          type: string
+      required:
+      - routing_number
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: RtpDepositInfo
+      type: object
+    DepositAccount_PixDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Pix
+            example: Pix
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    CreateAutoramp:
+      description: Either a set of market parameters or a signed quote. Optionally include a `type` field (`market` | `quote`) to get precise validation errors.
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/CreateAutorampParameters'
+        - properties:
+            type:
+              description: Optional discriminator. When present, the body is parsed as this variant and validation errors point at the offending field instead of the whole payload.
+              enum:
+              - market
+              type: string
+          type: object
+      - allOf:
+        - $ref: '#/components/schemas/SignedAutorampQuote'
+        - properties:
+            type:
+              description: Optional discriminator. When present, the body is parsed as this variant and validation errors point at the offending field instead of the whole payload.
+              enum:
+              - quote
+              type: string
+          type: object
+    BankAccountWireIdentifier:
+      example:
+        account_number: '987654321'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountWireIdentifier
+      type: object
+    Blockchain:
+      description: 'Blockchain
+
+
+        A type of blockchain
+
+        '
+      enum:
+      - Solana
+      - Ethereum
+      - Polygon
+      - Arbitrum
+      - Base
+      - Stellar
+      - Citrea
+      - Plasma
+      - Avalanche
+      - Moca
+      - Tempo
+      - Tron
+      - Bsc
+      type: string
+    NetworkFeeWithSettlement:
+      description: 'Network Fee with Settlement
+
+
+        The network fee with settlement for a given currency
+
+        '
+      properties:
+        fee_amount:
+          $ref: '#/components/schemas/Amount'
+        fee_type:
+          $ref: '#/components/schemas/NetworkFeeType'
+        settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+      required:
+      - fee_type
+      - fee_amount
+      title: NetworkFeeWithSettlement
+      type: object
+    ChapsDepositInfo:
+      example:
+        account_number: '12345678'
+        bank_address: 2 Thomas More Square, London, E1W 1YN
+        bank_name: Banking Circle UK
+        beneficiary_name: Alan Turing
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        beneficiary_name:
+          description: The beneficiary name (account holder) for the GBP account. For Fiat Republic this is the customer name.
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: ChapsDepositInfo
+      type: object
+    PixAccountIdentifier_PixCpfKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CPF
+            example: CPF
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixCpfKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    NetworkFeeType:
+      description: 'Network Fee Type
+
+
+        The type of network fee
+
+        '
+      enum:
+      - SepaIn
+      - SepaOut
+      - EthereumGas
+      - CitreaGas
+      - SolanaTransactionFee
+      - StellarTransactionFee
+      - PolygonGas
+      - BaseGas
+      - AvalancheGas
+      - TronGas
+      - BscGas
+      - RailFee
+      - AchIn
+      - AchOut
+      - WireIn
+      - WireOut
+      - SwiftIn
+      - SwiftOut
+      - FpsIn
+      - FpsOut
+      - ChapsIn
+      - ChapsOut
+      - RtpIn
+      - RtpOut
+      - FednowIn
+      - FednowOut
+      type: string
+    AuthenticationCodeStatus:
+      description: The status of the Authentication Code
+      enum:
+      - Pending
+      - Expired
+      - Confirmed
+      - Rejected
+      type: string
+    PagedList_ApiAutorampOpenBankingPayment:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/ApiAutorampOpenBankingPayment'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_ApiAutorampOpenBankingPayment
+      type: object
+    RecipientName_BusinessName:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Business
+            example: Business
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BusinessName'
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
+
+        Includes a trace_id that clients can reference when reporting issues.'
+      properties:
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
+          type: string
+      required:
+      - message
+      - trace_id
+      title: ApiError
+      type: object
+    Recipient_RecipientPix:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Pix
+            example: Pix
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/RecipientPix'
+      description: 'Recipient
+
+
+        The recipient of the payment
+
+        '
+    EmailAddress:
+      description: 'EmailAddress
+
+
+        An email address
+
+        An email address
+
+        '
+      example:
+        email: john.doe@example.com
+      properties:
+        email:
+          description: The email address
+          type: string
+      required:
+      - email
+      title: EmailAddress
+      type: object
+    FiatAccount:
+      description: 'Fiat Account
+
+
+        The fiat account for the autoramp
+
+        '
+      properties:
+        account_identifier:
+          $ref: '#/components/schemas/BankAccountIdentifier'
+      required:
+      - account_identifier
+      title: FiatAccount
+      type: object
+    BankAccountIdentifier_BankAccountWireIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Wire
+            example: Wire
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountWireIdentifier'
+    BankAccountIdentifier_Iban:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SEPA
+            example: SEPA
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Iban'
+    DepositAccount:
+      anyOf:
+      - $ref: '#/components/schemas/DepositAccount_IbanDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_AchWireDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_AfricanBankTransferDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_PixDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_SpeiDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_MobileMoneyDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_CryptoWallet'
+      - $ref: '#/components/schemas/DepositAccount_ChapsFpsDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+      discriminator:
+        mapping:
+          ACHWire: '#/components/schemas/DepositAccount_AchWireDepositInfo'
+          AfricanBankTransfer: '#/components/schemas/DepositAccount_AfricanBankTransferDepositInfo'
+          CHAPSFPS: '#/components/schemas/DepositAccount_ChapsFpsDepositInfo'
+          Crypto: '#/components/schemas/DepositAccount_CryptoWallet'
+          MobileMoney: '#/components/schemas/DepositAccount_MobileMoneyDepositInfo'
+          Pix: '#/components/schemas/DepositAccount_PixDepositInfo'
+          SEPA: '#/components/schemas/DepositAccount_IbanDepositInfo'
+          Spei: '#/components/schemas/DepositAccount_SpeiDepositInfo'
+        propertyName: type
+      type: object
+    BankAccountFedNowIdentifier:
+      example:
+        account_number: '456789123'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountFedNowIdentifier
+      type: object
+    DepositRail_SwiftDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SWIFT
+            example: SWIFT
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/SwiftDepositInfo'
+    DepositRail_IbanDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SEPA
+            example: SEPA
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IbanDepositInfo'
+    PixAccountIdentifier_PixEmailKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - EMAIL
+            example: EMAIL
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixEmailKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    BankAccountACHIdentifier:
+      example:
+        account_number: '123456789'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountACHIdentifier
+      type: object
+    SignedAutorampRateQuote:
+      description: 'Signed rate quote for an existing autoramp.
+
+
+        Contains only pricing fields — the autoramp''s currencies, recipient, etc. are already known.
+
+
+        Deposits are matched to the newest active quote whose `amount_in` value and
+
+        currency equal the deposit. Attaching a quote that overlaps an existing one
+
+        on those fields supersedes it for new deposits; all of the newer quote''s
+
+        terms apply (rate lock, expiry policy, slippage tolerance, fees).'
+      properties:
+        amount_in:
+          $ref: '#/components/schemas/Amount'
+        amount_out:
+          $ref: '#/components/schemas/Amount'
+        autoramp_id:
+          description: The autoramp this quote is for
+          format: uuid
+          type: string
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        fee:
+          $ref: '#/components/schemas/Fee'
+        fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        payment_reference:
+          description: 'An optional payout reference used when paying out transactions matched to
+
+            this quote. Overrides the autoramp''s payment reference.'
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        quote_id:
+          description: The id of the quote
+          format: uuid
+          type: string
+        rate:
+          description: The rate
+          format: decimal
+          type: string
+        rate_expiry_policy:
+          $ref: '#/components/schemas/RateExpiryPolicy'
+        rate_lock_valid_until:
+          description: The rate lock valid until
+          format: date-time
+          type: string
+        signature:
+          description: The signature
+          type: string
+        slippage_tolerance_in_bips:
+          description: The slippage tolerance in bips
+          format: decimal
+          type: string
+        source_currency:
+          $ref: '#/components/schemas/Currency'
+        valid_until:
+          description: The valid until
+          format: date-time
+          type: string
+      required:
+      - quote_id
+      - autoramp_id
+      - source_currency
+      - destination_currency
+      - amount_in
+      - amount_out
+      - rate
+      - rate_lock_valid_until
+      - rate_expiry_policy
+      - fee
+      - fee_settlement
+      - valid_until
+      - signature
+      title: SignedAutorampRateQuote
+      type: object
+    MobileMoneyDepositInfo:
+      properties:
+        instruction:
+          type: string
+        mobile_number:
+          type: string
+      required:
+      - mobile_number
+      title: MobileMoneyDepositInfo
+      type: object
+    DepositAccount_CryptoWallet:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/CryptoWallet'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    DepositRail_ChapsDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CHAPS
+            example: CHAPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/ChapsDepositInfo'
+    Fee:
+      description: 'Fee
+
+
+        The fee for a given currency pair
+
+        '
+      properties:
+        banking_fee:
+          $ref: '#/components/schemas/Amount'
+        banking_fee_network:
+          $ref: '#/components/schemas/PaymentNetwork'
+        deducted_fee:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          - deprecated: true
+            description: The amount of the fee that was deducted immediately and charged to the end customer. This is deprecated and will be removed in the future. Use transaction_fee instead.
+          deprecated: true
+          description: The amount of the fee that was deducted immediately and charged to the end customer. This is deprecated and will be removed in the future. Use transaction_fee instead.
+        iron_fee:
+          $ref: '#/components/schemas/Amount'
+        iron_fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        network_fee:
+          $ref: '#/components/schemas/Amount'
+        network_fees:
+          deprecated: true
+          description: The network fees in source currency
+          items:
+            $ref: '#/components/schemas/NetworkFee'
+          type: array
+        network_fees_with_settlement:
+          description: The network fees with settlement
+          items:
+            $ref: '#/components/schemas/NetworkFeeWithSettlement'
+          type: array
+        partner_fee:
+          $ref: '#/components/schemas/Amount'
+        partner_fees:
+          description: The partner fees
+          items:
+            $ref: '#/components/schemas/PartnerFee'
+          type: array
+        total_fee:
+          $ref: '#/components/schemas/Amount'
+        transaction_fee:
+          $ref: '#/components/schemas/Amount'
+      required:
+      - total_fee
+      - iron_fee
+      - partner_fee
+      - network_fees
+      - network_fees_with_settlement
+      - partner_fees
+      - transaction_fee
+      - banking_fee
+      - network_fee
+      title: Fee
+      type: object
+    PixCnpjKey:
+      description: 'PixCnpjKey
+
+
+        A PIX DICT key that is the recipient''s CNPJ.'
+      example:
+        key: '12345678000195'
+      properties:
+        key:
+          description: 14-digit CNPJ, with or without the `XX.XXX.XXX/XXXX-XX` formatting
+          pattern: ^([0-9]{14}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+          type: string
+      required:
+      - key
+      title: PixCnpjKey
+      type: object
+    BankAccountSWIFTIdentifier:
+      example:
+        account_number: '1234567890'
+        bic: CHASUS33XXX
+      properties:
+        account_number:
+          type: string
+        bic:
+          type: string
+        intermediary_bic:
+          description: 'BIC of an intermediary correspondent bank in the SWIFT routing chain,
+
+            when the sender wants to override the auto-selected intermediary.
+
+            Optional — most senders leave this unset and let their provider pick.'
+          type: string
+      required:
+      - bic
+      - account_number
+      title: BankAccountSWIFTIdentifier
+      type: object
+    FeeSettlement:
+      description: 'Fee Settlement
+
+
+        The settlement type for the fee
+
+        '
+      enum:
+      - deductedImmediately
+      - settledLater
+      type: string
+    ApiAutorampOpenBankingPaymentSettlementStatus:
+      enum:
+      - InProgress
+      - Completed
+      - Incomplete
+      type: string
+    RecipientWallet:
+      description: 'RecipientWallet
+
+
+        An on-chain wallet address
+
+        '
+      properties:
+        address:
+          description: The wallet address
+          type: string
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+      required:
+      - blockchain
+      - address
+      title: RecipientWallet
+      type: object
+    BankAccountIdentifier:
+      anyOf:
+      - $ref: '#/components/schemas/BankAccountIdentifier_Iban'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
+      discriminator:
+        mapping:
+          ACH: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
+          CHAPS: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
+          FEDNOW: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
+          FPS: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
+          RTP: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
+          SEPA: '#/components/schemas/BankAccountIdentifier_Iban'
+          SWIFT: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
+          Wire: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
+        propertyName: type
+      type: object
+    Iban:
+      example:
+        iban: DE89370400440532013000
+      properties:
+        iban:
+          type: string
+      required:
+      - iban
+      title: Iban
+      type: object
+    ApiThirdPartyClassification:
+      enum:
+      - FirstParty
+      - ThirdParty
+      - Inconclusive
+      - Unknown
+      type: string
+    Account_PixAccount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Pix
+            example: Pix
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixAccount'
+      description: 'Account
+
+
+        The account for the autoramp
+
+        '
+    Autoramp:
+      description: 'Autoramp
+
+
+        The autoramp response
+
+
+        A Autoramp response'
+      properties:
+        additional_partner_fee_in_bips:
+          description: The additional partner fee in bips
+          format: decimal
+          type: string
+        batch_payout:
+          description: Whether payouts for this autoramp are batched daily
+          type: boolean
+        created_at:
+          description: The created at timestamp
+          format: date-time
+          type: string
+        customer_id:
+          description: The id of the customer that owns the autoramp
+          format: uuid
+          type: string
+        deposit_account:
+          allOf:
+          - $ref: '#/components/schemas/DepositAccount'
+          - deprecated: true
+            description: Deprecated, please use the information in the deposit_rails field instead
+          deprecated: true
+          description: Deprecated, please use the information in the deposit_rails field instead
+        deposit_rails:
+          items:
+            $ref: '#/components/schemas/DepositRail'
+          type: array
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        external_id:
+          description: External ID for the autoramp, provided by the partner
+          type: string
+        fee_profile_id:
+          description: The fee profile id used for the autoramp
+          format: uuid
+          type: string
+        fps_payment_reference:
+          description: reference message for outgoing FPS transfers
+          type: string
+        id:
+          description: The id of the autoramp
+          format: uuid
+          type: string
+        inbound_payment_reference:
+          description: 'System-generated inbound memo that senders must include on transfers
+
+            to the shared VA. `None` for autoramps that don''t use pay-by-reference.'
+          type: string
+        is_third_party:
+          description: Is this a third party payment (3pp) autoramp
+          type: boolean
+        kind:
+          $ref: '#/components/schemas/AutorampType'
+        name:
+          description: The name of the autoramp
+          type: string
+        payment_reference:
+          description: The payment reference for the autoramp
+          type: string
+        quote:
+          allOf:
+          - $ref: '#/components/schemas/AutorampQuote'
+          - deprecated: true
+            description: 'Deprecated: use the `quotes` field instead. Returns the newest active (non-expired) quote if any.'
+          deprecated: true
+          description: 'Deprecated: use the `quotes` field instead. Returns the newest active (non-expired) quote if any.'
+        quotes:
+          description: 'Active (non-expired) quotes associated with this autoramp. Deposits are
+
+            matched to the newest active quote with matching `amount_in` value and
+
+            currency.'
+          items:
+            $ref: '#/components/schemas/AutorampQuote'
+          type: array
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        sepa_payment_reference:
+          description: reference message for outgoing SEPA transfers
+          type: string
+        source:
+          $ref: '#/components/schemas/AutorampSource'
+        source_currencies:
+          description: The source currencies
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+        status:
+          $ref: '#/components/schemas/AutorampStatus'
+        swift_payment_reference:
+          description: reference message for outgoing SWIFT transfers
+          type: string
+        travel_address:
+          description: The travel rule address for compliance
+          type: string
+        wire_message:
+          description: reference message for outgoing wire transfers
+          type: string
+      required:
+      - id
+      - customer_id
+      - status
+      - kind
+      - created_at
+      - source_currencies
+      - destination_currency
+      - source
+      - quotes
+      - is_third_party
+      - recipient
+      - deposit_rails
+      - fee_profile_id
+      - batch_payout
+      title: Autoramp
+      type: object
+    DepositRail_FpsDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FPS
+            example: FPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/FpsDepositInfo'
+    Fiat:
+      description: A fiat currency
+      example:
+        code: USD
+      properties:
+        code:
+          description: The code of the currency e.g. 'USD'
+          type: string
+      required:
+      - code
+      title: Fiat
+      type: object
+    Recipient_RecipientWallet:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Wallet
+            example: Wallet
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/RecipientWallet'
+      description: 'Recipient
+
+
+        The recipient of the payment
+
+        '
+    IndividualName:
+      example:
+        family_name: Turing
+        given_name: Alan
+      properties:
+        family_name:
+          maxLength: 50
+          minLength: 1
+          type: string
+        given_name:
+          maxLength: 50
+          minLength: 1
+          type: string
+      required:
+      - given_name
+      - family_name
+      title: IndividualName
+      type: object
+    CreateAutorampOpenBankingPayment:
+      description: 'Create Autoramp Payment Link Payload
+
+
+        The parameters for creating an autoramp payment link
+
+        '
+      properties:
+        amount_in:
+          $ref: '#/components/schemas/Amount'
+        callback_url:
+          type: string
+      required:
+      - amount_in
+      - callback_url
+      title: CreateAutorampOpenBankingPayment
+      type: object
+    FedNowDepositInfo:
+      description: Available from API version 2026-07-01.
+      example:
+        account_number: '456789123'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+        routing_number:
+          type: string
+      required:
+      - routing_number
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: FedNowDepositInfo
+      type: object
+    SignedAutorampQuote:
+      description: 'Signed Autoramp Quote
+
+
+        The signed autoramp quote
+
+        '
+      properties:
+        ach_payment_reference:
+          description: a message to include in outgoing ACH transfers (max 10 characters)
+          maxLength: 10
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        additional_in_currencies:
+          description: 'Additional input currencies to allow on the autoramp beyond `source_currency`.
+
+
+            Each entry must share the same chain as `source_currency` and the list must
+
+            not include `source_currency` itself. After autoramp creation, further quotes
+
+            can be obtained for these currencies via `POST /autoramps/:id/quotes`.'
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+        amount_in:
+          $ref: '#/components/schemas/Amount'
+        amount_out:
+          $ref: '#/components/schemas/Amount'
+        batch_payout:
+          description: 'If true, payouts for this autoramp will be batched and sent once per day instead of individually.
+
+            Only supported for fiat destination currencies.'
+          type: boolean
+        customer_id:
+          description: The customer id
+          format: uuid
+          type: string
+        deposit_account_type:
+          $ref: '#/components/schemas/DepositAccountType'
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        external_id:
+          description: The external id
+          type: string
+        fee:
+          $ref: '#/components/schemas/Fee'
+        fee_profile_id:
+          description: The fee profile id to use for the autoramp. If not provided, the default fee profile for the partner will be used.
+          format: uuid
+          type: string
+        fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        fps_payment_reference:
+          description: a message to include in outgoing FPS transfers (max 18 characters)
+          maxLength: 18
+          minLength: 6
+          pattern: ^[A-Za-z]*$
+          type: string
+        is_third_party:
+          description: Is this a third party autoramp
+          type: boolean
+        pay_by_reference:
+          description: 'If true, a payment reference will be generated for the autoramp on
+
+            inbound matching (pay-by-reference). Defaults to false if not provided.'
+          type: boolean
+        quote_id:
+          description: The id of the quote
+          format: uuid
+          type: string
+        rate:
+          description: The rate
+          format: decimal
+          type: string
+        rate_expiry_policy:
+          $ref: '#/components/schemas/RateExpiryPolicy'
+        rate_lock_valid_until:
+          description: The rate lock valid until
+          format: date-time
+          type: string
+        recipient_account:
+          $ref: '#/components/schemas/Account'
+        sepa_payment_reference:
+          description: a message to include in outgoing SEPA transfers (max 140 characters)
+          maxLength: 140
+          minLength: 6
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        signature:
+          description: The signature
+          type: string
+        slippage_tolerance_in_bips:
+          description: The slippage tolerance in bips
+          format: decimal
+          type: string
+        source_currency:
+          $ref: '#/components/schemas/Currency'
+        swift_payment_reference:
+          description: a message to include in outgoing SWIFT transfers (max 4 lines, 35 chars per line)
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        valid_until:
+          description: The valid until
+          format: date-time
+          type: string
+        wire_message:
+          description: a message to include in outgoing wire transfers (max 4 lines, 35 chars per line)
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+      required:
+      - quote_id
+      - source_currency
+      - destination_currency
+      - recipient_account
+      - customer_id
+      - amount_in
+      - amount_out
+      - rate
+      - rate_expiry_policy
+      - fee
+      - fee_settlement
+      - valid_until
+      - signature
+      - is_third_party
+      title: SignedAutorampQuote
+      type: object
+    ApiAutorampOpenBankingPaymentStatus:
+      description: 'Autoramp Payment Link Status
+
+
+        The status of the autoramp payment link
+
+        '
+      enum:
+      - Pending
+      - Ready
+      - Processing
+      - Completed
+      - Failed
+      type: string
+    ChapsFpsDepositInfo:
+      example:
+        account_number: '55779911'
+        bank_address: 2 Thomas More Square, London, E1W 1YN
+        bank_name: Banking Circle UK
+        beneficiary_name: Alan Turing
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        beneficiary_name:
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: ChapsFpsDepositInfo
+      type: object
+    BankAccountRTPIdentifier:
+      example:
+        account_number: '456789123'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountRTPIdentifier
+      type: object
+    BankPostalAddress:
+      description: 'BankPostalAddress
+
+
+        The bank''s address. Only required for SWIFT accounts.'
+      properties:
+        city:
+          description: The city
+          maxLength: 100
+          minLength: 2
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        postal_code:
+          description: The postal code
+          maxLength: 20
+          minLength: 3
+          type: string
+        state:
+          description: The state
+          type: string
+        street:
+          description: The street address
+          maxLength: 256
+          minLength: 2
+          type: string
+      required:
+      - street
+      - city
+      - state
+      - country
+      - postal_code
+      title: BankPostalAddress
+      type: object
+    PixBankDetails:
+      description: 'PixBankDetails
+
+
+        Full Brazilian bank account details identifying the recipient''s account,
+
+        for recipients without a registered PIX key.'
+      example:
+        account_number: '5678901'
+        account_type: CHECKING
+        bank_code: '341'
+        branch_code: '1234'
+      properties:
+        account_number:
+          description: 'Account number including the verification (check) digit, with no
+
+            separator, e.g. `7140025418`.'
+          maxLength: 20
+          minLength: 1
+          type: string
+        account_type:
+          $ref: '#/components/schemas/PixAccountType'
+        bank_code:
+          description: 3-digit COMPE bank code or 8-digit ISPB, distinguished by length
+          pattern: ^([0-9]{3}|[0-9]{8})$
+          type: string
+        branch_code:
+          description: Branch number without the verification digit
+          pattern: ^[0-9]{1,4}$
+          type: string
+      required:
+      - bank_code
+      - branch_code
+      - account_number
+      - account_type
+      title: PixBankDetails
+      type: object
+    BankAccountIdentifier_BankAccountRTPIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - RTP
+            example: RTP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountRTPIdentifier'
+    AutorampTransaction:
+      description: 'Autoramp Transaction
+
+
+        The autoramp transaction response
+
+
+        A Payment response'
+      properties:
+        autoramp_id:
+          description: The ID of the autoramp this transaction belongs to
+          format: uuid
+          type: string
+        batch_id:
+          description: The batch ID if this transaction was part of a batch payout
+          format: uuid
+          type: string
+        created_at:
+          description: Date of transaction creation
+          format: date-time
+          type: string
+        customer_id:
+          description: The ID of the customer two whom this transaction belongs
+          format: uuid
+          type: string
+        destination_amount:
+          $ref: '#/components/schemas/Amount'
+        exchange_rate:
+          description: The exchange rate
+          format: decimal
+          type: string
+        fee:
+          description: The total fee charged
+          format: decimal
+          type: string
+        fee_breakdown:
+          $ref: '#/components/schemas/Fee'
+        fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        id:
+          description: The ID of the transaction
+          format: uuid
+          type: string
+        inbound_payment_reference:
+          description: reference of this transaction's pay-in transfer
+          type: string
+        is_third_party:
+          description: Is this a third party payment (3pp) autoramp
+          type: boolean
+        kind:
+          $ref: '#/components/schemas/AutorampType'
+        ob_payment_id:
+          description: 'The id of the open-banking payment that initiated this
+
+            transaction, if any. Use this to look up the ob_payment via the
+
+            `getAutorampOpenBankingPayment` endpoint family.'
+          type: string
+        payment_tracking:
+          $ref: '#/components/schemas/PaymentTracking'
+        payout_crypto_transaction:
+          $ref: '#/components/schemas/PayoutCryptoTransaction'
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        source:
+          $ref: '#/components/schemas/RampTransactionSource'
+        source_amount:
+          $ref: '#/components/schemas/Amount'
+        state:
+          allOf:
+          - $ref: '#/components/schemas/AutorampTransactionState'
+          - deprecated: true
+            description: 'The current state of the transaction. DEPRECATED: use ''status'''
+          deprecated: true
+          description: 'The current state of the transaction. DEPRECATED: use ''status'''
+        status:
+          $ref: '#/components/schemas/AutorampTransactionStatus'
+        third_party_classification:
+          $ref: '#/components/schemas/ApiThirdPartyClassification'
+      required:
+      - id
+      - customer_id
+      - autoramp_id
+      - state
+      - status
+      - source_amount
+      - destination_amount
+      - recipient
+      - fee
+      - exchange_rate
+      - created_at
+      - fee_settlement
+      - is_third_party
+      - kind
+      title: AutorampTransaction
+      type: object
+    Account_FiatAccount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fiat
+            example: Fiat
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/FiatAccount'
+      description: 'Account
+
+
+        The account for the autoramp
+
+        '
+    RecipientPix:
+      description: 'RecipientPix
+
+
+        A PIX payout recipient.'
+      example:
+        account:
+          key: '+5511987654321'
+          type: PHONE
+        recipient:
+          family_name: Turing
+          given_name: Alan
+          type: Individual
+        tax_id: '12345678909'
+      properties:
+        account:
+          $ref: '#/components/schemas/PixAccountIdentifier'
+        recipient:
+          $ref: '#/components/schemas/RecipientName'
+        tax_id:
+          description: 'The recipient''s CPF (11 digits) or CNPJ (14 digits), with or without
+
+            the usual `.`/`-`/`/` formatting. The payout is rejected if the
+
+            destination account is not registered to this tax ID.'
+          pattern: ^([0-9]{11}|[0-9]{14}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+          type: string
+      required:
+      - recipient
+      - tax_id
+      - account
+      title: RecipientPix
+      type: object
+    ApiWalletDepositSource:
+      description: A wallet deposit source of an autoramp transaction
+      example:
+        blockchain: Solana
+        deposit_tx_hash: 45E89p7aRyUzsqbqstCkKqxaaeYXgagbq8ccHCZWMRN1E8KAqoEPACDasVjkMMbDJGwrwFHz5RDT67kUN3p5Rk81
+        wallet_address: 7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
+      properties:
+        blockchain:
+          description: The blockchain
+          type: string
+        deposit_tx_hash:
+          description: The deposit transaction hash
+          type: string
+        wallet_address:
+          description: The wallet address
+          type: string
+      required:
+      - wallet_address
+      - blockchain
+      title: ApiWalletDepositSource
+      type: object
+    Amount:
+      description: 'An amount of money
+
+        '
+      example:
+        amount: '100.5'
+        currency:
+          code: USD
+          type: Fiat
+      properties:
+        amount:
+          description: The amount, a decimal number
+          format: decimal
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+      required:
+      - amount
+      - currency
+      title: Amount
+      type: object
+    Recipient:
+      anyOf:
+      - $ref: '#/components/schemas/Recipient_RecipientBankAccount'
+      - $ref: '#/components/schemas/Recipient_RecipientWallet'
+      - $ref: '#/components/schemas/Recipient_RecipientPix'
+      description: 'Recipient
+
+
+        The recipient of the payment
+
+        '
+      discriminator:
+        mapping:
+          BankAccount: '#/components/schemas/Recipient_RecipientBankAccount'
+          Pix: '#/components/schemas/Recipient_RecipientPix'
+          Wallet: '#/components/schemas/Recipient_RecipientWallet'
+        propertyName: type
+      type: object
+    PayoutCryptoTransaction:
+      description: 'Payout Transaction Details
+
+
+        Details about the blockchain transaction used for crypto payouts
+
+        '
+      example:
+        transaction_hash: 5J9qvKhKqYbpjhCkqDnKXSp7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
+      properties:
+        transaction_hash:
+          description: The blockchain transaction hash
+          type: string
+      required:
+      - transaction_hash
+      title: PayoutCryptoTransaction
+      type: object
+    DepositRail_PixDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Pix
+            example: Pix
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixDepositInfo'
+    DepositRail_CryptoWallet:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/CryptoWallet'
+    Currency_Crypto:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Crypto'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    CreateAutorampParameters:
+      description: 'Create Autoramp Parameters
+
+
+        The parameters required to create a autoramp
+
+        '
+      properties:
+        ach_payment_reference:
+          description: reference message attached to outgoing ACH transfers (max 10 chars)
+          maxLength: 10
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        additional_partner_fee_in_bips:
+          deprecated: true
+          description: The additional partner fee in bips. This will be added to the fee. This is deprecated, use the partner fee configs instead.
+          format: decimal
+          type: string
+        batch_payout:
+          description: 'If true, payouts for this autoramp will be batched and sent once per day instead of individually.
+
+            Only supported for fiat destination currencies.'
+          type: boolean
+        customer_id:
+          description: The customer id
+          format: uuid
+          type: string
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        external_id:
+          description: External ID for the autoramp, provided by the partner
+          type: string
+        fee_profile_id:
+          description: The fee profile id to use for the autoramp. If not provided, the default fee profile for the partner will be used.
+          format: uuid
+          type: string
+        fps_payment_reference:
+          description: reference message attached to outgoing FPS transfers (max 18 chars)
+          maxLength: 18
+          minLength: 6
+          pattern: ^[A-Za-z]*$
+          type: string
+        name:
+          description: The name of the autoramp
+          type: string
+        pay_by_reference:
+          default: null
+          description: If true, a payment reference will be generated for the autoramp. Defaults to false if not provided.
+          type: boolean
+        recipient_account:
+          $ref: '#/components/schemas/Account'
+        sepa_payment_reference:
+          description: reference message attached to outgoing SEPA transfers (max 140 chars)
+          maxLength: 140
+          minLength: 6
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        source_currencies:
+          description: The list of source currencies
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+        source_is_third_party:
+          description: 'The source should be third party. E.g. a fiat account that allows
+
+            receiving 3pp payments.'
+          type: boolean
+        swift_payment_reference:
+          description: reference message attached to outgoing SWIFT transfers (max 4 lines, 35 chars per line)
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        wire_message:
+          description: reference message attached to outgoing wire transfers (max 4 lines, 35 chars per line)
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+      required:
+      - source_currencies
+      - destination_currency
+      - recipient_account
+      - customer_id
+      title: CreateAutorampParameters
+      type: object
+    PaymentNetwork:
+      description: 'PaymentNetwork
+
+
+        A payment network
+
+        '
+      enum:
+      - Sepa
+      - Swift
+      - Fps
+      - Chats
+      - Ach
+      - Wire
+      - Rtp
+      - Fednow
+      - Pix
+      - Spei
+      - AfricanBankTransfer
+      - MobileMoney
+      - Chaps
+      type: string
+    PixAccountIdentifier_PixBankDetails:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - BANK_DETAILS
+            example: BANK_DETAILS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixBankDetails'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    DepositRail_WireDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Wire
+            example: Wire
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/WireDepositInfo'
+    WireDepositInfo:
+      example:
+        account_number: '987654321'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+        routing_number:
+          type: string
+      required:
+      - routing_number
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: WireDepositInfo
+      type: object
+    AutorampTransactionStatus:
+      description: 'Autoramp Transaction Status
+
+
+        The status of the autoramp transaction
+
+        '
+      enum:
+      - FundsReviewInProgress
+      - ConversionInProgress
+      - PayoutInProgress
+      - Completed
+      - Failed
+      - RejectedAml
+      - RejectedFraud
+      - RejectedMinAmount
+      type: string
+    PaymentTracking:
+      description: Tracking information for this transactions' payout. Only populated for completed transactions
+      properties:
+        ach_payment_reference:
+          type: string
+        ach_trace_number:
+          type: string
+        fps_payment_reference:
+          type: string
+        imad:
+          type: string
+        omad:
+          type: string
+        sepa_payment_reference:
+          type: string
+        swift_payment_reference:
+          type: string
+        uetr:
+          type: string
+        wire_message:
+          type: string
+      title: PaymentTracking
+      type: object
+    BusinessName:
+      example:
+        name: Aperture Science
+      properties:
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+      required:
+      - name
+      title: BusinessName
+      type: object
+    PixAccountIdentifier_PixPhoneKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - PHONE
+            example: PHONE
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixPhoneKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    PixAccountIdentifier_PixEvpKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - EVP
+            example: EVP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixEvpKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    DepositAccount_AfricanBankTransferDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - AfricanBankTransfer
+            example: AfricanBankTransfer
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/AfricanBankTransferDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    PatchAutorampMarketParameters:
+      description: 'Patch Autoramp Market Parameters
+
+
+        The parameters for patching the autoramp market
+
+        '
+      properties:
+        customer_id:
+          format: uuid
+          type: string
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        fee_profile_id:
+          description: 'Change the fee profile applied to this autoramp. Must be a transactional
+
+            profile of the same partner, eligible for the (post-patch) autoramp shape.
+
+            A change requires 2FA confirmation before it takes effect.'
+          format: uuid
+          type: string
+        recipient_account:
+          $ref: '#/components/schemas/Account'
+      required:
+      - customer_id
+      title: PatchAutorampMarketParameters
+      type: object
+    PixAccountType:
+      description: 'PixAccountType
+
+
+        The type of a Brazilian bank account.'
+      enum:
+      - CHECKING
+      - SAVINGS
+      - SALARY
+      - TRANSACTION
+      type: string
+    AutorampSource:
+      description: 'Autoramp Source
+
+
+        The source of the autoramp'
+      enum:
+      - Standalone
+      - Quote
+      type: string
+    Account:
+      anyOf:
+      - $ref: '#/components/schemas/Account_FiatAccount'
+      - $ref: '#/components/schemas/Account_CryptoWallet'
+      - $ref: '#/components/schemas/Account_PixAccount'
+      description: 'Account
+
+
+        The account for the autoramp
+
+        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Account_CryptoWallet'
+          Fiat: '#/components/schemas/Account_FiatAccount'
+          Pix: '#/components/schemas/Account_PixAccount'
+        propertyName: type
+      type: object
+  parameters:
+    XApiVersion:
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      in: header
+      name: X-API-Version
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    ApiKeyAuth:
+      description: API Key
+      in: header
+      name: X-API-Key
+      type: apiKey
