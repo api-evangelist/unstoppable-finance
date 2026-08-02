@@ -1,0 +1,41 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/unstoppable-finance-iron-openapi-original.yml
+skills:
+- file: unstoppable-finance-onboard-customer-kyc.md
+  name: Onboard a customer and complete KYC
+  api: openapi/unstoppable-finance-iron-openapi-original.yml
+  operations:
+  - createCustomer
+  - createCustomerIdentificationV2
+  - getAllCustomerIdentifications
+  - getCustomerById
+  - getCustomerAbilities
+  - getCustomerRequirements
+  - updateSandboxIdentificationStatus
+- file: unstoppable-finance-create-onramp-autoramp.md
+  name: Create a fiat-to-stablecoin onramp (Autoramp)
+  api: openapi/unstoppable-finance-iron-openapi-original.yml
+  operations:
+  - registerSelfHostedWalletAddress
+  - registerAttestedWalletAddress
+  - registerHostedWallet
+  - searchHostedVasps
+  - getAutorampQuotePreview
+  - createAutoramp
+  - getAutorampById
+  - getAutorampTransactions
+  - createSandboxTransaction
+  - updateSandboxTransactionState
+- file: unstoppable-finance-offramp-to-bank.md
+  name: Offramp stablecoins to a bank account
+  api: openapi/unstoppable-finance-iron-openapi-original.yml
+  operations:
+  - registerFiatAddress
+  - getFiatAddresses
+  - getFiatAddressesByStatus
+  - createAutoramp
+  - getAutorampTransactions
+  - listWebhooks
+  - pingWebhook
+  - updateSandboxFiatAddressVerificationStatus

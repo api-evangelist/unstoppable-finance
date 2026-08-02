@@ -1,0 +1,834 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/unstoppable-finance-iron-openapi-original.yml
+format: plain
+notes: Derived from the Iron API OpenAPI 4xx/5xx responses. Error bodies are plain text/JSON (no RFC 9457 application/problem+json).
+  401 returns a plain-text authorization error; 429 signals rate limiting with exponential backoff recommended.
+problems:
+- status: 400
+  title: Bad request
+  description: null
+  operations: 3
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createSandboxTransaction
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxTransactionState
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAllCurrentTermsAndConditions
+- status: 400
+  title: Bad request
+  description: Archive Customer Failed (Bad Request)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#archiveCustomer
+- status: 400
+  title: Bad request
+  description: Bad Request
+  operations: 13
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampTransactions
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampTransactionsByIds
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createAutoramp
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampOpenBankingPayment
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampQuote
+- status: 400
+  title: Bad request
+  description: Bad request (e.g. invalid data)
+  operations: 4
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerHostedWallet
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerPixAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateWebhook
+- status: 400
+  title: Bad request
+  description: Bad request (e.g. query too short)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#searchHostedVasps
+- status: 400
+  title: Bad request
+  description: GET Addresses Failed (Bad Request)
+  operations: 3
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddressesByStatus
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddresses
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getPixAddresses
+- status: 400
+  title: Bad request
+  description: GET Wallets Failed (Bad Request)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getWalletAddresses
+- status: 400
+  title: Bad request
+  description: POST Customer Failed (Bad Request)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomer
+- status: 400
+  title: Bad request
+  description: POST Customer Identification Failed (Invalid Request)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerIdentificationV2
+- status: 400
+  title: Bad request
+  description: POST Self-Attested Wallet Failed (Bad Request)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerAttestedWalletAddress
+- status: 400
+  title: Bad request
+  description: POST Self-Hosted Wallet Failed (Bad Request)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerSelfHostedWalletAddress
+- status: 400
+  title: Bad request
+  description: PUT Customer Failed (Bad Request)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateCustomer
+- status: 400
+  title: Bad request
+  description: PUT Disabled Status Failed (Bad Request)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateDisabledStatus
+- status: 400
+  title: Bad request
+  description: The bad request response
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getExchangeRate
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: null
+  operations: 6
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#listAutorampOpenBankingPayments
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxIdentificationStatus
+  - openapi/unstoppable-finance-iron-openapi-original.yml#resetSandbox
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createSandboxTransaction
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxTransactionState
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: Archive Customer Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#archiveCustomer
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: Archive Identification Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#archiveIdentification
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET ALL Customer Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAllCustomers
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET ALL Identification Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAllCustomerIdentifications
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Addresses Failed (Unauthorized)
+  operations: 3
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddressesByStatus
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddresses
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getPixAddresses
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Authentication Code Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getPendingAuthenticationCode
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Compliance Question Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationComplianceQuestionnaire
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Customer Abilities Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerAbilities
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Customer Failed (Unauthorized)
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerByExternalId
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerById
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Customer Requirements Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequirements
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Customer Spending Limit Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerSpendingLimit
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Fee Profiles Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFeeProfiles
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Identification Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationById
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Microdeposits Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerMicrodeposits
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Required Signings Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequiredSignings
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Signings Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getSignings
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET Wallets Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getWalletAddresses
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET crypto currencies failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#listCryptoCurrencies
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: GET fiat currencies failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#listFiatCurrencies
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: POST Customer Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomer
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: POST Customer Identification Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerIdentificationV2
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: POST Self-Attested Wallet Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerAttestedWalletAddress
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: POST Self-Hosted Wallet Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerSelfHostedWalletAddress
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: POST Signing Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerSigning
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: PUT Authentication Code Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#submitAuthenticationCode
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: PUT Customer Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateCustomer
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: PUT Disabled Status Failed (Unauthorized)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateDisabledStatus
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: The unauthorized response
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getExchangeRate
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: Unauthorized
+  operations: 25
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#deleteFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#retryFiatAddressAuth
+  - openapi/unstoppable-finance-iron-openapi-original.yml#deletePixAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampTransactions
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampTransactionsByIds
+- status: 401
+  title: Unauthorized - missing, invalid, or revoked X-API-Key
+  description: Unauthorized (e.g. customer does not belong to partner)
+  operations: 3
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerHostedWallet
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerPixAddress
+- status: 403
+  title: Forbidden
+  description: Forbidden
+  operations: 4
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutoramps
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampQuote
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampQuotePreview
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampRateQuote
+- status: 403
+  title: Forbidden
+  description: Forbidden (e.g. customer is suspended)
+  operations: 8
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#deleteFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerPixAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#deletePixAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createAutoramp
+- status: 403
+  title: Forbidden
+  description: GET Identification Failed (Forbidden)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationById
+- status: 403
+  title: Forbidden
+  description: GET Required Signings Failed (Forbidden)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequiredSignings
+- status: 403
+  title: Forbidden
+  description: POST Customer Identification Failed (Forbidden)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerIdentificationV2
+- status: 403
+  title: Forbidden
+  description: POST Self-Attested Wallet Failed (Forbidden - e.g. region not supported, customer suspended)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerAttestedWalletAddress
+- status: 403
+  title: Forbidden
+  description: POST Self-Hosted Wallet Failed (Forbidden - e.g. customer is suspended)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerSelfHostedWalletAddress
+- status: 403
+  title: Forbidden
+  description: POST Signing Failed (Forbidden)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerSigning
+- status: 403
+  title: Forbidden
+  description: Update Address Failed (Forbidden)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxFiatAddressVerificationStatus
+- status: 404
+  title: Not found
+  description: null
+  operations: 5
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#listAutorampOpenBankingPayments
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxIdentificationStatus
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createSandboxTransaction
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxTransactionState
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAllCurrentTermsAndConditions
+- status: 404
+  title: Not found
+  description: Archive Identification Failed (ResourceNotFound)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#archiveIdentification
+- status: 404
+  title: Not found
+  description: Country not found or has no subdivisions
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCountrySubdivisions
+- status: 404
+  title: Not found
+  description: GET ALL Identification Failed (Resource Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAllCustomerIdentifications
+- status: 404
+  title: Not found
+  description: GET Address Failed (Not Found)
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getPixAddress
+- status: 404
+  title: Not found
+  description: GET Addresses Failed (Not Found)
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddressesByStatus
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddresses
+- status: 404
+  title: Not found
+  description: GET Authentication Code Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getPendingAuthenticationCode
+- status: 404
+  title: Not found
+  description: GET Compliance Question Failed (Resource Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationComplianceQuestionnaire
+- status: 404
+  title: Not found
+  description: GET Customer Abilities Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerAbilities
+- status: 404
+  title: Not found
+  description: GET Customer Failed (Resource Not Found)
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerByExternalId
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerById
+- status: 404
+  title: Not found
+  description: GET Customer Requirements Failed (Resource Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequirements
+- status: 404
+  title: Not found
+  description: GET Customer Spending Limit Failed (Resource Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerSpendingLimit
+- status: 404
+  title: Not found
+  description: GET Identification Failed (ResourceNotFound)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationById
+- status: 404
+  title: Not found
+  description: GET Microdeposits Failed (Resource Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerMicrodeposits
+- status: 404
+  title: Not found
+  description: GET Required Signings Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequiredSignings
+- status: 404
+  title: Not found
+  description: GET Signings Resource Not found
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getSignings
+- status: 404
+  title: Not found
+  description: Get Fee Profiles Not Found
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFeeProfiles
+- status: 404
+  title: Not found
+  description: Not Found
+  operations: 22
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#deleteFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#retryFiatAddressAuth
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerPixAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#deletePixAddress
+- status: 404
+  title: Not found
+  description: POST Customer Identification Failed (Resource Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerIdentificationV2
+- status: 404
+  title: Not found
+  description: POST Self-Attested Wallet Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerAttestedWalletAddress
+- status: 404
+  title: Not found
+  description: POST Self-Hosted Wallet Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerSelfHostedWalletAddress
+- status: 404
+  title: Not found
+  description: POST Signing Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerSigning
+- status: 404
+  title: Not found
+  description: PUT Authentication Code Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#submitAuthenticationCode
+- status: 404
+  title: Not found
+  description: PUT Disabled Status Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateDisabledStatus
+- status: 404
+  title: Not found
+  description: The not found response
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getExchangeRate
+- status: 404
+  title: Not found
+  description: Update Address Failed (Not Found)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxFiatAddressVerificationStatus
+- status: 404
+  title: Not found
+  description: Webhook not found
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#pingWebhook
+- status: 409
+  title: Conflict
+  description: Conflict (e.g. address already exists for this customer)
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerPixAddress
+- status: 409
+  title: Conflict
+  description: Conflict (e.g. quote already attached)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#attachQuoteToAutoramp
+- status: 409
+  title: Conflict
+  description: Conflict - Address already exists
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerHostedWallet
+- status: 409
+  title: Conflict
+  description: GET Required Signings Failed (Conflict)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequiredSignings
+- status: 409
+  title: Conflict
+  description: POST Customer Idenfication Failed (Has Pending Identification)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerIdentificationV2
+- status: 409
+  title: Conflict
+  description: POST Self-Attested Wallet Failed (Conflict - Address Already Exists)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerAttestedWalletAddress
+- status: 409
+  title: Conflict
+  description: POST Self-Hosted Wallet Failed (Conflict - Address Already Exists)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerSelfHostedWalletAddress
+- status: 422
+  title: Unprocessable entity
+  description: POST Signing Failed (Validation Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerSigning
+- status: 422
+  title: Unprocessable entity
+  description: Unprocessable Content
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createAutoramp
+- status: 422
+  title: Unprocessable entity
+  description: Unprocessable Entity (e.g. customer does not have access to this rail)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerFiatAddress
+- status: 429
+  title: Rate limit exceeded - retry with exponential backoff
+  description: POST Customer Identification Failed (Creation Rate Limit Exceeded)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerIdentificationV2
+- status: 500
+  title: Internal server error
+  description: null
+  operations: 7
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#listAutorampOpenBankingPayments
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxFiatAddressVerificationStatus
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxIdentificationStatus
+  - openapi/unstoppable-finance-iron-openapi-original.yml#resetSandbox
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createSandboxTransaction
+- status: 500
+  title: Internal server error
+  description: Archive Customer Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#archiveCustomer
+- status: 500
+  title: Internal server error
+  description: Archive Identification Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#archiveIdentification
+- status: 500
+  title: Internal server error
+  description: Delete Address Failed (Internal Server Error)
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#deleteFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#deletePixAddress
+- status: 500
+  title: Internal server error
+  description: Failed to list webhooks
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#listWebhooks
+- status: 500
+  title: Internal server error
+  description: Failed to register the address
+  operations: 3
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerHostedWallet
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerPixAddress
+- status: 500
+  title: Internal server error
+  description: Failed to update the webhook
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateWebhook
+- status: 500
+  title: Internal server error
+  description: GET ALL Customer Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAllCustomers
+- status: 500
+  title: Internal server error
+  description: GET ALL Identification Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAllCustomerIdentifications
+- status: 500
+  title: Internal server error
+  description: GET Address Failed (Internal Server Error)
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddress
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getPixAddress
+- status: 500
+  title: Internal server error
+  description: GET Addresses Failed (Internal Error)
+  operations: 3
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddressesByStatus
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddresses
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getPixAddresses
+- status: 500
+  title: Internal server error
+  description: GET Authentication Code Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getPendingAuthenticationCode
+- status: 500
+  title: Internal server error
+  description: GET Compliance Question Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationComplianceQuestionnaire
+- status: 500
+  title: Internal server error
+  description: GET Customer Abilities Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerAbilities
+- status: 500
+  title: Internal server error
+  description: GET Customer Failed (Internal Error)
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerByExternalId
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerById
+- status: 500
+  title: Internal server error
+  description: GET Customer Requirements Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequirements
+- status: 500
+  title: Internal server error
+  description: GET Customer Spending Limit Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerSpendingLimit
+- status: 500
+  title: Internal server error
+  description: GET Fee Profiles Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getFeeProfiles
+- status: 500
+  title: Internal server error
+  description: GET Identification Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationById
+- status: 500
+  title: Internal server error
+  description: GET Microdeposits Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerMicrodeposits
+- status: 500
+  title: Internal server error
+  description: GET Required Signings Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequiredSignings
+- status: 500
+  title: Internal server error
+  description: GET Signings Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getSignings
+- status: 500
+  title: Internal server error
+  description: GET Wallets Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getWalletAddresses
+- status: 500
+  title: Internal server error
+  description: GET crypto currencies failed (Internal Server Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#listCryptoCurrencies
+- status: 500
+  title: Internal server error
+  description: Internal Error
+  operations: 18
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampTransactions
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampTransactionsByIds
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getAutoramps
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createAutoramp
+  - openapi/unstoppable-finance-iron-openapi-original.yml#checkAutorampLimit
+- status: 500
+  title: Internal server error
+  description: Internal server error
+  operations: 2
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#searchHostedVasps
+  - openapi/unstoppable-finance-iron-openapi-original.yml#pingWebhook
+- status: 500
+  title: Internal server error
+  description: POST Customer Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomer
+- status: 500
+  title: Internal server error
+  description: POST Customer Identification Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerIdentificationV2
+- status: 500
+  title: Internal server error
+  description: POST Self-Attested Wallet Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerAttestedWalletAddress
+- status: 500
+  title: Internal server error
+  description: POST Self-Hosted Wallet Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#registerSelfHostedWalletAddress
+- status: 500
+  title: Internal server error
+  description: POST Signing Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerSigning
+- status: 500
+  title: Internal server error
+  description: PUT Authentication Code Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#submitAuthenticationCode
+- status: 500
+  title: Internal server error
+  description: PUT Customer Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateCustomer
+- status: 500
+  title: Internal server error
+  description: PUT Disabled Status Failed (Internal Error)
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#updateDisabledStatus
+- status: 500
+  title: Internal server error
+  description: The internal server error response
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#getExchangeRate
+- status: 503
+  title: Service unavailable
+  description: VASP search unavailable
+  operations: 1
+  source_operations:
+  - openapi/unstoppable-finance-iron-openapi-original.yml#searchHostedVasps

@@ -1,0 +1,217 @@
+generated: '2026-07-21'
+method: derived
+status: candidate
+source: openapi/unstoppable-finance-iron-openapi-original.yml
+server:
+  name: unstoppable-finance-iron
+  transport: http
+notes: No official Iron MCP server found published. Candidate tool list derived from the Iron API OpenAPI operations. Iron
+  is accessible to agents today via the MoonPay CLI (mp).
+tools:
+- name: registerAttestedWalletAddress
+  description: Register a self-attested wallet address
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#registerAttestedWalletAddress
+- name: registerHostedWallet
+  description: Register a hosted wallet address
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#registerHostedWallet
+- name: searchHostedVasps
+  description: Search hosted wallet providers (VASPs)
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#searchHostedVasps
+- name: registerSelfHostedWalletAddress
+  description: Register a self-hosted wallet address
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#registerSelfHostedWalletAddress
+- name: getWalletAddresses
+  description: Get all registered wallet addresses
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getWalletAddresses
+- name: updateDisabledStatus
+  description: Update the disabled status of a verified crypto address
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#updateDisabledStatus
+- name: getFiatAddressesByStatus
+  description: Get all fiat addresses with status
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddressesByStatus
+- name: registerFiatAddress
+  description: Register a fiat bank account for a customer.
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#registerFiatAddress
+- name: getFiatAddresses
+  description: Get all fiat addresses / bank accounts
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddresses
+- name: deleteFiatAddress
+  description: Delete a fiat address
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#deleteFiatAddress
+- name: getFiatAddress
+  description: Get a specific fiat address
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getFiatAddress
+- name: retryFiatAddressAuth
+  description: Retry Authentication
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#retryFiatAddressAuth
+- name: registerPixAddress
+  description: Register a PIX destination for a customer.
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#registerPixAddress
+- name: getPixAddresses
+  description: Get a customer's PIX destinations.
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getPixAddresses
+- name: deletePixAddress
+  description: Delete a PIX destination.
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#deletePixAddress
+- name: getPixAddress
+  description: Get a specific PIX destination by ID.
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getPixAddress
+- name: getPendingAuthenticationCode
+  description: Get the pending authentication code for an entity
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getPendingAuthenticationCode
+- name: submitAuthenticationCode
+  description: Submit an authentication code
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#submitAuthenticationCode
+- name: getAutorampTransactions
+  description: List autoramp transactions
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampTransactions
+- name: getAutorampTransactionsByIds
+  description: Get autoramp transactions by transaction IDs
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampTransactionsByIds
+- name: getAutoramps
+  description: List Autoramps for a Customer
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutoramps
+- name: createAutoramp
+  description: Create a new Autoramp
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#createAutoramp
+- name: checkAutorampLimit
+  description: Check if a customer can create more autoramps
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#checkAutorampLimit
+- name: getAutorampOpenBankingPayment
+  description: Get the autoramp open banking payment for existing payment
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampOpenBankingPayment
+- name: getAutorampQuote
+  description: Get a quote for an autoramp
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampQuote
+- name: getAutorampQuotePreview
+  description: Get autoramp quote preview
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampQuotePreview
+- name: cancelAutoramp
+  description: Cancel an Autoramp
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#cancelAutoramp
+- name: getAutorampById
+  description: Get an Autoramp by ID
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampById
+- name: patchAutorampMarketById
+  description: Patch an autoramp market
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#patchAutorampMarketById
+- name: listAutorampOpenBankingPayments
+  description: List open banking payments for an autoramp
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#listAutorampOpenBankingPayments
+- name: createAutorampOpenBankingPayment
+  description: Create an open banking payment link
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#createAutorampOpenBankingPayment
+- name: getAutorampRateQuote
+  description: Get a rate quote for an existing autoramp
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampRateQuote
+- name: attachQuoteToAutoramp
+  description: Attach a quote to an existing autoramp
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#attachQuoteToAutoramp
+- name: retryAutorampAuth
+  description: Retry authentication
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#retryAutorampAuth
+- name: getAutorampByExternalId
+  description: Get an Autoramp by external ID
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAutorampByExternalId
+- name: getCountrySubdivisions
+  description: Get country subdivisions
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getCountrySubdivisions
+- name: listCryptoCurrencies
+  description: List all available crypto currencies
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#listCryptoCurrencies
+- name: getAllCustomers
+  description: Get all Customers
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAllCustomers
+- name: createCustomer
+  description: Create a new customer
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#createCustomer
+- name: getCustomerByExternalId
+  description: Get a customer by external ID
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerByExternalId
+- name: getCustomerById
+  description: Get a customer by ID
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerById
+- name: updateCustomer
+  description: Update a customer
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#updateCustomer
+- name: getCustomerAbilities
+  description: Get customer abilities
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerAbilities
+- name: archiveCustomer
+  description: Archive a customer
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#archiveCustomer
+- name: getAllCustomerIdentifications
+  description: Get all customer Identifications
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAllCustomerIdentifications
+- name: createCustomerIdentificationV2
+  description: Create Customer Identification V2
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerIdentificationV2
+- name: getCustomerMicrodeposits
+  description: Get customer microdeposits
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerMicrodeposits
+- name: getCustomerRequiredSignings
+  description: Get customer required signings
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequiredSignings
+- name: getCustomerRequirements
+  description: Get customer requirements
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerRequirements
+- name: getSignings
+  description: Get all customer Signings
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getSignings
+- name: createCustomerSigning
+  description: Create a new Customer signing
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#createCustomerSigning
+- name: getCustomerSpendingLimit
+  description: Get customer spending limit usage
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getCustomerSpendingLimit
+- name: getExchangeRate
+  description: Get exchange rate
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getExchangeRate
+- name: getFeeProfiles
+  description: Get Fee Profile of Partner
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getFeeProfiles
+- name: createFeeProfile
+  description: Create Fee Profile
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#createFeeProfile
+- name: listFiatCurrencies
+  description: List all available fiat currencies
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#listFiatCurrencies
+- name: getIdentificationById
+  description: Get an Identification by ID
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationById
+- name: archiveIdentification
+  description: Archive an identification
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#archiveIdentification
+- name: getIdentificationComplianceQuestionnaire
+  description: Fetch identification compliance questionnaire
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getIdentificationComplianceQuestionnaire
+- name: updateSandboxAutorampStatus
+  description: Update autoramp status
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxAutorampStatus
+- name: updateSandboxFiatAddressVerificationStatus
+  description: Update fiat address verification status
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxFiatAddressVerificationStatus
+- name: updateSandboxIdentificationStatus
+  description: Update pending Identification status
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxIdentificationStatus
+- name: resetSandbox
+  description: Reset sandbox environment
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#resetSandbox
+- name: createSandboxTransaction
+  description: Mock a transaction
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#createSandboxTransaction
+- name: updateSandboxTransactionState
+  description: Update sandbox transaction state
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#updateSandboxTransactionState
+- name: getAllCurrentTermsAndConditions
+  description: Get all current terms and conditions
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#getAllCurrentTermsAndConditions
+- name: listWebhooks
+  description: List all webhooks
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#listWebhooks
+- name: updateWebhook
+  description: Update a webhook
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#updateWebhook
+- name: pingWebhook
+  description: Ping webhook
+  source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#pingWebhook

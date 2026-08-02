@@ -1,0 +1,81 @@
+# Iron
+
+> Iron is a set of Stablecoin APIs for on-chain banking, payments, money transfers, and treasury management. Fiat-to-stablecoin and stablecoin-to-fiat infrastructure for businesses. Iron runs several banking partners in the background, providing redundancy and fallback if a bank cannot process a customer or an industry. A customer onboarded with a banking partner always keeps their named account. Iron is a MoonPay company.
+
+- **Authentication**: All API requests require a valid API key included in the `X-API-Key` header. Keys are created and managed in the Partner Dashboard under Developer → API Keys.
+- **Rate Limits**: Iron implements per-API-key rate limits and infrastructure-level protections. Exceeding limits returns HTTP 429. Use exponential backoff for retries. Contact support for high-volume needs.
+- **Environments**: Two environments are available — Sandbox (`api.sandbox.iron.xyz`) for testing and Production (`api.iron.xyz`) for live operations.
+- **Idempotency**: Certain API endpoints require an `IDEMPOTENCY-KEY` header with a unique UUID to prevent duplicate processing. Applicable endpoints are marked in the API documentation.
+
+## Authentication & Setup
+
+- [Introduction](https://docs.iron.xyz/overview.md): Iron developer portal landing page. Overview of products (Onramp, Offramp, Swap, Virtual Accounts, Issuance) and how to start integrating. Several banking partners in the background provide redundancy and fallback.
+- [Authentication](https://docs.iron.xyz/authentication.md): Authenticate Iron API requests using the X-API-Key header. Includes example requests, 401 error handling, and common troubleshooting steps.
+- [API Access](https://docs.iron.xyz/api-access.md): Obtain and manage API keys for authenticating with the Iron API. Covers Sandbox and Production environments, key creation, and permissions.
+- [Sandbox](https://docs.iron.xyz/sandbox.md): Test your Iron integration against api.sandbox.iron.xyz. Covers sandbox access, differences from production, and simulating transactions.
+- [Idempotency](https://docs.iron.xyz/idempotency.md): Use the IDEMPOTENCY-KEY header to ensure write operations are processed only once. Prevents duplicate resource creation from retried requests.
+- [CLI](https://docs.iron.xyz/cli.md): Access Iron via the MoonPay CLI (mp). Manage virtual accounts, onramps, KYC verification, wallets, and more from the terminal.
+- [Partner Dashboard](https://docs.iron.xyz/partner-dashboard.md): Web UI for managing partners, customers, API keys, webhooks, autoramps, and compliance workflows at app.iron.xyz.
+
+## Core API (Autoramp)
+
+- [Autoramp](https://docs.iron.xyz/autoramp.md): Create standing conversion rules between fiat, crypto, and cross-chain assets. The core primitive powering onramp, offramp, and swap flows.
+- [Autoramp Status](https://docs.iron.xyz/autoramp-status.md): Interpret autoramp lifecycle statuses: Created, Authorized, Approved, Rejected, Cancelled.
+- [Quotes](https://docs.iron.xyz/quotes.md): Lock an exchange rate before creating an Autoramp. Covers rate locks, expiry, slippage tolerance, and exact-in/exact-out semantics.
+- [Transaction Status](https://docs.iron.xyz/transaction-status.md): Track transaction lifecycle from FundsReviewInProgress through Completed or Failed.
+- [Limits and Minimums](https://docs.iron.xyz/limits-and-minimum.md): Transaction spending limits and minimum amounts per risk tier. Covers annual limits, verification requirements, and minimum transaction sizes.
+
+## Tutorials
+
+- [Onramp](https://docs.iron.xyz/onramp.md): Convert fiat to stablecoins via virtual IBANs tied to autoramp rules. Includes API request/response examples for EUR to USDC flows.
+- [Offramp](https://docs.iron.xyz/offramp.md): Convert stablecoins to fiat by setting up autoramp rules that offramp crypto received at a deposit address to a registered bank account.
+- [Swap](https://docs.iron.xyz/swap.md): Swap one stablecoin for another across chains using autoramp rules. Examples: USDC on Solana to EURC on Ethereum, USDT to USDC.
+- [Virtual Accounts](https://docs.iron.xyz/account.md): Create named virtual bank accounts in USD, EUR, and GBP. Incoming funds auto-mint to stablecoins and deliver to self-custodial wallets.
+
+## Issuance
+
+- [Create your Stablecoin](https://docs.iron.xyz/issuance/create-your-stablecoin.md): Launch, manage, and scale your own stablecoin with a fully regulated US issuer.
+
+## Onboarding & Compliance
+
+- [Onboarding Lifecycle](https://docs.iron.xyz/onboarding.md): End-to-end onboarding flow for partners and customers. Covers customer creation, identification, status tracking, and activation.
+- [Roles & Entities](https://docs.iron.xyz/roles-entities.md): Organizational roles and entity types within Iron. Covers partners, customers, users, and their relationships and permissions.
+- [Individual KYC](https://docs.iron.xyz/kyc.md): KYC requirements for onboarding individual customers. Covers standard, enhanced, and high-risk verification tiers with required documents.
+- [Business KYB](https://docs.iron.xyz/kyb.md): Onboard business customers using Iron's hosted Link flow or the programmatic Business API.
+- [Hosted Identification](https://docs.iron.xyz/hosted.md): The simplest identification method. Create an identification with type Link and receive a URL to pass to your customer for completing verification.
+- [Outsourcing Identification](https://docs.iron.xyz/outsourcing.md): Provide identification data on your customers directly to Iron's API instead of using our verification providers.
+- [SumSub Token Sharing](https://docs.iron.xyz/reliance-kyc-token-sharing.md): Share existing SumSub KYC data with Iron to onboard verified applicants in seconds.
+- [Proof of Address](https://docs.iron.xyz/proof-of-address.md): When proof of address (POA) is required, accepted documents, and criteria. All documents must be under 3 months old; IDs are not accepted for proof of address.
+- [Source of Wealth](https://docs.iron.xyz/source-of-wealth.md): When source of wealth (SOW) is required for Tier 2 and EDD, accepted documents by source, and validity windows.
+- [2FA](https://docs.iron.xyz/2fa.md): Email-based two-factor authentication for sensitive operations like autoramp creation, fiat address registration, and customer actions.
+
+## Addresses & Travel Rule
+
+- [Crypto Addresses](https://docs.iron.xyz/crypto-addresses.md): Register wallet addresses for Travel Rule compliance before using them in any Autoramp flow. Supports self-hosted and hosted wallets.
+- [Fiat Addresses](https://docs.iron.xyz/fiat-addresses.md): Register and manage bank accounts for payouts. Supports multiple payment rails including SEPA, ACH, Wire, and SWIFT.
+- [Travel Rule](https://docs.iron.xyz/travel-rule.md): Overview of the Travel Rule, when it applies, and steps to ensure compliance for crypto transfers.
+
+## Webhooks & Events
+
+- [Webhooks](https://docs.iron.xyz/webhooks.md): Subscribe to event notifications for transactions, autoramp status, customer status, and identification changes. HMAC-SHA256 signature verification following the Standard Webhooks spec.
+
+## Billing & Settlement
+
+- [Fees and Invoices](https://docs.iron.xyz/fees-and-invoices.md): Fee structures for Iron transactions including transaction fees, banking fees, and network fees. Covers fee profiles and invoicing.
+- [End of Day Settlement](https://docs.iron.xyz/end-of-day-settlement.md): Batch fiat payouts into a single daily settlement instead of paying out each transaction individually.
+
+## Coverage & Supported Assets
+
+- [Countries](https://docs.iron.xyz/country.md): Supported onboarding countries organized by risk tier. Covers OFAC restrictions, country risk ratings, and virtual account eligibility.
+- [Currencies](https://docs.iron.xyz/currencies.md): Supported currencies and their availability for onramp, offramp, and swap transactions.
+- [Blockchains](https://docs.iron.xyz/stablecoins-and-blockchains.md): Supported blockchains and stablecoins including Ethereum, Solana, Arbitrum, Base, Polygon, and tokens like USDC, USDT, EURC.
+- [Payment Methods](https://docs.iron.xyz/fiat-payment-methods.md): Supported payment rails and virtual accounts including SEPA, ACH, Wire, and SWIFT. Several banking partners in the background provide redundancy and fallback.
+- [Integration Models](https://docs.iron.xyz/integration-models.md): Iron supports B2B, B2B2B, and B2B2C setups. Integrate via API, the Partner Dashboard, or offer Iron App as a whitelabel frontend.
+
+## API Reference
+
+- [OpenAPI Specification (YAML)](https://docs.iron.xyz/spec.yaml): Full Iron API OpenAPI 3.1.0 specification — all endpoints, schemas, and authentication.
+
+## Support
+
+- [Support](https://docs.iron.xyz/support.md): Contact information, support channels, and how to get help with Iron integration.

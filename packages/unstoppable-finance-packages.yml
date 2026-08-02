@@ -1,0 +1,15 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.iron.xyz/cli
+notes: No first-party language SDKs published for the Iron API (REST + docs only). The MoonPay CLI (mp) is the official
+  first-party tooling; npm registry checked 2026-07-21 (latest 1.92.1). npm/PyPI/Maven/NuGet/RubyGems searched for
+  iron.xyz-specific client libraries - none found.
+packages:
+- language: javascript
+  registry: npm
+  name: '@moonpay/cli'
+  kind: cli
+  url: https://www.npmjs.com/package/@moonpay/cli
+  install: npm install -g @moonpay/cli
+  official: true
+  description: MoonPay CLI (mp) - unified CLI for MoonPay products including Iron.

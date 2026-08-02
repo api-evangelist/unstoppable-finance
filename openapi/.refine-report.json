@@ -1,0 +1,30 @@
+{
+  "provider": "unstoppable-finance",
+  "sources": [
+    "unstoppable-finance-addresses-api-openapi.yml",
+    "unstoppable-finance-autoramp-api-openapi.yml",
+    "unstoppable-finance-currencies-api-openapi.yml",
+    "unstoppable-finance-customer-api-openapi.yml",
+    "unstoppable-finance-exchangerate-api-openapi.yml",
+    "unstoppable-finance-feeprofiles-api-openapi.yml",
+    "unstoppable-finance-sandbox-api-openapi.yml",
+    "unstoppable-finance-termsandconditions-api-openapi.yml",
+    "unstoppable-finance-webhooks-api-openapi.yml"
+  ],
+  "outputs": [
+    "unstoppable-finance-addresses-api-openapi.yml",
+    "unstoppable-finance-autoramp-api-openapi.yml",
+    "unstoppable-finance-currencies-api-openapi.yml",
+    "unstoppable-finance-customer-api-openapi.yml",
+    "unstoppable-finance-exchangerate-api-openapi.yml",
+    "unstoppable-finance-feeprofiles-api-openapi.yml",
+    "unstoppable-finance-sandbox-api-openapi.yml",
+    "unstoppable-finance-termsandconditions-api-openapi.yml",
+    "unstoppable-finance-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

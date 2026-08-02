@@ -1,0 +1,362 @@
+{
+  "info": {
+    "_postman_id": "4e1d7769-1556-47d9-bc9c-8d04ac436a83",
+    "name": "Iron API - Sandbox Addresses TermsAndConditions API",
+    "description": "The Stablecoin Payment Network",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T03:23:54.000Z",
+    "updatedAt": "2026-07-28T03:23:54.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-4e1d7769-1556-47d9-bc9c-8d04ac436a83"
+  },
+  "item": [
+    {
+      "name": "terms-and-conditions",
+      "item": [
+        {
+          "name": "Get all current terms and conditions",
+          "id": "33f42067-77f8-4cee-9c45-5c1293ea4a9b",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/terms-and-conditions?country=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terms-and-conditions"
+              ],
+              "query": [
+                {
+                  "description": "(Required) ",
+                  "key": "country",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "description": "Retrieve all latest terms and conditions signings are required for a specific country\n"
+          },
+          "response": [
+            {
+              "id": "f4b08cd7-dd29-4133-b869-bdd1453d9a5b",
+              "name": "New Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/terms-and-conditions?country=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "terms-and-conditions"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) ",
+                      "key": "country",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "[\n  {\n    \"id\": \"<uuid>\",\n    \"url\": \"<string>\",\n    \"display_name\": \"<string>\"\n  },\n  {\n    \"id\": \"<uuid>\",\n    \"url\": \"<string>\",\n    \"display_name\": \"<string>\"\n  }\n]",
+              "createdAt": "2026-07-28T03:23:54.000Z",
+              "updatedAt": "2026-07-28T03:23:54.000Z",
+              "uid": "35240-f4b08cd7-dd29-4133-b869-bdd1453d9a5b"
+            },
+            {
+              "id": "da99bd2e-56d5-44e9-8c97-7c93bbdc5ec1",
+              "name": "New Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/terms-and-conditions?country=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "terms-and-conditions"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) ",
+                      "key": "country",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "<string>",
+              "createdAt": "2026-07-28T03:23:54.000Z",
+              "updatedAt": "2026-07-28T03:23:54.000Z",
+              "uid": "35240-da99bd2e-56d5-44e9-8c97-7c93bbdc5ec1"
+            },
+            {
+              "id": "41c6fb85-4a2d-4d37-b773-a5a74e12ecb0",
+              "name": "New Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/terms-and-conditions?country=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "terms-and-conditions"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) ",
+                      "key": "country",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "<string>",
+              "createdAt": "2026-07-28T03:23:54.000Z",
+              "updatedAt": "2026-07-28T03:23:54.000Z",
+              "uid": "35240-41c6fb85-4a2d-4d37-b773-a5a74e12ecb0"
+            },
+            {
+              "id": "7f0d6b90-35f4-4cc9-ac03-510a6766209d",
+              "name": "New Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/terms-and-conditions?country=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "terms-and-conditions"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) ",
+                      "key": "country",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "<string>",
+              "createdAt": "2026-07-28T03:23:54.000Z",
+              "updatedAt": "2026-07-28T03:23:54.000Z",
+              "uid": "35240-7f0d6b90-35f4-4cc9-ac03-510a6766209d"
+            },
+            {
+              "id": "69e9a68a-6492-4604-8d5c-b743f09c5c7e",
+              "name": "New Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: apikey",
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/terms-and-conditions?country=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "terms-and-conditions"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) ",
+                      "key": "country",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "<string>",
+              "createdAt": "2026-07-28T03:23:54.000Z",
+              "updatedAt": "2026-07-28T03:23:54.000Z",
+              "uid": "35240-69e9a68a-6492-4604-8d5c-b743f09c5c7e"
+            }
+          ],
+          "createdAt": "2026-07-28T03:23:54.000Z",
+          "updatedAt": "2026-07-28T03:23:54.000Z",
+          "uid": "35240-33f42067-77f8-4cee-9c45-5c1293ea4a9b"
+        }
+      ],
+      "id": "e4996fd2-e583-4dc4-af54-79a35c44414e",
+      "createdAt": "2026-07-28T03:23:54.000Z",
+      "updatedAt": "2026-07-28T03:23:54.000Z",
+      "uid": "35240-e4996fd2-e583-4dc4-af54-79a35c44414e"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.sandbox.iron.xyz/api"
+    }
+  ]
+}

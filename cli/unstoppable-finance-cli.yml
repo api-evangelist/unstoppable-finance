@@ -1,0 +1,48 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.iron.xyz/cli
+name: MoonPay CLI
+binary: mp
+official: true
+description: Iron is accessed through the unified MoonPay CLI (mp) - "MoonPay CLI - how agents move money". Provides
+  terminal access to virtual accounts, fiat-to-stablecoin onramps, KYC verification, and local wallet management.
+install:
+- method: npm
+  command: npm install -g @moonpay/cli
+auth:
+  flow: email verification code
+  commands:
+  - mp login --email <email>
+  - mp verify --email <email> --code <code>
+  - mp user retrieve
+  - mp logout
+command_groups:
+- group: wallet
+  description: Local HD wallets (Solana, Ethereum, Tron); private keys AES-256-GCM encrypted with OS-keychain key
+  commands:
+  - mp wallet create --name <name>
+  - mp wallet import --name <name> --mnemonic|--key
+  - mp wallet list
+  - mp wallet retrieve --wallet <name>
+  - mp wallet delete --wallet <name> --confirm
+- group: virtual-account
+  description: Virtual accounts, KYC, agreements, wallet registration
+  commands:
+  - mp virtual-account create
+  - mp virtual-account kyc continue
+  - mp virtual-account kyc restart
+  - mp virtual-account retrieve
+  - mp virtual-account agreement list
+  - mp virtual-account agreement accept --contentId <id>
+  - mp virtual-account wallet register --wallet <name> --chain <chain>
+  - mp virtual-account wallet list
+- group: virtual-account onramp
+  description: Fiat-to-stablecoin onramps and open-banking funding
+  commands:
+  - mp virtual-account onramp create
+  - mp virtual-account onramp retrieve --onrampId <id>
+  - mp virtual-account onramp list --status <status>
+  - mp virtual-account onramp delete --onrampId <id>
+  - mp virtual-account onramp payment create
+  - mp virtual-account onramp payment retrieve
+package: packages/unstoppable-finance-packages.yml

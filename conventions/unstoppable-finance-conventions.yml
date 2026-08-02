@@ -1,0 +1,51 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.iron.xyz/idempotency
+authentication:
+  style: api-key
+  header: X-API-Key
+  docs: https://docs.iron.xyz/authentication
+  artifact: authentication/unstoppable-finance-authentication.yml
+idempotency:
+  supported: true
+  header: IDEMPOTENCY-KEY
+  format: uuid
+  docs: https://docs.iron.xyz/idempotency
+  semantics: Required on marked write endpoints (e.g. POST /autoramps, sandbox mutation endpoints). First request
+    result is stored under the key; retries with the same key return the stored result (including stored error responses).
+    Use a fresh UUID per operation.
+pagination:
+  style: cursor
+  params:
+  - cursor
+  - prev_cursor
+  - page_size
+  - limit
+  notes: Cursor-based pagination on list endpoints (cursor/prev_cursor with page_size); some endpoints use limit.
+versioning:
+  style: header
+  header: X-API-Version
+  format: YYYY-MM-DD (ISO date)
+  default: '2025-03-13'
+  supported:
+  - '2025-03-13'
+  - '2026-07-01'
+  artifact: lifecycle/unstoppable-finance-lifecycle.yml
+environments:
+  sandbox: https://api.sandbox.iron.xyz/api
+  production: https://api.iron.xyz/api
+  docs: https://docs.iron.xyz/api-access
+error_envelope:
+  format: plain
+  notes: Errors are HTTP status driven; 401 returns a plain-text authorization error body. No RFC 9457 problem+json
+    envelope.
+  artifact: errors/unstoppable-finance-problem-types.yml
+rate_limits:
+  signaling: HTTP 429
+  docs: https://docs.iron.xyz/overview
+  notes: Per-API-key rate limits with infrastructure-level protections; exceeding limits returns HTTP 429. Iron
+    recommends exponential backoff. Contact support for high-volume needs.
+webhooks:
+  spec: Standard Webhooks
+  signature: HMAC-SHA256 (webhook-signature header, v1= prefix)
+  artifact: asyncapi/unstoppable-finance-webhooks.yml

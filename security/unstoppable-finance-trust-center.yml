@@ -1,0 +1,35 @@
+generated: '2026-07-21'
+method: searched
+probe: true
+url: https://iron.xyz/security
+parent: https://www.moonpay.com/security
+certifications:
+- SOC 2
+- ISO 27001
+- ISO 27701
+- ISO 27018
+- PCI DSS
+- CMMC
+- GDPR
+evidence:
+- source: https://iron.xyz/security
+  keywords:
+  - SOC 2
+  - ISO 27001
+  - ISO 27701
+  - ISO 27018
+  - PCI DSS
+  - CMMC
+  - GDPR
+  - bug bounty
+- source: https://iron.xyz/compliance
+  keywords:
+  - licenses
+  - MiCA
+  - CASP
+  - MSB
+  - VASP
+  - money transmitter
+notes: Iron is a MoonPay company; security certifications and the licensing program are published at iron.xyz/security
+  and iron.xyz/compliance, with full detail at moonpay.com/security and moonpay.com/legal/licenses. Data encrypted
+  in transit (TLS 1.2+) and at rest (AES-256) in PCI DSS / ISO 27001 compliant data centers.

@@ -1,0 +1,42 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.iron.xyz/webhooks
+type: Webhooks
+asyncapi_published: false
+delivery:
+  method: POST
+  content_type: application/json
+  spec: Standard Webhooks
+  headers:
+    webhook-id: Unique UUID v4 of the delivery attempt (use for idempotency)
+    webhook-timestamp: Unix timestamp (seconds) when sent
+    webhook-signature: v1=<HMAC_SHA256> over webhook-timestamp + raw_body using the webhook secret
+  signature: HMAC-SHA256, constant-time comparison recommended; secret issued once at webhook registration in the
+    Partner Dashboard.
+management: 'Webhook Console in the Partner Dashboard: register webhooks (https URLs), select topics, ping test,
+  enable/disable.'
+events:
+- type: transaction
+  description: A new transaction happened for a customer
+- type: new_autoramp
+  description: A new autoramp was created
+- type: new_bank_account
+  description: A new bank account was registered
+- type: deposit_address_created
+  description: A deposit address was created
+- type: customer_created
+  description: A customer was created
+- type: transaction_status
+  description: A transaction changed status
+- type: register_fiat_address_status
+  description: Fiat address registration status changed
+- type: customer_status
+  description: Customer status changed
+- type: register_autoramp_status
+  description: Autoramp registration status changed
+- type: identification_status
+  description: Customer identification status changed
+- type: ping
+  description: Test event triggered from the Webhook Console
+openapi_webhooks: The OpenAPI declares a webhooks section (new_event) covering the WebhookContainer payload.
+notes: No AsyncAPI document published; this catalog captures the documented webhook surface verbatim.

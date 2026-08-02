@@ -1,0 +1,40 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.iron.xyz/sandbox
+environments:
+  sandbox:
+    api: https://api.sandbox.iron.xyz/api
+    dashboard: https://app.sandbox.iron.xyz
+  production:
+    api: https://api.iron.xyz/api
+    dashboard: https://app.iron.xyz
+separation: Fully separate sandbox environment with its own API keys (created at app.sandbox.iron.xyz/dashboard/keys).
+  Fiat and crypto flows are simulated - no real IBANs and no testnet crypto.
+capabilities:
+- name: Create sandbox transaction
+  operation: POST /sandbox/transaction
+  description: 'Creates a ramp transaction directly from an autoramp configuration, bypassing the normal deposit
+    flow. Fields: autoramp_id, amount, optional amount_out/fee/fx_rate/initial_state (Pending|Completed|Failed)/input_currency/source/transaction_id/deposit_id.
+    Default fee 0.25% of amount.'
+- name: Update sandbox transaction state
+  operation: PUT /sandbox/transaction/{id}/state
+  description: Transition a sandbox transaction to Pending, Completed, or Failed.
+- name: Approve/reject identification
+  operation: POST /sandbox/identification/{id}
+  description: 'Approve or reject a pending customer identification (in production Iron compliance handles the review).
+    Body: {"approved": true|false}.'
+- name: Set fiat address registration status
+  operation: PUT /sandbox/fiat-verification/{id}
+  description: 'Set fiat address status: RegistrationPending, Registered, RegistrationFailed, AuthorizationRequired,
+    AuthorizationFailed.'
+- name: Set autoramp status
+  operation: PUT /sandbox/autoramp/{id}
+  description: 'Set autoramp status: Created, EditPending, Authorized, DepositAccountAdded, Approved, Rejected,
+    Cancelled.'
+- name: Reset sandbox
+  operation: POST /sandbox/reset
+  description: Deletes all customers, wallets, fiat accounts, transactions, and autoramps for a pristine state.
+    Requires IDEMPOTENCY-KEY header.
+approval_flows: Accept/reject flows (customer fiat accounts, Autoramps) are controlled from the dashboard Sandbox
+  control center instead of email flows. Editors can create API keys in sandbox (production requires an administrator).
+notes: Sandbox-only /sandbox endpoints are part of the published OpenAPI (tag Sandbox) and do not exist in production.

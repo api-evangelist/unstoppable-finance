@@ -1,0 +1,48 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.iron.xyz
+standards:
+- id: api-key-auth
+  conforms: true
+  evidence: openapi securityScheme ApiKeyAuth (X-API-Key header); docs.iron.xyz/authentication
+- id: oauth2
+  conforms: false
+  evidence: no oauth2 securitySchemes in OpenAPI; API-key only
+- id: oidc
+  conforms: false
+  evidence: no openid-configuration on any host (probed 404)
+- id: idempotency
+  conforms: true
+  evidence: IDEMPOTENCY-KEY header (UUID) required on marked write endpoints; docs.iron.xyz/idempotency
+- id: pagination
+  conforms: true
+  evidence: cursor-based pagination (cursor/prev_cursor/page_size) in OpenAPI list operations
+- id: standard-webhooks
+  conforms: true
+  evidence: 'docs.iron.xyz/webhooks: "Iron follows the Standard Webhooks specification" (webhook-id/-timestamp/-signature,
+    HMAC-SHA256)'
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: no application/problem+json in OpenAPI responses
+- id: rfc8594-sunset
+  conforms: false
+  evidence: no Sunset/Deprecation header support documented
+- id: fatf-travel-rule
+  conforms: true
+  evidence: 'docs.iron.xyz/travel-rule: Travel Rule information exchange for hosted wallets (all transfers) and
+    self-hosted wallets over EUR 1,000, with wallet verification/self-attestation'
+- id: kyc-aml
+  conforms: true
+  evidence: 'docs.iron.xyz/limits-and-minimum: tiered KYC/KYB (ID + liveness + questionnaire + proof of address),
+    EDD for Tier 2 / high risk, 52-week rolling per-direction limits'
+- id: gdpr
+  conforms: true
+  evidence: 'iron.xyz/security: data encrypted in transit (TLS 1.2+) and at rest (AES-256), fully GDPR compliant
+    (via MoonPay)'
+- id: mica-casp
+  conforms: true
+  evidence: 'iron.xyz/compliance: MoonPay licenses include CASP (MiCA/EEA) via AFM Netherlands, FCA registration
+    (UK), MSB via FinCEN (US) and FINTRAC (Canada), DCE via AUSTRAC (Australia), VASP via Jersey FSC'
+- id: soc2
+  conforms: true
+  evidence: 'iron.xyz/security: MoonPay certified across SOC 2, ISO 27001, ISO 27701, ISO 27018, PCI DSS, and CMMC'

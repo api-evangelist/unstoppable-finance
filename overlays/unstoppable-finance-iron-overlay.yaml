@@ -1,0 +1,29 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Iron API (Unstoppable Finance)
+  version: 1.0.0
+extends: openapi/unstoppable-finance-iron-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-provider-lineage: Unstoppable Finance (Berlin) rebranded to Iron (iron.xyz); Iron was acquired by MoonPay in 2025.
+    x-idempotency:
+      header: IDEMPOTENCY-KEY
+      format: uuid
+      docs: https://docs.iron.xyz/idempotency
+    x-environments:
+      sandbox: https://api.sandbox.iron.xyz/api
+      production: https://api.iron.xyz/api
+    x-api-versioning:
+      header: X-API-Version
+      format: YYYY-MM-DD
+      default: '2025-03-13'
+      supported:
+      - '2025-03-13'
+      - '2026-07-01'
+    contact:
+      email: contact@iron.com
+      url: https://docs.iron.xyz/support
+- target: $.info.description
+  update: The Stablecoin Payment Network - fiat-to-stablecoin and stablecoin-to-fiat infrastructure for businesses (onramp,
+    offramp, swap, virtual accounts, stablecoin issuance), by Iron, a MoonPay company (formerly Unstoppable Finance).

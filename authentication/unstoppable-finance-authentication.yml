@@ -1,0 +1,23 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/unstoppable-finance-iron-openapi-original.yml
+docs: https://docs.iron.xyz/authentication
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+  oauth2_flows: []
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: 'API key created and managed in the Iron Partner Dashboard (Developer -> API Keys). Keys carry a
+    role: Read Only or Read / Write. Missing, incorrect, or revoked keys return 401 Unauthorized with a plain-text
+    authorization error. Separate keys per environment: sandbox keys at app.sandbox.iron.xyz/dashboard/keys, production
+    keys at app.iron.xyz (production keys can only be created by an administrator).'
+  sources:
+  - openapi/unstoppable-finance-iron-openapi-original.yml
+notes: All Iron API requests require the X-API-Key header. No OAuth2/OIDC surface. The Partner Dashboard itself
+  supports 2FA (docs.iron.xyz/2fa).

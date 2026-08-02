@@ -1,0 +1,32 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.iron.xyz/api-access
+versioning:
+  scheme: header-date
+  header: X-API-Version
+  format: YYYY-MM-DD
+  default: '2025-03-13'
+  supported:
+  - '2025-03-13'
+  - '2026-07-01'
+  docs: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  notes: Date-based API versions selected per-request via the X-API-Version header; omitting the header pins to
+    the default version 2025-03-13.
+status_page: https://status.iron.xyz
+environments:
+  sandbox: https://api.sandbox.iron.xyz/api
+  production: https://api.iron.xyz/api
+deprecation:
+  policy_url: null
+  sunset_header: false
+  notes: No published deprecation policy or RFC 8594 Sunset header support found in the docs.
+sla: null
+deprecated_operations: []
+lineage:
+- date: '2021'
+  event: Founded as Unstoppable Finance GmbH (Berlin); built the Ultimate self-custodial DeFi wallet.
+- date: '2024'
+  event: Rebranded to Iron (iron.xyz) - stablecoin banking / fiat-stablecoin infrastructure. unstoppable.fi and
+    ultimate.app now redirect to iron.xyz.
+- date: '2025'
+  event: Iron acquired by MoonPay; docs and CLI are unified under MoonPay (docs at docs.iron.xyz, CLI mp).

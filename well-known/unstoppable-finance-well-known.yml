@@ -1,0 +1,65 @@
+generated: '2026-07-21'
+method: searched
+source: live probes of iron.xyz, docs.iron.xyz, api.iron.xyz, api.sandbox.iron.xyz
+notes: No /.well-known/ discovery documents published on any Iron host (all probes returned 404). Probed 2026-07-21.
+documents:
+- host: https://iron.xyz
+  path: /.well-known/security.txt
+  status: 404
+- host: https://iron.xyz
+  path: /.well-known/openid-configuration
+  status: 404
+- host: https://iron.xyz
+  path: /.well-known/oauth-authorization-server
+  status: 404
+- host: https://iron.xyz
+  path: /.well-known/api-catalog
+  status: 404
+- host: https://iron.xyz
+  path: /.well-known/ai-plugin.json
+  status: 404
+- host: https://docs.iron.xyz
+  path: /.well-known/security.txt
+  status: 404
+- host: https://docs.iron.xyz
+  path: /.well-known/openid-configuration
+  status: 404
+- host: https://docs.iron.xyz
+  path: /.well-known/oauth-authorization-server
+  status: 404
+- host: https://docs.iron.xyz
+  path: /.well-known/api-catalog
+  status: 404
+- host: https://docs.iron.xyz
+  path: /.well-known/ai-plugin.json
+  status: 404
+- host: https://api.iron.xyz
+  path: /.well-known/security.txt
+  status: 404
+- host: https://api.iron.xyz
+  path: /.well-known/openid-configuration
+  status: 404
+- host: https://api.iron.xyz
+  path: /.well-known/oauth-authorization-server
+  status: 404
+- host: https://api.iron.xyz
+  path: /.well-known/api-catalog
+  status: 404
+- host: https://api.iron.xyz
+  path: /.well-known/ai-plugin.json
+  status: 404
+- host: https://api.sandbox.iron.xyz
+  path: /.well-known/security.txt
+  status: 404
+- host: https://api.sandbox.iron.xyz
+  path: /.well-known/openid-configuration
+  status: 404
+- host: https://api.sandbox.iron.xyz
+  path: /.well-known/oauth-authorization-server
+  status: 404
+- host: https://api.sandbox.iron.xyz
+  path: /.well-known/api-catalog
+  status: 404
+- host: https://api.sandbox.iron.xyz
+  path: /.well-known/ai-plugin.json
+  status: 404
