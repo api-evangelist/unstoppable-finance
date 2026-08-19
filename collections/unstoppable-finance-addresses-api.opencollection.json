@@ -1,0 +1,661 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Iron API - Sandbox Addresses API",
+    "version": "1.0-16988"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Addresses",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Register a self-attested wallet address",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/crypto/attested",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Register a self-hosted wallet that the customer **declares** they control, without\nproviding a cryptographic signature. Intended for direct customers who cannot sign a\nproof-of-ownership message from their custody UI (e.g. Fireblocks).\n\nLike the signed self-hosted flow, the wallet must be registered before it can be used\nin any flow — onramp, offramp, or swap — under the **Travel Rule**. This endpoint is\ncurrently limited to customers in the **US** and **Rest of World** jurisdictions."
+        },
+        {
+          "info": {
+            "name": "Register a hosted wallet address",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/crypto/hosted",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Register a wallet that is custodied by another VASP (e.g. Coinbase, Kraken) on behalf of the customer. This is required by the **Travel Rule** before the wallet can be used in **any** flow — onramp, offramp, or swap.\n\nProvide the VASP's DID (Decentralized Identifier) so Iron can exchange travel-rule data with the custodian. Use the [Search VASPs](#tag/Addresses/operation/searchHostedVasps) endpoint to look up the correct DID.\n"
+        },
+        {
+          "info": {
+            "name": "Search hosted wallet providers (VASPs)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/crypto/hosted/vasps",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "query string (min 2 chars)"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "optional limit (default 20, max 50)"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Look up a VASP by name to find its DID (Decentralized Identifier). You need the DID when registering a hosted wallet via [Register Hosted Wallet](#tag/Addresses/operation/registerHostedWallet)."
+        },
+        {
+          "info": {
+            "name": "Register a self-hosted wallet address",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/crypto/selfhosted",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Register a wallet that the customer controls directly (i.e. they hold the private key). This is required by the **Travel Rule** before the wallet can be used in **any** flow — onramp, offramp, or swap.\n\nSubmit a proof of address ownership. **The message must be in the format**:\n\n> I am verifying ownership of the wallet address [Wallet Address] as customer [CustomerId]. This message was signed on [DD/MM/YYYY] to confirm my control over this wallet.\n\nThe signature must be generated using the priva"
+        },
+        {
+          "info": {
+            "name": "Get all registered wallet addresses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/crypto/:customer_id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the customer"
+              },
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query",
+                "description": "Filter for which type of addresses to return"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns every wallet address a customer has registered (linked), including both hosted and self-hosted wallets. Use the `filter` query parameter to narrow by type."
+        },
+        {
+          "info": {
+            "name": "Update the disabled status of a verified crypto address",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/crypto/:id/disabled",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the verified crypto address"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Enable or disable a verified crypto address. Disabled addresses cannot be used for transactions.\nOnly addresses belonging to the customer of the authenticated partner can be modified.\n"
+        },
+        {
+          "info": {
+            "name": "Get all fiat addresses with status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/fiat",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "The Status to filter by. If not provided, defaults to `Registered`"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field from previous page"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the requested page size (max 100)"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get all fiat addresses with a specific status for the current partner\n"
+        },
+        {
+          "info": {
+            "name": "Register a fiat bank account for a customer.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/fiat",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Register a bank account address for a customer.\n"
+        },
+        {
+          "info": {
+            "name": "Get all fiat addresses / bank accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/fiat/:customer_id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the customer"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field from previous page"
+              },
+              {
+                "name": "prev_cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field for backward pagination"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the requested page size (max 100)"
+              },
+              {
+                "name": "search_term",
+                "value": "",
+                "type": "query",
+                "description": "A search term to filter the addresses"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get all fiat addresses registered for a customer\n\nBank account structure can vary per country. Therefore, the `bank_account_identifier` is always the identifier\nthat matches how a user would identify it. For SEPA it would be the IBAN.\n\nYou can search by providing a `search_term` parameter. This will search the following fields:\n\n- `bank_account_identifier`\n- `label`\n- `bank_name`"
+        },
+        {
+          "info": {
+            "name": "Get a specific fiat address",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/fiat/:customer_id/:fiat_address_id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the customer"
+              },
+              {
+                "name": "fiat_address_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the fiat address"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get a specific fiat address by customer ID and address ID\n"
+        },
+        {
+          "info": {
+            "name": "Delete a fiat address",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/fiat/:customer_id/:fiat_address_id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the customer"
+              },
+              {
+                "name": "fiat_address_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the fiat address"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Soft-delete a fiat address for a customer\n"
+        },
+        {
+          "info": {
+            "name": "Retry Authentication",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/fiat/:id/retry-auth",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the fiat address"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retry the authentication process on a failed fiat address\n\nNOTE: This endpoint is not yet implemented\n"
+        },
+        {
+          "info": {
+            "name": "Register a PIX destination for a customer.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/pix",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Registers a PIX payout destination (Brazil / BRL). Check the returned\n`status` to determine whether the destination can be used for payouts."
+        },
+        {
+          "info": {
+            "name": "Get a customer's PIX destinations.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/pix/:customer_id",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the customer"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get a customer's PIX destinations."
+        },
+        {
+          "info": {
+            "name": "Get a specific PIX destination by ID.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/pix/:customer_id/:pix_address_id",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the customer"
+              },
+              {
+                "name": "pix_address_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the PIX address"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get a specific PIX destination by ID."
+        },
+        {
+          "info": {
+            "name": "Delete a PIX destination.",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.sandbox.iron.xyz/api/addresses/pix/:customer_id/:pix_address_id",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the customer"
+              },
+              {
+                "name": "pix_address_id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the PIX address"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Soft-deletes a PIX destination for a customer."
+        },
+        {
+          "info": {
+            "name": "Get country subdivisions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/country_subdivisions/:country_code",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "country_code",
+                "value": "",
+                "type": "path",
+                "description": "The ISO 3166-1 Alpha-2 country code"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Utility endpoint to get a list of all accepted subdivisions (states, provinces, regions, etc.) for a given country\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

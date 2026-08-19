@@ -1,0 +1,90 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Iron API - Sandbox Addresses FeeProfiles API",
+    "version": "1.0-16988"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "FeeProfiles",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Fee Profile of Partner",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/fee-profiles",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "fee_profile_ids",
+                "value": "",
+                "type": "query",
+                "description": "Ids of the fee profiles to get. Will be ignored if is_default is set to true."
+              },
+              {
+                "name": "is_default",
+                "value": "",
+                "type": "query",
+                "description": "parameter to get the default fee profile. If set to true, only the default fee profile will be returned."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Gets fee profile of partner"
+        },
+        {
+          "info": {
+            "name": "Create Fee Profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/fee-profiles",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Creates a new transactional fee profile for the partner.\nIron fee settings are inherited from the partner's invoicing fee profile."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

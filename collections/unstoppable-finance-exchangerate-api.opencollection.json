@@ -1,0 +1,97 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Iron API - Sandbox Addresses ExchangeRate API",
+    "version": "1.0-16988"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "ExchangeRate",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get exchange rate",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/exchange-rate",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query",
+                "description": "customer id"
+              },
+              {
+                "name": "source_currency_code",
+                "value": "",
+                "type": "query",
+                "description": "source currency code"
+              },
+              {
+                "name": "source_currency_type",
+                "value": "",
+                "type": "query",
+                "description": "source currency type"
+              },
+              {
+                "name": "source_currency_chain",
+                "value": "",
+                "type": "query",
+                "description": "source currency chain"
+              },
+              {
+                "name": "destination_currency_code",
+                "value": "",
+                "type": "query",
+                "description": "destination currency code"
+              },
+              {
+                "name": "destination_currency_type",
+                "value": "",
+                "type": "query",
+                "description": "destination currency type"
+              },
+              {
+                "name": "destination_currency_chain",
+                "value": "",
+                "type": "query",
+                "description": "destination currency chain"
+              },
+              {
+                "name": "amount",
+                "value": "",
+                "type": "query",
+                "description": "amount"
+              },
+              {
+                "name": "_partner_fee_in_bips",
+                "value": "",
+                "type": "query",
+                "description": "partner fee in bips"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get the exchange rate from a source currency to a destination currency for a customer with effective rate and fees\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

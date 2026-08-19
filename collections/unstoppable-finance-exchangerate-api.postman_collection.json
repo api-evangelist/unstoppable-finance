@@ -1,0 +1,574 @@
+{
+  "item": [
+    {
+      "id": "9bd8fea9-3c67-4534-acd9-84ea2202b1ec",
+      "name": "ExchangeRate",
+      "description": {
+        "content": "Operations on Exchange Rate",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "cf7ea7cc-55b3-450f-a065-39bbd8d5467e",
+          "name": "Get exchange rate",
+          "request": {
+            "name": "Get exchange rate",
+            "description": {
+              "content": "Get the exchange rate from a source currency to a destination currency for a customer with effective rate and fees\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "exchange-rate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "customer_id",
+                  "value": "",
+                  "description": "customer id"
+                },
+                {
+                  "disabled": false,
+                  "key": "source_currency_code",
+                  "value": "<string>",
+                  "description": "(Required) source currency code"
+                },
+                {
+                  "disabled": false,
+                  "key": "source_currency_type",
+                  "value": "<string>",
+                  "description": "(Required) source currency type"
+                },
+                {
+                  "disabled": false,
+                  "key": "source_currency_chain",
+                  "value": "<string>",
+                  "description": "source currency chain"
+                },
+                {
+                  "disabled": false,
+                  "key": "destination_currency_code",
+                  "value": "<string>",
+                  "description": "(Required) destination currency code"
+                },
+                {
+                  "disabled": false,
+                  "key": "destination_currency_type",
+                  "value": "<string>",
+                  "description": "(Required) destination currency type"
+                },
+                {
+                  "disabled": false,
+                  "key": "destination_currency_chain",
+                  "value": "<string>",
+                  "description": "destination currency chain"
+                },
+                {
+                  "disabled": false,
+                  "key": "amount",
+                  "value": "<decimal>",
+                  "description": "(Required) amount"
+                },
+                {
+                  "disabled": false,
+                  "key": "_partner_fee_in_bips",
+                  "value": "<uint64>",
+                  "description": "partner fee in bips"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1f9255a6-91e1-4009-9c9c-00533c2c5645",
+              "name": "The exchange rate response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customer_id",
+                      "value": ""
+                    },
+                    {
+                      "key": "source_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "source_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "source_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "destination_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "destination_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "destination_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "amount",
+                      "value": "<decimal>"
+                    },
+                    {
+                      "key": "_partner_fee_in_bips",
+                      "value": "<uint64>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"from\": {\n    \"blockchain\": \"Tron\",\n    \"token\": \"string\",\n    \"type\": \"Crypto\"\n  },\n  \"to\": {\n    \"blockchain\": \"Arbitrum\",\n    \"token\": \"string\",\n    \"type\": \"Crypto\"\n  },\n  \"out_amount\": {\n    \"amount\": \"string\",\n    \"currency\": {\n      \"blockchain\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"token\": \"string\",\n      \"type\": \"Crypto\"\n    }\n  },\n  \"effective_rate\": \"string\",\n  \"fee\": {\n    \"total_fee\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"iron_fee\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"partner_fee\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"network_fees\": [\n      {\n        \"amount\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"currency\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"type\": \"SwiftOut\"\n      },\n      {\n        \"amount\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"currency\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"type\": \"SwiftOut\"\n      }\n    ],\n    \"network_fees_with_settlement\": [\n      {\n        \"fee_type\": \"FpsOut\",\n        \"fee_amount\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"settlement\": \"settledLater\"\n      },\n      {\n        \"fee_type\": \"StellarTransactionFee\",\n        \"fee_amount\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"settlement\": \"settledLater\"\n      }\n    ],\n    \"partner_fees\": [\n      {\n        \"label\": \"string\",\n        \"fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"settlement\": \"deductedImmediately\"\n      },\n      {\n        \"label\": \"string\",\n        \"fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"settlement\": \"deductedImmediately\"\n      }\n    ],\n    \"transaction_fee\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"banking_fee\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"network_fee\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"banking_fee_network\": \"Rtp\",\n    \"deducted_fee\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"iron_fee_settlement\": \"settledLater\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ca2f82cf-c8d9-42da-8b5e-cbb41241e0b3",
+              "name": "The bad request response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customer_id",
+                      "value": ""
+                    },
+                    {
+                      "key": "source_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "source_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "source_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "destination_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "destination_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "destination_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "amount",
+                      "value": "<decimal>"
+                    },
+                    {
+                      "key": "_partner_fee_in_bips",
+                      "value": "<uint64>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "663da133-5798-480d-83d8-1bdd70c0cd4f",
+              "name": "The unauthorized response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customer_id",
+                      "value": ""
+                    },
+                    {
+                      "key": "source_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "source_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "source_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "destination_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "destination_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "destination_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "amount",
+                      "value": "<decimal>"
+                    },
+                    {
+                      "key": "_partner_fee_in_bips",
+                      "value": "<uint64>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "355faf2c-7732-4f9f-a52d-60c400fb0a38",
+              "name": "The not found response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customer_id",
+                      "value": ""
+                    },
+                    {
+                      "key": "source_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "source_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "source_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "destination_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "destination_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "destination_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "amount",
+                      "value": "<decimal>"
+                    },
+                    {
+                      "key": "_partner_fee_in_bips",
+                      "value": "<uint64>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4a95133d-8e43-4022-a807-c687ccfafd47",
+              "name": "The internal server error response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customer_id",
+                      "value": ""
+                    },
+                    {
+                      "key": "source_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "source_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "source_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "destination_currency_code",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "destination_currency_type",
+                      "value": "fiat"
+                    },
+                    {
+                      "key": "destination_currency_chain",
+                      "value": "Base"
+                    },
+                    {
+                      "key": "amount",
+                      "value": "<decimal>"
+                    },
+                    {
+                      "key": "_partner_fee_in_bips",
+                      "value": "<uint64>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.sandbox.iron.xyz/api",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "be14b216-c10b-423f-98e3-8696da25404d",
+    "name": "Iron API - Sandbox Addresses ExchangeRate API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Stablecoin Payment Network",
+      "type": "text/plain"
+    }
+  }
+}

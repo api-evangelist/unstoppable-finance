@@ -5,8 +5,8 @@ source: openapi/unstoppable-finance-iron-openapi-original.yml
 server:
   name: unstoppable-finance-iron
   transport: http
-notes: No official Iron MCP server found published. Candidate tool list derived from the Iron API OpenAPI operations. Iron
-  is accessible to agents today via the MoonPay CLI (mp).
+notes: No official Iron MCP server found published. Candidate tool list derived from the Iron API OpenAPI
+  operations. Iron is accessible to agents today via the MoonPay CLI (mp).
 tools:
 - name: registerAttestedWalletAddress
   description: Register a self-attested wallet address
@@ -215,3 +215,9 @@ tools:
 - name: pingWebhook
   description: Ping webhook
   source_operation: openapi/unstoppable-finance-iron-openapi-original.yml#pingWebhook
+deployment:
+  mode: none
+  verified: derived
+  tools: 69
+  checked: '2026-08-12'
+  source: catalog MCP census

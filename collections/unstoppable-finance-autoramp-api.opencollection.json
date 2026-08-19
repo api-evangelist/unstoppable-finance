@@ -1,0 +1,988 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Iron API - Sandbox Addresses Autoramp API",
+    "version": "1.0-16988"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Autoramp",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List autoramp transactions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramp-transactions",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "query",
+                "description": "Optional autoramp ID"
+              },
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query",
+                "description": "Optional customer ID"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field from previous page"
+              },
+              {
+                "name": "prev_cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field for backward pagination"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the requested page size"
+              },
+              {
+                "name": "search_term",
+                "value": "",
+                "type": "query",
+                "description": "A search term to filter the transactions (searches bank account name, provider, wallet address, transaction ID, deposit transaction hash)"
+              },
+              {
+                "name": "ramp_type",
+                "value": "",
+                "type": "query",
+                "description": "Type of the autoramp (onramp, offramp or crypto-to-crypto swap)"
+              },
+              {
+                "name": "from_date",
+                "value": "",
+                "type": "query",
+                "description": "Filter by start date (inclusive). Only transactions created on or after this date will be returned."
+              },
+              {
+                "name": "to_date",
+                "value": "",
+                "type": "query",
+                "description": "Filter by end date (inclusive). Only transactions created on or before this date will be returned."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by transaction status. Multiple statuses can be provided as comma-separated values."
+              },
+              {
+                "name": "sort_order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order for results. \"asc\" for oldest first, \"desc\" for newest first (default)."
+              },
+              {
+                "name": "is_batch_payout",
+                "value": "",
+                "type": "query",
+                "description": "Filter by batch payout flag. If true, only batch payout transactions are returned. If false, only non-batch payout. If omitted, all transactions are returned."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns a list of transactions, optionally filtered by autoramp ID or customer ID\n\nAn optional `search_term` parameter can be provided that will search the following fields:\n\n- Bank Account Name\n- Bank Account Provider Name\n- Wallet Address\n- Transaction ID"
+        },
+        {
+          "info": {
+            "name": "Get autoramp transactions by transaction IDs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramp-transactions/ids",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Ids of the transactions to get"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Return a subset of transactions by ID.\nThis can be used to query multiple transactions for updated states without having to go through all transactions.\n\nYou have to provide at least one transaction ID\n\nReturns at most 100 transactions"
+        },
+        {
+          "info": {
+            "name": "List Autoramps for a Customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query",
+                "description": "The optional Customer ID to filter autoramps by. If not provided, returns autoramps for all customers"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by autoramp status. Multiple statuses can be provided as comma-separated values."
+              },
+              {
+                "name": "autoramp_type",
+                "value": "",
+                "type": "query",
+                "description": "autoramp type filter"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field from previous page"
+              },
+              {
+                "name": "prev_cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field for backward pagination"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the requested page size"
+              },
+              {
+                "name": "sort_order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order for results. \"asc\" for oldest first, \"desc\" for newest first (default)."
+              },
+              {
+                "name": "is_batch_payout",
+                "value": "",
+                "type": "query",
+                "description": "Filter by batch payout flag. If true, only batch payout autoramps are returned. If false, only non-batch payout. If omitted, all autoramps are returned."
+              },
+              {
+                "name": "source",
+                "value": "",
+                "type": "query",
+                "description": "Filter by autoramp source. \"Standalone\" returns only market autoramps (with no attached quotes). \"Quote\" returns only autoramps with at least one attached quote. If omitted, all sources are returned."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns a paginated list of autoramps for all customers\n\nIf customer ID is provided, returns all autoramps for the specified customer\n\nIf status is provided, returns all autoramps with the specified status"
+        },
+        {
+          "info": {
+            "name": "Create a new Autoramp",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Creates a new autoramp, with a specified recipient account, source and destination currency"
+        },
+        {
+          "info": {
+            "name": "Check if a customer can create more autoramps",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/check-limit",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query",
+                "description": "The customer ID"
+              },
+              {
+                "name": "deposit_account_type",
+                "value": "",
+                "type": "query",
+                "description": "The type of deposit account intended (e.g., Iban, Wallet)"
+              },
+              {
+                "name": "is_third_party",
+                "value": "",
+                "type": "query",
+                "description": "Whether the intended autoramp is for a third party"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Checks if a customer has reached their limit for creating new autoramps based on the deposit account type and whether it's a third-party ramp."
+        },
+        {
+          "info": {
+            "name": "Get the autoramp open banking payment for existing payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/payments/open-banking/:payment_id",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "payment_id",
+                "value": "",
+                "type": "path",
+                "description": "The payment ID"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get the autoramp open banking payment for a given autoramp\n"
+        },
+        {
+          "info": {
+            "name": "Get a quote for an autoramp",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/quote",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query",
+                "description": "The parameters for the quote\nThe customer id"
+              },
+              {
+                "name": "source_currency_code",
+                "value": "",
+                "type": "query",
+                "description": "The source currency code"
+              },
+              {
+                "name": "source_currency_chain",
+                "value": "",
+                "type": "query",
+                "description": "The source currency chain"
+              },
+              {
+                "name": "destination_currency_code",
+                "value": "",
+                "type": "query",
+                "description": "The destination currency code"
+              },
+              {
+                "name": "destination_currency_chain",
+                "value": "",
+                "type": "query",
+                "description": "The destination currency chain"
+              },
+              {
+                "name": "recipient_account_id",
+                "value": "",
+                "type": "query",
+                "description": "The recipient account ID (fiat_address or verified_crypto_address ID)\nUse this parameter instead of recipient_account. This is the preferred way to provide the recipient account and will be used if both are provided."
+              },
+              {
+                "name": "recipient_account",
+                "value": "",
+                "type": "query",
+                "description": "**DEPRECATED**: The recipient account, either a fiat iban or a crypto wallet address\nUse recipient_account_id instead"
+              },
+              {
+                "name": "amount_in",
+                "value": "",
+                "type": "query",
+                "description": "The source amount"
+              },
+              {
+                "name": "amount_out",
+                "value": "",
+                "type": "query",
+                "description": "The destination amount"
+              },
+              {
+                "name": "rate_lock_duration_minutes",
+                "value": "",
+                "type": "query",
+                "description": "The rate lock duration in minutes"
+              },
+              {
+                "name": "rate_expiry_policy",
+                "value": "",
+                "type": "query",
+                "description": "The rate expiry policy"
+              },
+              {
+                "name": "slippage_tolerance_in_bips",
+                "value": "",
+                "type": "query",
+                "description": "The slippage tolerance in bips"
+              },
+              {
+                "name": "expiry_in_hours",
+                "value": "",
+                "type": "query",
+                "description": "The autoramp expiry time in hours. Maximum is 24 hours. It is limited to rate lock duration if rate expiry policy is Return"
+              },
+              {
+                "name": "is_third_party",
+                "value": "",
+                "type": "query",
+                "description": "Is this a third party autoramp"
+              },
+              {
+                "name": "sender_account_number",
+                "value": "",
+                "type": "query",
+                "description": "Sender Account Number is required when the source currency is African & payment type is Bank transfer"
+              },
+              {
+                "name": "sender_mobile_number",
+                "value": "",
+                "type": "query",
+                "description": "Sender Mobile Number is required when the source currency is African & payment type is Mobile Money"
+              },
+              {
+                "name": "sender_bank",
+                "value": "",
+                "type": "query",
+                "description": "Sender Account Financial Institution/Bank is required when the source currency is African"
+              },
+              {
+                "name": "external_id",
+                "value": "",
+                "type": "query",
+                "description": "The external id"
+              },
+              {
+                "name": "wire_message",
+                "value": "",
+                "type": "query",
+                "description": "wire_message"
+              },
+              {
+                "name": "swift_payment_reference",
+                "value": "",
+                "type": "query",
+                "description": "swift_payment_reference"
+              },
+              {
+                "name": "sepa_payment_reference",
+                "value": "",
+                "type": "query",
+                "description": "sepa_payment_reference"
+              },
+              {
+                "name": "ach_payment_reference",
+                "value": "",
+                "type": "query",
+                "description": "ach_payment_reference"
+              },
+              {
+                "name": "fps_payment_reference",
+                "value": "",
+                "type": "query",
+                "description": "fps_payment_reference"
+              },
+              {
+                "name": "fee_profile_id",
+                "value": "",
+                "type": "query",
+                "description": "The fee profile id to use for the autoramp"
+              },
+              {
+                "name": "batch_payout",
+                "value": "",
+                "type": "query",
+                "description": "Whether payouts for this autoramp are batched daily"
+              },
+              {
+                "name": "additional_in_currency_codes",
+                "value": "",
+                "type": "query",
+                "description": "Additional input currency codes to allow on the autoramp beyond\n`source_currency_code`. Used to enable later per-currency quotes via\n`POST /autoramps/:id/quotes` on a quote-type autoramp.\n\nMust have the same length as `additional_in_currency_chains` and be\nindex-aligned: the chain at position `i` describes the code at\nposition `i`."
+              },
+              {
+                "name": "additional_in_currency_chains",
+                "value": "",
+                "type": "query",
+                "description": "Chains for each entry in `additional_in_currency_codes`, index-aligned.\nMust have the same length as `additional_in_currency_codes`."
+              },
+              {
+                "name": "pay_by_reference",
+                "value": "",
+                "type": "query",
+                "description": "If true, a payment reference will be generated for the autoramp on\ninbound matching (pay-by-reference). Defaults to false if not provided."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get a quote for an autoramp with fixed conversion rate, exact amount out or amount in"
+        },
+        {
+          "info": {
+            "name": "Get autoramp quote preview",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/quotes-preview",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query",
+                "description": "The customer id"
+              },
+              {
+                "name": "source_currency_code",
+                "value": "",
+                "type": "query",
+                "description": "The source currency code"
+              },
+              {
+                "name": "source_currency_chain",
+                "value": "",
+                "type": "query",
+                "description": "The source currency chain"
+              },
+              {
+                "name": "destination_currency_code",
+                "value": "",
+                "type": "query",
+                "description": "The destination currency code"
+              },
+              {
+                "name": "destination_currency_chain",
+                "value": "",
+                "type": "query",
+                "description": "The destination currency chain"
+              },
+              {
+                "name": "amount_in",
+                "value": "",
+                "type": "query",
+                "description": "The source amount. Provide exactly one of amount_in / amount_out."
+              },
+              {
+                "name": "amount_out",
+                "value": "",
+                "type": "query",
+                "description": "The destination amount. Provide exactly one of amount_in / amount_out."
+              },
+              {
+                "name": "fee_profile_id",
+                "value": "",
+                "type": "query",
+                "description": "Price against this fee profile; resolved automatically when omitted"
+              },
+              {
+                "name": "is_third_party",
+                "value": "",
+                "type": "query",
+                "description": "Is this a third party autoramp (defaults to false)"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Price a prospective autoramp knowing only the currencies — before a recipient\nwallet or bank account is selected. Prices identically to `getAutorampQuote`;\nbanking fees assume the destination currency's default payout rail (USD→ACH,\nEUR→SEPA, GBP→FPS; see `assumed_payout_rail` in the response). The result is an\nestimate and cannot be submitted; fetch a signed quote once a recipient is chosen."
+        },
+        {
+          "info": {
+            "name": "Get an Autoramp by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:autoramp_id",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "path",
+                "description": "The autoramp ID"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get a single autoramp by ID"
+        },
+        {
+          "info": {
+            "name": "Patch an autoramp market",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:autoramp_id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "path",
+                "description": "The autoramp ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Patch the autoramp market by ID\n"
+        },
+        {
+          "info": {
+            "name": "Cancel an Autoramp",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:autoramp_id",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "path",
+                "description": "The autoramp ID"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Cancel the execution of an autoramp. After this, the given autoramp will not perform any transactions anymore."
+        },
+        {
+          "info": {
+            "name": "List open banking payments for an autoramp",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:autoramp_id/payments/open-banking",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "prev_cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "sort_order",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns a paginated list of all open banking payment attempts for the\nautoramp, ordered by most recent first. Statuses are refreshed from the\nprovider on every call (skipping payments already in terminal states).\n\nPagination follows the standard cursor pattern: pass `cursor` =\n`iron_payment_id` of the last item in the previous page to fetch the\nnext (older) page, or `prev_cursor` to walk backward (newer)."
+        },
+        {
+          "info": {
+            "name": "Create an open banking payment link",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:autoramp_id/payments/open-banking",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "path",
+                "description": "The autoramp ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Create an open banking payment link for a given autoramp\n"
+        },
+        {
+          "info": {
+            "name": "Get a rate quote for an existing autoramp",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:autoramp_id/quote",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "source_currency_code",
+                "value": "",
+                "type": "query",
+                "description": "The source currency code — must be one of the autoramp's input currencies"
+              },
+              {
+                "name": "source_currency_chain",
+                "value": "",
+                "type": "query",
+                "description": "The source currency chain (required for crypto source currencies)"
+              },
+              {
+                "name": "amount_in",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "amount_out",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "rate_lock_duration_minutes",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "rate_expiry_policy",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "slippage_tolerance_in_bips",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "expiry_in_hours",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "payment_reference",
+                "value": "",
+                "type": "query",
+                "description": "An optional payout reference applied when paying out transactions\nmatched to this quote. Overrides the autoramp's payment reference."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Generates a signed rate quote for an existing quote-type autoramp.\nThe autoramp's currencies, recipient, and fee profile are used automatically."
+        },
+        {
+          "info": {
+            "name": "Attach a quote to an existing autoramp",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:autoramp_id/quotes",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Attaches a signed rate quote to an existing quote-type autoramp."
+        },
+        {
+          "info": {
+            "name": "Retry authentication",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:autoramp_id/retry-auth",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "autoramp_id",
+                "value": "",
+                "type": "path",
+                "description": "the autoramp ID"
+              }
+            ]
+          },
+          "docs": "Retry the authentication process on a failed autoramp\n"
+        },
+        {
+          "info": {
+            "name": "Get an Autoramp by external ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/autoramps/:external_id/external",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "external_id",
+                "value": "",
+                "type": "path",
+                "description": "The autoramp external ID"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get a single autoramp by external ID"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,798 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Iron API - Sandbox Addresses Customer API",
+    "version": "1.0-16988"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Customer",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get the pending authentication code for an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/authentication-codes/entity/:id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the entity to get the pending authentication code for"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get the pending authentication code for an entity by ID\ne.g. ID of Autoramp or FiatAddress (entity in AuhorizationRequired state)\nif no pending code is found, retry flow will have to be triggered\n"
+        },
+        {
+          "info": {
+            "name": "Submit an authentication code",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.sandbox.iron.xyz/api/authentication-codes/:id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the authentication code to submit"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Submit the code for a given authentication\n"
+        },
+        {
+          "info": {
+            "name": "Get all Customers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field from previous page"
+              },
+              {
+                "name": "prev_cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field for backward pagination"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the requested page size (max 100)"
+              },
+              {
+                "name": "search_term",
+                "value": "",
+                "type": "query",
+                "description": "A search term to filter the customers"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by customer status (comma-separated or repeated values)"
+              },
+              {
+                "name": "identification_status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by the customer's most-recent identification status"
+              },
+              {
+                "name": "customer_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by customer type (Person or Business)"
+              },
+              {
+                "name": "has_transactions",
+                "value": "",
+                "type": "query",
+                "description": "When true, only customers with at least one transaction; when\nfalse, only customers without any. Omit to disable the filter."
+              },
+              {
+                "name": "sort_order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order: \"asc\" for oldest first, \"desc\" for newest first (default)"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get all customers for a particular partner. The partner ID does not need to be provided as it\nis provided by the API Key.\n\nAn optional `search_term` can be provided to filter by name, id, email, or external id.\n"
+        },
+        {
+          "info": {
+            "name": "Create a new customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/customers",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Create a new **business** or **legal person** customer.\n"
+        },
+        {
+          "info": {
+            "name": "Get a customer by external ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:external_id/external",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "external_id",
+                "value": "",
+                "type": "path",
+                "description": "the external ID of the Customer to GET"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve a specific customer by external ID\n"
+        },
+        {
+          "info": {
+            "name": "Get a customer by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to GET"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve a specific customer by ID\n"
+        },
+        {
+          "info": {
+            "name": "Update a customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to update"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Update a customer by ID\n"
+        },
+        {
+          "info": {
+            "name": "Get customer abilities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/abilities",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to GET abilities for"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve the abilities/capabilities for a specific customer by ID\n"
+        },
+        {
+          "info": {
+            "name": "Archive a customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/archive",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to archive"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Archive a customer and all of their identifications. This is terminal and\ncannot be undone: the customer is completely and permanently blocked from\nusing any services.\n"
+        },
+        {
+          "info": {
+            "name": "Get all customer Identifications",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/identifications",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to get Identifications for"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field from previous page"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the requested page size (max 100)"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve all identifications for this customer\n"
+        },
+        {
+          "info": {
+            "name": "Create Customer Identification V2",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/identifications/v2",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to create an Identification for"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "This will create a new identification for the customer, dependent on the customer type a KYC or KYB will be created for the customer to complete.\nwe support three types of identification:\n- Link: where a link is provided to the customer for access to the identification process.\n- Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider\n- Person: where the identification details of the person for whi"
+        },
+        {
+          "info": {
+            "name": "Get customer microdeposits",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/microdeposits",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to GET microdeposits for"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve all microdeposits for a specific customer by ID\n"
+        },
+        {
+          "info": {
+            "name": "Get customer required signings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/required-signings",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to get required signings for"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get all required signings for a customer\n"
+        },
+        {
+          "info": {
+            "name": "Get customer requirements",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/requirements",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to GET requirements for"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve a requirements view of a customer:\nfour buckets — `complete`, `pending`, `missing`, `issues` — plus a\ncoarse `requirements_due` summary of categories that still need\nattention. Each requirement carries a stable typed `code` (switch on\nthis) and, when available, a verbatim `description` from the upstream\nKYC provider's moderation comment. **NOTE**: The `description` field is subject to change without notice.\n\nComputed on demand from the customer's identifications and\ncustomer-level state"
+        },
+        {
+          "info": {
+            "name": "Get all customer Signings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/signings",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to get Signings for"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the cursor field from previous page"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Paging: the requested page size (max 100)"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve all signings for a customer, representing the various legal agreements and consents gathered from the customer.\nSee The KYC/Compliance section of our documentation for more info.\n"
+        },
+        {
+          "info": {
+            "name": "Create a new Customer signing",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/signings",
+            "headers": [
+              {
+                "name": "IDEMPOTENCY-KEY",
+                "value": ""
+              },
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to create a Signing for"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "This will create a signing for the customer, representing the legal consent to a specific Document.\nSee The KYC/Compliance section of our documentation for more info.\n\n"
+        },
+        {
+          "info": {
+            "name": "Get customer spending limit usage",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/customers/:id/spending-limit",
+            "headers": [
+              {
+                "name": "X-SUB-PARTNER-ID",
+                "value": ""
+              },
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Customer to GET the spending limit for"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve the current spending limit usage for a specific customer,\nsplit by direction (fiat on-ramp and crypto off-ramp).\n\nAmounts are returned in **EUR cents** as strings.\n\n`threshold_eur` (and therefore `remaining_eur`) is `null` for Business\ncustomers and persons with `ThresholdKind::Regulated`. `null` means\n\"no enforced cap\""
+        },
+        {
+          "info": {
+            "name": "Get an Identification by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/identifications/:id",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Identification to GET"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve a specific Identification by ID\n"
+        },
+        {
+          "info": {
+            "name": "Archive an identification",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.sandbox.iron.xyz/api/identifications/:id/archive",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Identification to archive"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Archive an identification. This is terminal and cannot be undone: the\nidentification is permanently invalidated and can no longer be used to\nverify the customer.\n"
+        },
+        {
+          "info": {
+            "name": "Fetch identification compliance questionnaire",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.sandbox.iron.xyz/api/identifications/:id/compliance-questionnaire",
+            "headers": [
+              {
+                "name": "X-API-Version",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "the ID of the Identification to get compliance questions for"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Fetch the compliance questionnaire for an identification\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

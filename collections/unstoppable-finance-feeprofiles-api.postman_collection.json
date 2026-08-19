@@ -1,0 +1,795 @@
+{
+  "item": [
+    {
+      "id": "e7315793-a77b-44d3-a65d-66bb203b87bc",
+      "name": "FeeProfiles",
+      "description": {
+        "content": "Operations on Fee Profiles",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b9420c01-c2c4-401e-9bca-45ea215c8959",
+          "name": "Get Fee Profile of Partner",
+          "request": {
+            "name": "Get Fee Profile of Partner",
+            "description": {
+              "content": "Gets fee profile of partner",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "fee-profiles"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "fee_profile_ids",
+                  "value": "",
+                  "description": "Ids of the fee profiles to get. Will be ignored if is_default is set to true."
+                },
+                {
+                  "disabled": false,
+                  "key": "is_default",
+                  "value": "",
+                  "description": "parameter to get the default fee profile. If set to true, only the default fee profile will be returned."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Optional sub-partner UUID, if provided, the fee profiles will be filtered for the sub-partner",
+                "key": "X-SUB-PARTNER-ID",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7ee68ff6-6cb5-4cc1-aeb8-45573d6100e1",
+              "name": "GET Fee Profiles Succeeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "fee_profile_ids",
+                      "value": ""
+                    },
+                    {
+                      "key": "is_default",
+                      "value": ""
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Optional sub-partner UUID, if provided, the fee profiles will be filtered for the sub-partner",
+                    "key": "X-SUB-PARTNER-ID",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"items\": [\n    {\n      \"id\": \"1d1ee2ce-1bfa-d367-25f7-4ba5fbb7f84d\",\n      \"name\": \"string\",\n      \"partner_id\": \"3c6fd4ee-957a-06aa-29b4-3776b960dd66\",\n      \"iron_fee\": {\n        \"bips\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"type\": \"Bips\"\n      },\n      \"iron_fee_settlement\": \"settledLater\",\n      \"iron_fee_billing_type\": \"Quarterly\",\n      \"min_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"network_fee_enabled\": true,\n      \"network_fee_settlement\": \"settledLater\",\n      \"profile_type\": \"Transactional\",\n      \"is_default\": true,\n      \"partner_fee_configs\": [\n        {\n          \"label\": \"onboarding\",\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"billing_type\": \"Per Transaction\",\n          \"settlement\": \"deductedImmediately\"\n        },\n        {\n          \"label\": \"customer\",\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"billing_type\": \"Monthly\",\n          \"settlement\": \"deductedImmediately\"\n        }\n      ],\n      \"banking_fee_configs\": [\n        {\n          \"rail\": \"Fednow\",\n          \"fee_amount\": {\n            \"amount\": \"100.5\",\n            \"currency\": {\n              \"code\": \"USD\",\n              \"type\": \"Fiat\"\n            }\n          },\n          \"fiat_transfer_type\": \"PayIn\",\n          \"billing_type\": \"Per Transaction\",\n          \"settlement\": \"settledLater\"\n        },\n        {\n          \"rail\": \"AfricanBankTransfer\",\n          \"fee_amount\": {\n            \"amount\": \"100.5\",\n            \"currency\": {\n              \"code\": \"USD\",\n              \"type\": \"Fiat\"\n            }\n          },\n          \"fiat_transfer_type\": \"PayIn\",\n          \"billing_type\": \"Annual\",\n          \"settlement\": \"settledLater\"\n        }\n      ],\n      \"non_transactional_partner_fee_configs\": [\n        {\n          \"label\": \"surcharge\",\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"billing_type\": \"Per Transaction\",\n          \"settlement\": \"settledLater\"\n        },\n        {\n          \"label\": \"onboarding\",\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"billing_type\": \"Quarterly\",\n          \"settlement\": \"settledLater\"\n        }\n      ],\n      \"rule\": {\n        \"autoramp_source\": \"Quote\",\n        \"currency_pairs\": [\n          {\n            \"from_currency\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"to_currency\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"from_currency\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"to_currency\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ],\n        \"customer_ids\": [\n          \"ec588585-89f2-43b2-ed1b-4c44df5f0405\",\n          \"3824eb26-9aa6-f145-ce82-2110c2d8338e\"\n        ],\n        \"ramp_kinds\": [\n          \"Redeem\",\n          \"Onramp\"\n        ]\n      }\n    },\n    {\n      \"id\": \"511bcf41-8a9d-2a5e-e7e1-a602dc37d962\",\n      \"name\": \"string\",\n      \"partner_id\": \"960777c4-d501-c993-b7bf-be15dbc02614\",\n      \"iron_fee\": {\n        \"bips\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"type\": \"Bips\"\n      },\n      \"iron_fee_settlement\": \"deductedImmediately\",\n      \"iron_fee_billing_type\": \"One Time\",\n      \"min_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"network_fee_enabled\": true,\n      \"network_fee_settlement\": \"settledLater\",\n      \"profile_type\": \"Transactional\",\n      \"is_default\": true,\n      \"partner_fee_configs\": [\n        {\n          \"label\": \"onboarding\",\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"billing_type\": \"Semi Annual\",\n          \"settlement\": \"deductedImmediately\"\n        },\n        {\n          \"label\": \"account_setup\",\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"billing_type\": \"Per Transaction\",\n          \"settlement\": \"settledLater\"\n        }\n      ],\n      \"banking_fee_configs\": [\n        {\n          \"rail\": \"Spei\",\n          \"fee_amount\": {\n            \"amount\": \"100.5\",\n            \"currency\": {\n              \"code\": \"USD\",\n              \"type\": \"Fiat\"\n            }\n          },\n          \"fiat_transfer_type\": \"PayOut\",\n          \"billing_type\": \"Monthly\",\n          \"settlement\": \"deductedImmediately\"\n        },\n        {\n          \"rail\": \"Wire\",\n          \"fee_amount\": {\n            \"amount\": \"100.5\",\n            \"currency\": {\n              \"code\": \"USD\",\n              \"type\": \"Fiat\"\n            }\n          },\n          \"fiat_transfer_type\": \"PayIn\",\n          \"billing_type\": \"One Time\",\n          \"settlement\": \"deductedImmediately\"\n        }\n      ],\n      \"non_transactional_partner_fee_configs\": [\n        {\n          \"label\": \"account_setup\",\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"billing_type\": \"Per Transaction\",\n          \"settlement\": \"deductedImmediately\"\n        },\n        {\n          \"label\": \"customer\",\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"billing_type\": \"Quarterly\",\n          \"settlement\": \"settledLater\"\n        }\n      ],\n      \"rule\": {\n        \"autoramp_source\": \"Standalone\",\n        \"currency_pairs\": [\n          {\n            \"from_currency\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"to_currency\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"from_currency\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"to_currency\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ],\n        \"customer_ids\": [\n          \"bd6c9d1d-c031-3c1e-e268-0a455cd51c9a\",\n          \"eacf5e73-b081-1e95-2593-9228f7420d5b\"\n        ],\n        \"ramp_kinds\": [\n          \"Swap\",\n          \"Mint\"\n        ]\n      }\n    }\n  ],\n  \"cursor\": \"96d10d19-7c42-b66e-6c87-e3f1e2460b9c\",\n  \"prev_cursor\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2a0b5bdb-6303-4d2b-9ddf-62f1270d87d8",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "fee_profile_ids",
+                      "value": ""
+                    },
+                    {
+                      "key": "is_default",
+                      "value": ""
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Optional sub-partner UUID, if provided, the fee profiles will be filtered for the sub-partner",
+                    "key": "X-SUB-PARTNER-ID",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c7f8341d-86ce-4618-ae42-0a47b1af4e9b",
+              "name": "GET Fee Profiles Failed (Unauthorized)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "fee_profile_ids",
+                      "value": ""
+                    },
+                    {
+                      "key": "is_default",
+                      "value": ""
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Optional sub-partner UUID, if provided, the fee profiles will be filtered for the sub-partner",
+                    "key": "X-SUB-PARTNER-ID",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "888c2d45-5c1c-4b6e-8246-cd2ed5dd22e9",
+              "name": "Get Fee Profiles Not Found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "fee_profile_ids",
+                      "value": ""
+                    },
+                    {
+                      "key": "is_default",
+                      "value": ""
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Optional sub-partner UUID, if provided, the fee profiles will be filtered for the sub-partner",
+                    "key": "X-SUB-PARTNER-ID",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "48f2e98e-5b99-4406-9bbc-511c13b1aea2",
+              "name": "GET Fee Profiles Failed (Internal Error)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "fee_profile_ids",
+                      "value": ""
+                    },
+                    {
+                      "key": "is_default",
+                      "value": ""
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Optional sub-partner UUID, if provided, the fee profiles will be filtered for the sub-partner",
+                    "key": "X-SUB-PARTNER-ID",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "149fe953-5abb-4791-a37a-d0dba45a4a6e",
+          "name": "Create Fee Profile",
+          "request": {
+            "name": "Create Fee Profile",
+            "description": {
+              "content": "Creates a new transactional fee profile for the partner.\nIron fee settings are inherited from the partner's invoicing fee profile.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "fee-profiles"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) Unique key to ensure idempotent creation",
+                "key": "IDEMPOTENCY-KEY",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"network_fee_settlement\": \"<string>\",\n  \"transaction_fee_bips\": \"<uint32>\",\n  \"banking_fee_configs\": [\n    {\n      \"rail\": \"<string>\",\n      \"fee_amount\": \"<decimal>\",\n      \"fiat_transfer_type\": \"<string>\"\n    },\n    {\n      \"rail\": \"<string>\",\n      \"fee_amount\": \"<decimal>\",\n      \"fiat_transfer_type\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "839cd0c4-df9b-4fe7-a0ee-147f6e10d844",
+              "name": "Create fee profile successful",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Unique key to ensure idempotent creation",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"network_fee_settlement\": \"settledLater\",\n  \"transaction_fee_bips\": \"<uint32>\",\n  \"banking_fee_configs\": [\n    {\n      \"rail\": \"Sepa\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    },\n    {\n      \"rail\": \"Rtp\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": \"ce4d40a1-29f8-572b-2cd9-98d65529d7f4\",\n  \"name\": \"string\",\n  \"partner_id\": \"7ed8836d-f6c2-4e21-3d29-539683cc3d3d\",\n  \"iron_fee\": {\n    \"bips\": 8577,\n    \"type\": \"Bips\"\n  },\n  \"iron_fee_settlement\": \"settledLater\",\n  \"iron_fee_billing_type\": \"Quarterly\",\n  \"min_fee\": {\n    \"amount\": \"string\",\n    \"currency\": {\n      \"blockchain\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"token\": \"string\",\n      \"type\": \"Crypto\"\n    }\n  },\n  \"network_fee_enabled\": false,\n  \"network_fee_settlement\": \"deductedImmediately\",\n  \"profile_type\": \"Transactional\",\n  \"is_default\": false,\n  \"partner_fee_configs\": [\n    {\n      \"label\": \"banking\",\n      \"fee_type\": {\n        \"fixed_fee\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"type\": \"Fixed\"\n      },\n      \"billing_type\": \"One Time\",\n      \"settlement\": \"settledLater\"\n    },\n    {\n      \"label\": \"partner\",\n      \"fee_type\": {\n        \"fixed_fee\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"type\": \"Fixed\"\n      },\n      \"billing_type\": \"Annual\",\n      \"settlement\": \"deductedImmediately\"\n    }\n  ],\n  \"banking_fee_configs\": [\n    {\n      \"rail\": \"Swift\",\n      \"fee_amount\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"fiat_transfer_type\": \"PayOut\",\n      \"billing_type\": \"Semi Annual\",\n      \"settlement\": \"settledLater\"\n    },\n    {\n      \"rail\": \"AfricanBankTransfer\",\n      \"fee_amount\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"fiat_transfer_type\": \"PayIn\",\n      \"billing_type\": \"Annual\",\n      \"settlement\": \"settledLater\"\n    }\n  ],\n  \"non_transactional_partner_fee_configs\": [\n    {\n      \"label\": \"onboarding\",\n      \"fee_type\": {\n        \"fixed_fee\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"type\": \"Fixed\"\n      },\n      \"billing_type\": \"Annual\",\n      \"settlement\": \"settledLater\"\n    },\n    {\n      \"label\": \"banking\",\n      \"fee_type\": {\n        \"fixed_fee\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"type\": \"Fixed\"\n      },\n      \"billing_type\": \"Monthly\",\n      \"settlement\": \"settledLater\"\n    }\n  ],\n  \"rule\": {\n    \"autoramp_source\": \"Standalone\",\n    \"currency_pairs\": [\n      {\n        \"from_currency\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"to_currency\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      },\n      {\n        \"from_currency\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"to_currency\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      }\n    ],\n    \"customer_ids\": [\n      \"840ef342-c319-1119-6e2a-97e4e9c096b3\",\n      \"8f11591e-beb9-ea73-5991-061ba32b391e\"\n    ],\n    \"ramp_kinds\": [\n      \"Mint\",\n      \"Onramp\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c3408f0f-4040-429c-9cff-ac50f2435852",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Unique key to ensure idempotent creation",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"network_fee_settlement\": \"settledLater\",\n  \"transaction_fee_bips\": \"<uint32>\",\n  \"banking_fee_configs\": [\n    {\n      \"rail\": \"Sepa\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    },\n    {\n      \"rail\": \"Rtp\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "398ac54c-a8e4-4da0-b905-7c074ef66631",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Unique key to ensure idempotent creation",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"network_fee_settlement\": \"settledLater\",\n  \"transaction_fee_bips\": \"<uint32>\",\n  \"banking_fee_configs\": [\n    {\n      \"rail\": \"Sepa\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    },\n    {\n      \"rail\": \"Rtp\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "a792bcdf-8509-4e13-ba62-5c6acda68ee4",
+              "name": "Not Found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Unique key to ensure idempotent creation",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"network_fee_settlement\": \"settledLater\",\n  \"transaction_fee_bips\": \"<uint32>\",\n  \"banking_fee_configs\": [\n    {\n      \"rail\": \"Sepa\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    },\n    {\n      \"rail\": \"Rtp\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "9fd67565-b5a1-4477-911b-310e3f449a17",
+              "name": "Internal Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fee-profiles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Unique key to ensure idempotent creation",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"network_fee_settlement\": \"settledLater\",\n  \"transaction_fee_bips\": \"<uint32>\",\n  \"banking_fee_configs\": [\n    {\n      \"rail\": \"Sepa\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    },\n    {\n      \"rail\": \"Rtp\",\n      \"fee_amount\": \"string\",\n      \"fiat_transfer_type\": \"PayIn\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.sandbox.iron.xyz/api",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "2295e0d5-1cb2-4d6a-a62a-bb5da34a7580",
+    "name": "Iron API - Sandbox Addresses FeeProfiles API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Stablecoin Payment Network",
+      "type": "text/plain"
+    }
+  }
+}

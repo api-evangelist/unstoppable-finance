@@ -1,0 +1,2324 @@
+{
+  "item": [
+    {
+      "id": "48aebac2-e68c-40aa-b4a5-f30d3d788a10",
+      "name": "Sandbox",
+      "description": {
+        "content": "Operations for Sandbox Testing",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "090ccbf2-db2a-4364-ac76-7d2a961bc0aa",
+          "name": "Update autoramp status",
+          "request": {
+            "name": "Update autoramp status",
+            "description": {
+              "content": "Update the status of an autoramp for testing purposes\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "autoramp",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) the ID of the autoramp to update"
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "PUT",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "<string>",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1dfa1ff4-802a-46ce-a52d-d38233833787",
+              "name": "Update autoramp successful",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "autoramp",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the autoramp to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": \"369cdc4f-7bd6-260e-9f34-86828ead7c64\",\n  \"customer_id\": \"9ffad454-4ef6-61b0-ca04-83d9c55a87d9\",\n  \"status\": \"Approved\",\n  \"kind\": \"Onramp\",\n  \"created_at\": \"1983-01-30T17:19:12.855Z\",\n  \"source_currencies\": [\n    {\n      \"blockchain\": \"Ethereum\",\n      \"token\": \"string\",\n      \"type\": \"Crypto\"\n    },\n    {\n      \"blockchain\": \"Plasma\",\n      \"token\": \"string\",\n      \"type\": \"Crypto\"\n    }\n  ],\n  \"destination_currency\": {\n    \"blockchain\": \"Tempo\",\n    \"token\": \"string\",\n    \"type\": \"Crypto\"\n  },\n  \"source\": \"Quote\",\n  \"quotes\": [\n    {\n      \"quote_id\": \"9519e189-5431-9ebd-f20f-ecd780fbc193\",\n      \"amount_in\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"amount_out\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"rate\": \"string\",\n      \"rate_lock_valid_until\": \"1954-01-01T13:39:22.717Z\",\n      \"rate_expiry_policy\": \"Return\",\n      \"fee\": {\n        \"total_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"iron_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"partner_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"network_fees\": [\n          {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        ],\n        \"network_fees_with_settlement\": [\n          {\n            \"fee_type\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"fee_amount\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"settlement\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"fee_type\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"fee_amount\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"settlement\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ],\n        \"partner_fees\": [\n          {\n            \"label\": \"string\",\n            \"fee\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"settlement\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"label\": \"string\",\n            \"fee\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"settlement\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ],\n        \"transaction_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"banking_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"network_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"banking_fee_network\": \"Ach\",\n        \"deducted_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"iron_fee_settlement\": \"settledLater\"\n      },\n      \"fee_settlement\": \"deductedImmediately\",\n      \"partner_fee_settlement\": \"deductedImmediately\",\n      \"valid_until\": \"1958-06-29T20:36:21.144Z\",\n      \"slippage_tolerance_in_bips\": \"string\"\n    },\n    {\n      \"quote_id\": \"d794cb95-cc9b-3eeb-5f2d-2bfda04addec\",\n      \"amount_in\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"amount_out\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"rate\": \"string\",\n      \"rate_lock_valid_until\": \"2009-07-09T23:57:12.160Z\",\n      \"rate_expiry_policy\": \"Return\",\n      \"fee\": {\n        \"total_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"iron_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"partner_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"network_fees\": [\n          {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        ],\n        \"network_fees_with_settlement\": [\n          {\n            \"fee_type\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"fee_amount\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"settlement\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"fee_type\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"fee_amount\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"settlement\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ],\n        \"partner_fees\": [\n          {\n            \"label\": \"string\",\n            \"fee\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"settlement\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"label\": \"string\",\n            \"fee\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"settlement\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ],\n        \"transaction_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"banking_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"network_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"banking_fee_network\": \"Sepa\",\n        \"deducted_fee\": {\n          \"amount\": \"100.5\",\n          \"currency\": {\n            \"code\": \"USD\",\n            \"type\": \"Fiat\"\n          }\n        },\n        \"iron_fee_settlement\": \"settledLater\"\n      },\n      \"fee_settlement\": \"settledLater\",\n      \"partner_fee_settlement\": \"deductedImmediately\",\n      \"valid_until\": \"1949-08-31T00:44:19.007Z\",\n      \"slippage_tolerance_in_bips\": \"string\"\n    }\n  ],\n  \"is_third_party\": true,\n  \"recipient\": {\n    \"account_identifier\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"address\": {\n      \"street\": \"string\",\n      \"city\": \"string\",\n      \"state\": \"string\",\n      \"country\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"postal_code\": \"string\"\n    },\n    \"is_third_party\": true,\n    \"provider_country\": {\n      \"code\": \"DE\"\n    },\n    \"provider_name\": \"string\",\n    \"recipient\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"type\": \"BankAccount\",\n    \"bank_address\": {\n      \"street\": \"string\",\n      \"city\": \"string\",\n      \"state\": \"string\",\n      \"country\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"postal_code\": \"str\"\n    },\n    \"email_address\": {\n      \"email\": \"john.doe@example.com\"\n    },\n    \"phone_number\": \"string\"\n  },\n  \"deposit_rails\": [\n    {\n      \"iban\": \"string\",\n      \"type\": \"SEPA\",\n      \"address\": \"string\",\n      \"beneficiary_name\": \"string\",\n      \"bic\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    {\n      \"iban\": \"string\",\n      \"type\": \"SEPA\",\n      \"address\": \"string\",\n      \"beneficiary_name\": \"string\",\n      \"bic\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    }\n  ],\n  \"fee_profile_id\": \"3c8c6dae-d338-f249-4605-f5c7ef44d0a1\",\n  \"batch_payout\": true,\n  \"additional_partner_fee_in_bips\": \"string\",\n  \"deposit_account\": {\n    \"iban\": \"string\",\n    \"type\": \"SEPA\",\n    \"address\": \"string\",\n    \"beneficiary_name\": \"string\",\n    \"bic\": \"string\",\n    \"name\": \"string\",\n    \"phone\": \"string\"\n  },\n  \"external_id\": \"string\",\n  \"fps_payment_reference\": \"string\",\n  \"inbound_payment_reference\": \"string\",\n  \"name\": \"string\",\n  \"payment_reference\": \"string\",\n  \"quote\": {\n    \"quote_id\": \"c8c86f97-acff-86e1-585e-d3bd56a25cff\",\n    \"amount_in\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"amount_out\": {\n      \"amount\": \"100.5\",\n      \"currency\": {\n        \"code\": \"USD\",\n        \"type\": \"Fiat\"\n      }\n    },\n    \"rate\": \"string\",\n    \"rate_lock_valid_until\": \"1961-08-13T09:45:02.872Z\",\n    \"rate_expiry_policy\": \"Return\",\n    \"fee\": {\n      \"total_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"iron_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"partner_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"network_fees\": [\n        {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      ],\n      \"network_fees_with_settlement\": [\n        {\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fee_amount\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"settlement\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        {\n          \"fee_type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fee_amount\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"settlement\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        }\n      ],\n      \"partner_fees\": [\n        {\n          \"label\": \"string\",\n          \"fee\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"settlement\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        {\n          \"label\": \"string\",\n          \"fee\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"settlement\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        }\n      ],\n      \"transaction_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"banking_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"network_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"banking_fee_network\": \"Ach\",\n      \"deducted_fee\": {\n        \"amount\": \"100.5\",\n        \"currency\": {\n          \"code\": \"USD\",\n          \"type\": \"Fiat\"\n        }\n      },\n      \"iron_fee_settlement\": \"settledLater\"\n    },\n    \"fee_settlement\": \"deductedImmediately\",\n    \"partner_fee_settlement\": \"deductedImmediately\",\n    \"valid_until\": \"1983-05-01T08:02:26.216Z\",\n    \"slippage_tolerance_in_bips\": \"string\"\n  },\n  \"sepa_payment_reference\": \"string\",\n  \"swift_payment_reference\": \"string\",\n  \"travel_address\": \"string\",\n  \"wire_message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ddbb3249-cb12-45a7-ad19-6da709c7253c",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "autoramp",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the autoramp to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "acc54b95-a83a-41f1-a18b-8f191423c66d",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "autoramp",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the autoramp to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "06dec820-ac33-498f-bd93-310a63e3706c",
+              "name": "Forbidden (e.g. customer is suspended)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "autoramp",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the autoramp to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f1faf1ad-ad4f-4384-bad1-f5779b8bbfd9",
+              "name": "Not Found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "autoramp",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the autoramp to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "aabb1fff-87b4-467e-a25a-3b7ad4dfa407",
+              "name": "Internal Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "autoramp",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the autoramp to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "118bec53-565a-4c2f-9d3e-753eaaab3e45",
+          "name": "Update fiat address verification status",
+          "request": {
+            "name": "Update fiat address verification status",
+            "description": {
+              "content": "Update the verification status of a fiat address\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "fiat-verification",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) the ID of the address to update"
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "PUT",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "<string>",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "7b392637-e114-4ba3-8e1c-5ec412b5ec8f",
+              "name": "Update Address Succeeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "fiat-verification",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the address to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": \"a84d078e-1dde-05da-6911-557f676df68f\",\n  \"created_at\": \"1959-10-11T19:23:22.219Z\",\n  \"updated_at\": \"1984-08-06T12:29:06.545Z\",\n  \"customer_id\": \"5e1a38fb-e33b-baf5-8e64-dc59351449e7\",\n  \"bank_details\": {\n    \"recipient\": {\n      \"family_name\": \"string\",\n      \"given_name\": \"string\",\n      \"type\": \"Individual\"\n    },\n    \"provider_name\": \"string\",\n    \"provider_country\": {\n      \"code\": \"DE\"\n    },\n    \"account_identifier\": {\n      \"iban\": \"string\",\n      \"type\": \"SEPA\"\n    },\n    \"address\": {\n      \"street\": \"string\",\n      \"city\": \"string\",\n      \"state\": \"string\",\n      \"country\": {\n        \"code\": \"DE\"\n      },\n      \"postal_code\": \"string\"\n    },\n    \"is_third_party\": true,\n    \"bank_address\": {\n      \"street\": \"string\",\n      \"city\": \"string\",\n      \"state\": \"string\",\n      \"country\": {\n        \"code\": \"DE\"\n      },\n      \"postal_code\": \"stri\"\n    },\n    \"email_address\": {\n      \"email\": \"john.doe@example.com\"\n    },\n    \"phone_number\": \"string\"\n  },\n  \"status\": \"RegistrationPending\",\n  \"currency\": \"string\",\n  \"bank_account_identifier\": {\n    \"iban\": \"string\",\n    \"type\": \"SEPA\"\n  },\n  \"country\": \"string\",\n  \"bank_name\": \"string\",\n  \"ownership_verified\": true,\n  \"is_third_party\": true,\n  \"label\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fdf414d0-26d8-4eb1-90c3-16cef6661a49",
+              "name": "Update Address Failed (Forbidden)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "fiat-verification",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the address to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3a2eab60-9c25-410c-a151-3c172cd33719",
+              "name": "Update Address Failed (Not Found)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "fiat-verification",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the address to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6e499690-1de2-4d8e-b91f-a76646079cee",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "fiat-verification",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the address to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d4b43dcd-0232-491c-9c4c-2732dfd3e978",
+          "name": "Update pending Identification status",
+          "request": {
+            "name": "Update pending Identification status",
+            "description": {
+              "content": "Updates a pending identification for a customer",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "identification",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) the ID of the identification to update"
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                "key": "IDEMPOTENCY-KEY",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approved\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d49208e3-5c48-4809-a232-84f864d59da1",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "identification",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the identification to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"approved\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": \"71888fc1-8c8d-7acd-8824-324b241da964\",\n  \"status\": \"PendingReview\",\n  \"created_at\": \"1975-11-25T06:52:54.485Z\",\n  \"updated_at\": \"1982-09-25T21:13:53.035Z\",\n  \"customer_id\": \"0a9ac26c-7c0f-0b44-8ee1-3d8537c92eb1\",\n  \"partner_id\": \"4d209fee-9159-6737-c2e7-06f66a73ab14\",\n  \"residence_country\": \"string\",\n  \"review_comment\": \"string\",\n  \"step_status\": {\n    \"company_beneficiaries\": {\n      \"result\": \"Processed\",\n      \"retry\": true,\n      \"comment\": \"string\"\n    },\n    \"company_data\": {\n      \"result\": \"Approved\",\n      \"retry\": true,\n      \"comment\": \"string\"\n    },\n    \"company_documents\": {\n      \"result\": \"Processed\",\n      \"retry\": false,\n      \"comment\": \"string\"\n    },\n    \"questionnaire\": {\n      \"result\": \"Archived\",\n      \"retry\": false,\n      \"comment\": \"string\"\n    }\n  },\n  \"url\": \"string\",\n  \"with_edd\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bd76f1b4-8b74-49d9-9839-fbcf1f906ed9",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "identification",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the identification to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"approved\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6de508b6-73e3-493c-b10b-bc245ebf6c9f",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "identification",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the identification to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"approved\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f06b221f-6f4c-4e3f-afe7-56bb19d76a3a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "identification",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the identification to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"approved\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "64969774-9375-465c-b8ca-ede4b3cc96d8",
+          "name": "Reset sandbox environment",
+          "request": {
+            "name": "Reset sandbox environment",
+            "description": {
+              "content": "Resets the sandbox for the partner. Including fiat accounts, wallets, autoramps, transactions, and customers",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "reset"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                "key": "IDEMPOTENCY-KEY",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "Optional sub-partner UUID, if provided, the wallet address will be registered for the sub-partner",
+                "key": "X-SUB-PARTNER-ID",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "69e7887e-0358-4b61-91a5-4a954744ddee",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "reset"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Optional sub-partner UUID, if provided, the wallet address will be registered for the sub-partner",
+                    "key": "X-SUB-PARTNER-ID",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "true",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "948e7d37-1423-4815-a1db-d34ddbe411a3",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "reset"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Optional sub-partner UUID, if provided, the wallet address will be registered for the sub-partner",
+                    "key": "X-SUB-PARTNER-ID",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5dddeefa-bb84-476a-a9ec-d6d45ac6b197",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "reset"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the reset operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Optional sub-partner UUID, if provided, the wallet address will be registered for the sub-partner",
+                    "key": "X-SUB-PARTNER-ID",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "92f9197a-173b-48eb-b51c-fe29a779c432",
+          "name": "Mock a transaction",
+          "request": {
+            "name": "Mock a transaction",
+            "description": {
+              "content": "Creates a new fiat transaction directly from an autoramp configuration for testing purposes.\nThis bypasses the normal deposit flow and creates a ramp transaction with the specified amount\nusing the autoramp's configuration (customer, recipient, currencies, etc.).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "transaction"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) a UUID ensuring a Ramp Transaction operation is only processed once",
+                "key": "IDEMPOTENCY-KEY",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autoramp_id\": \"<uuid>\",\n  \"amount\": \"<decimal>\",\n  \"amount_out\": \"<decimal>\",\n  \"deposit_id\": \"<uuid>\",\n  \"fee\": \"<decimal>\",\n  \"fx_rate\": \"<decimal>\",\n  \"initial_state\": \"<string>\",\n  \"input_currency\": {\n    \"blockchain\": \"<string>\",\n    \"token\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  \"source\": {\n    \"wallet_address\": \"<string>\",\n    \"blockchain\": \"<string>\",\n    \"deposit_tx_hash\": \"<string>\"\n  },\n  \"transaction_id\": \"<uuid>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b105bb6f-fbef-4bc7-ae25-472c8c140676",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring a Ramp Transaction operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"autoramp_id\": \"<uuid>\",\n  \"amount\": \"<decimal>\",\n  \"amount_out\": \"<decimal>\",\n  \"deposit_id\": \"<uuid>\",\n  \"fee\": \"<decimal>\",\n  \"fx_rate\": \"<decimal>\",\n  \"initial_state\": \"Pending\",\n  \"input_currency\": {\n    \"blockchain\": \"Base\",\n    \"token\": \"string\",\n    \"type\": \"Crypto\"\n  },\n  \"source\": {\n    \"blockchain\": \"Solana\",\n    \"deposit_tx_hash\": \"45E89p7aRyUzsqbqstCkKqxaaeYXgagbq8ccHCZWMRN1E8KAqoEPACDasVjkMMbDJGwrwFHz5RDT67kUN3p5Rk81\",\n    \"wallet_address\": \"7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp\"\n  },\n  \"transaction_id\": \"<uuid>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": \"d3e829fb-1851-6719-cc51-8b1a40dd168b\",\n  \"autoramp_id\": \"1aab0ea4-83c9-19c1-2723-f0ca74bba000\",\n  \"amount_in\": \"string\",\n  \"currency_in\": \"string\",\n  \"amount_out\": \"string\",\n  \"currency_out\": \"string\",\n  \"customer_id\": \"b28e4f21-70a6-6f04-e08f-6554adec62b0\",\n  \"state\": \"string\",\n  \"created_at\": \"1952-07-10T22:54:03.925Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c1226e87-5dc0-42d9-9976-99d7041ab681",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring a Ramp Transaction operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"autoramp_id\": \"<uuid>\",\n  \"amount\": \"<decimal>\",\n  \"amount_out\": \"<decimal>\",\n  \"deposit_id\": \"<uuid>\",\n  \"fee\": \"<decimal>\",\n  \"fx_rate\": \"<decimal>\",\n  \"initial_state\": \"Pending\",\n  \"input_currency\": {\n    \"blockchain\": \"Base\",\n    \"token\": \"string\",\n    \"type\": \"Crypto\"\n  },\n  \"source\": {\n    \"blockchain\": \"Solana\",\n    \"deposit_tx_hash\": \"45E89p7aRyUzsqbqstCkKqxaaeYXgagbq8ccHCZWMRN1E8KAqoEPACDasVjkMMbDJGwrwFHz5RDT67kUN3p5Rk81\",\n    \"wallet_address\": \"7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp\"\n  },\n  \"transaction_id\": \"<uuid>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1222f0e4-cc99-4eea-8d6f-c62413e1c764",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring a Ramp Transaction operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"autoramp_id\": \"<uuid>\",\n  \"amount\": \"<decimal>\",\n  \"amount_out\": \"<decimal>\",\n  \"deposit_id\": \"<uuid>\",\n  \"fee\": \"<decimal>\",\n  \"fx_rate\": \"<decimal>\",\n  \"initial_state\": \"Pending\",\n  \"input_currency\": {\n    \"blockchain\": \"Base\",\n    \"token\": \"string\",\n    \"type\": \"Crypto\"\n  },\n  \"source\": {\n    \"blockchain\": \"Solana\",\n    \"deposit_tx_hash\": \"45E89p7aRyUzsqbqstCkKqxaaeYXgagbq8ccHCZWMRN1E8KAqoEPACDasVjkMMbDJGwrwFHz5RDT67kUN3p5Rk81\",\n    \"wallet_address\": \"7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp\"\n  },\n  \"transaction_id\": \"<uuid>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "35931bc3-4a0e-40e6-a8b9-2aba0baef01a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring a Ramp Transaction operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"autoramp_id\": \"<uuid>\",\n  \"amount\": \"<decimal>\",\n  \"amount_out\": \"<decimal>\",\n  \"deposit_id\": \"<uuid>\",\n  \"fee\": \"<decimal>\",\n  \"fx_rate\": \"<decimal>\",\n  \"initial_state\": \"Pending\",\n  \"input_currency\": {\n    \"blockchain\": \"Base\",\n    \"token\": \"string\",\n    \"type\": \"Crypto\"\n  },\n  \"source\": {\n    \"blockchain\": \"Solana\",\n    \"deposit_tx_hash\": \"45E89p7aRyUzsqbqstCkKqxaaeYXgagbq8ccHCZWMRN1E8KAqoEPACDasVjkMMbDJGwrwFHz5RDT67kUN3p5Rk81\",\n    \"wallet_address\": \"7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp\"\n  },\n  \"transaction_id\": \"<uuid>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9af0e6af-0393-4f38-868f-7ca98f6da1d4",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring a Ramp Transaction operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"autoramp_id\": \"<uuid>\",\n  \"amount\": \"<decimal>\",\n  \"amount_out\": \"<decimal>\",\n  \"deposit_id\": \"<uuid>\",\n  \"fee\": \"<decimal>\",\n  \"fx_rate\": \"<decimal>\",\n  \"initial_state\": \"Pending\",\n  \"input_currency\": {\n    \"blockchain\": \"Base\",\n    \"token\": \"string\",\n    \"type\": \"Crypto\"\n  },\n  \"source\": {\n    \"blockchain\": \"Solana\",\n    \"deposit_tx_hash\": \"45E89p7aRyUzsqbqstCkKqxaaeYXgagbq8ccHCZWMRN1E8KAqoEPACDasVjkMMbDJGwrwFHz5RDT67kUN3p5Rk81\",\n    \"wallet_address\": \"7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp\"\n  },\n  \"transaction_id\": \"<uuid>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c4fa08d9-b668-4b63-81af-1c7b694268f4",
+          "name": "Update sandbox transaction state",
+          "request": {
+            "name": "Update sandbox transaction state",
+            "description": {
+              "content": "Updates the state of a sandbox transaction for testing purposes",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "transaction",
+                ":id",
+                "state"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) the ID of the ramp transaction to update"
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) a UUID ensuring the state update operation is only processed once",
+                "key": "IDEMPOTENCY-KEY",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                "key": "X-API-Version",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "method": "PUT",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "7b9963c7-7cea-49cb-b428-3c1089bd91d2",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction",
+                    ":id",
+                    "state"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the ramp transaction to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the state update operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"Pending\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": \"d3e829fb-1851-6719-cc51-8b1a40dd168b\",\n  \"autoramp_id\": \"1aab0ea4-83c9-19c1-2723-f0ca74bba000\",\n  \"amount_in\": \"string\",\n  \"currency_in\": \"string\",\n  \"amount_out\": \"string\",\n  \"currency_out\": \"string\",\n  \"customer_id\": \"b28e4f21-70a6-6f04-e08f-6554adec62b0\",\n  \"state\": \"string\",\n  \"created_at\": \"1952-07-10T22:54:03.925Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ca6dba5a-f332-4e75-8f3d-2f9d337f3109",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction",
+                    ":id",
+                    "state"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the ramp transaction to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the state update operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"Pending\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "24d90c06-7f0f-4548-a2a0-0700491bc8db",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction",
+                    ":id",
+                    "state"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the ramp transaction to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the state update operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"Pending\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f255e728-3310-4dc6-98a5-eae19bf22e61",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction",
+                    ":id",
+                    "state"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the ramp transaction to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the state update operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"Pending\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e2908fe7-2994-4886-af8e-1f20009e78c1",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "transaction",
+                    ":id",
+                    "state"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) the ID of the ramp transaction to update"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) a UUID ensuring the state update operation is only processed once",
+                    "key": "IDEMPOTENCY-KEY",
+                    "value": "<string>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.",
+                    "key": "X-API-Version",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json; charset=utf-8"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"Pending\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.sandbox.iron.xyz/api",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "c2545e14-720c-42a5-a130-5fd754091415",
+    "name": "Iron API - Addresses Sandbox API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Stablecoin Payment Network",
+      "type": "text/plain"
+    }
+  }
+}
