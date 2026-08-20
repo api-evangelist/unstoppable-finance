@@ -39,6 +39,16 @@ tags:
 - Company
 - Stablecoins
 - Payments
+- On-Ramp
+- Off-Ramp
+- Cryptocurrency
+- Banking
+- Fintech
+- Compliance
+tags_raw:
+- Company
+- Stablecoins
+- Payments
 - Onramp
 - Offramp
 - Cryptocurrency
@@ -102,6 +112,8 @@ apis:
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
+  - Currency
+  tags_raw:
   - Currencies
   properties:
   - type: OpenAPI
@@ -117,6 +129,8 @@ apis:
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
+  - Customers
+  tags_raw:
   - Customer
   properties:
   - type: OpenAPI
@@ -132,6 +146,8 @@ apis:
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
+  - Exchange Rate
+  tags_raw:
   - ExchangeRate
   properties:
   - type: OpenAPI
@@ -147,6 +163,8 @@ apis:
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
+  - Fee Profiles
+  tags_raw:
   - FeeProfiles
   properties:
   - type: OpenAPI
@@ -177,6 +195,8 @@ apis:
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
+  - Terms And Conditions
+  tags_raw:
   - TermsAndConditions
   properties:
   - type: OpenAPI
@@ -192,6 +212,8 @@ apis:
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
