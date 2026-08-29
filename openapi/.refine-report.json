@@ -1,15 +1,7 @@
 {
   "provider": "unstoppable-finance",
   "sources": [
-    "unstoppable-finance-addresses-api-openapi.yml",
-    "unstoppable-finance-autoramp-api-openapi.yml",
-    "unstoppable-finance-currencies-api-openapi.yml",
-    "unstoppable-finance-customer-api-openapi.yml",
-    "unstoppable-finance-exchangerate-api-openapi.yml",
-    "unstoppable-finance-feeprofiles-api-openapi.yml",
-    "unstoppable-finance-sandbox-api-openapi.yml",
-    "unstoppable-finance-termsandconditions-api-openapi.yml",
-    "unstoppable-finance-webhooks-api-openapi.yml"
+    "_original/unstoppable-finance-iron-openapi-original.yml"
   ],
   "outputs": [
     "unstoppable-finance-addresses-api-openapi.yml",
@@ -25,6 +17,19 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "unstoppable-finance-iron-openapi-original.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0"
+  ],
+  "skipped": [
+    "unstoppable-finance-addresses-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-autoramp-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-currencies-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-customer-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-exchangerate-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-feeprofiles-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-sandbox-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-termsandconditions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

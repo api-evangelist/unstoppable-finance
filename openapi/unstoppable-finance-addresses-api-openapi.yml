@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   description: The Stablecoin Payment Network
   title: Iron API - Sandbox Addresses API
@@ -1118,70 +1118,65 @@ paths:
       - Addresses
 components:
   schemas:
-    BankAccountIdentifier_BankAccountFedNowIdentifier:
+    RecipientName:
+      anyOf:
+      - $ref: '#/components/schemas/RecipientName_IndividualName'
+      - $ref: '#/components/schemas/RecipientName_BusinessName'
+      discriminator:
+        mapping:
+          Business: '#/components/schemas/RecipientName_BusinessName'
+          Individual: '#/components/schemas/RecipientName_IndividualName'
+        propertyName: type
+      type: object
+    PixAccountType:
+      description: 'PixAccountType
+
+
+        The type of a Brazilian bank account.'
+      enum:
+      - CHECKING
+      - SAVINGS
+      - SALARY
+      - TRANSACTION
+      type: string
+    BankAccountIdentifier_BankAccountCHAPSIdentifier:
       allOf:
       - properties:
           type:
             enum:
-            - FEDNOW
-            example: FEDNOW
+            - CHAPS
+            example: CHAPS
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/BankAccountFedNowIdentifier'
-    PixAccountIdentifier_PixCpfKey:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - CPF
-            example: CPF
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixCpfKey'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    RecipientPostalAddress:
-      description: 'RecipientPostalAddress
-
-
-        The account holder''s address.'
+      - $ref: '#/components/schemas/BankAccountCHAPSIdentifier'
+    Country:
+      description: A country
+      example:
+        code: DE
       properties:
-        city:
-          description: The city
-          maxLength: 100
-          minLength: 2
-          type: string
-        country:
-          $ref: '#/components/schemas/Country'
-        postal_code:
-          description: The postal code
-          maxLength: 20
-          minLength: 3
-          type: string
-        state:
-          description: The state
-          type: string
-        street:
-          description: The street address
-          maxLength: 256
+        code:
+          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
+          maxLength: 2
           minLength: 2
           type: string
       required:
-      - street
-      - city
-      - state
-      - country
-      - postal_code
-      title: RecipientPostalAddress
+      - code
+      title: Country
       type: object
+    RecipientName_BusinessName:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Business
+            example: Business
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BusinessName'
     PixAccountIdentifier_PixCnpjKey:
       allOf:
       - properties:
@@ -1200,63 +1195,36 @@ components:
         How the recipient''s PIX account is identified: a DICT key of one of the
 
         five key types, or full bank account details.'
-    Country:
-      description: A country
-      example:
-        code: DE
-      properties:
-        code:
-          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
-          maxLength: 2
-          minLength: 2
-          type: string
-      required:
-      - code
-      title: Country
-      type: object
-    CountrySubdivision:
-      properties:
-        code:
-          type: string
-        name:
-          type: string
-      required:
-      - code
-      - name
-      title: CountrySubdivision
-      type: object
-    BankAccountCHAPSIdentifier:
-      example:
-        account_number: '12345678'
-        sort_code: 20-00-00
-      properties:
-        account_number:
-          type: string
-        sort_code:
-          type: string
-      required:
-      - sort_code
-      - account_number
-      title: BankAccountCHAPSIdentifier
-      type: object
-    BankAccountRTPIdentifier:
-      example:
-        account_number: '456789123'
-        routing_number: '021000021'
-      properties:
-        account_number:
-          description: US account number (4-17 alphanumeric characters)
-          pattern: ^[0-9A-Z]{4,17}$
-          type: string
-        routing_number:
-          description: US routing number (exactly 9 digits)
-          pattern: ^[0-9]{9}$
-          type: string
-      required:
-      - routing_number
-      - account_number
-      title: BankAccountRTPIdentifier
-      type: object
+    BankAccountIdentifier_BankAccountWireIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Wire
+            example: Wire
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountWireIdentifier'
+    PixAccountIdentifier_PixBankDetails:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - BANK_DETAILS
+            example: BANK_DETAILS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixBankDetails'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
     PixAddressStatus:
       description: PIX Address Status
       enum:
@@ -1264,155 +1232,6 @@ components:
       - Registered
       - RegistrationFailed
       type: string
-    BankAccountIdentifier_BankAccountACHIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - ACH
-            example: ACH
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountACHIdentifier'
-    RecipientName_IndividualName:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Individual
-            example: Individual
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/IndividualName'
-    BankPostalAddress:
-      description: 'BankPostalAddress
-
-
-        The bank''s address. Only required for SWIFT accounts.'
-      properties:
-        city:
-          description: The city
-          maxLength: 100
-          minLength: 2
-          type: string
-        country:
-          $ref: '#/components/schemas/Country'
-        postal_code:
-          description: The postal code
-          maxLength: 20
-          minLength: 3
-          type: string
-        state:
-          description: The state
-          type: string
-        street:
-          description: The street address
-          maxLength: 256
-          minLength: 2
-          type: string
-      required:
-      - street
-      - city
-      - state
-      - country
-      - postal_code
-      title: BankPostalAddress
-      type: object
-    RecipientName_BusinessName:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Business
-            example: Business
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BusinessName'
-    ApiError:
-      description: 'Standard error response returned to API clients for server errors.
-
-        Includes a trace_id that clients can reference when reporting issues.'
-      properties:
-        message:
-          description: Human-readable error message
-          type: string
-        trace_id:
-          description: Trace ID that can be used to look up request details in logs
-          type: string
-      required:
-      - message
-      - trace_id
-      title: ApiError
-      type: object
-    VerifiedAddressResponse:
-      description: 'Verified Address Response
-
-
-        Response containing verified address details
-
-        '
-      example:
-        address_type: SelfHosted
-        blockchain: Solana
-        created_at: 2024-01-15 10:30:00+00:00
-        disabled: false
-        id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-        is_self: true
-        name: Primary Solana wallet
-        proof_message: I hereby verify that I own this wallet address
-        proof_signature: 5J9qvKhKqYbpjhCkqDnKXSp7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp...
-        vasp_did: null
-        wallet_address: 7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
-      properties:
-        address_type:
-          $ref: '#/components/schemas/AddressType'
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
-        created_at:
-          description: When the address was verified
-          format: date-time
-          type: string
-        disabled:
-          description: Whether the address is disabled
-          type: boolean
-        id:
-          description: The ID of the verified address
-          format: uuid
-          type: string
-        is_self:
-          description: Whether the wallet belongs to the customer themselves (true) or a third party
-          type: boolean
-        name:
-          description: Optional display name for this wallet address
-          type: string
-        proof_message:
-          description: The proof message
-          type: string
-        proof_signature:
-          description: The proof signature
-          type: string
-        vasp_did:
-          description: The VASP DID (decentralized Identifier) for hosted wallets
-          type: string
-        wallet_address:
-          description: The wallet address
-          type: string
-      required:
-      - id
-      - created_at
-      - wallet_address
-      - address_type
-      - blockchain
-      - disabled
-      - is_self
-      title: VerifiedAddressResponse
-      type: object
     SelfHostedWalletResponse:
       description: 'Self-Hosted Wallet Response
 
@@ -1452,6 +1271,263 @@ components:
       - disabled
       title: SelfHostedWalletResponse
       type: object
+    BankAccountRTPIdentifier:
+      example:
+        account_number: '456789123'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountRTPIdentifier
+      type: object
+    PixAccountIdentifier_PixEmailKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - EMAIL
+            example: EMAIL
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixEmailKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    BusinessName:
+      example:
+        name: Aperture Science
+      properties:
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+      required:
+      - name
+      title: BusinessName
+      type: object
+    RegisterSelfHostedWalletRequest:
+      description: 'Self-hosted wallet registration request
+
+
+        Proof of wallet ownership to register a self-hosted wallet for Travel Rule compliance
+
+        '
+      properties:
+        address:
+          description: The address of the wallet
+          type: string
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        message:
+          description: The message that was signed
+          type: string
+        name:
+          description: Optional display name for this wallet address
+          type: string
+        signature:
+          description: The signature of the message
+          type: string
+      required:
+      - blockchain
+      - customer_id
+      - address
+      - signature
+      - message
+      title: RegisterSelfHostedWalletRequest
+      type: object
+    PixCpfKey:
+      description: 'PixCpfKey
+
+
+        A PIX DICT key that is the recipient''s CPF.'
+      example:
+        key: '12345678909'
+      properties:
+        key:
+          description: 11-digit CPF, with or without the `XXX.XXX.XXX-XX` formatting
+          pattern: ^([0-9]{11}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})$
+          type: string
+      required:
+      - key
+      title: PixCpfKey
+      type: object
+    PixAccountIdentifier_PixEvpKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - EVP
+            example: EVP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixEvpKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    IndividualName:
+      example:
+        family_name: Turing
+        given_name: Alan
+      properties:
+        family_name:
+          maxLength: 50
+          minLength: 1
+          type: string
+        given_name:
+          maxLength: 50
+          minLength: 1
+          type: string
+      required:
+      - given_name
+      - family_name
+      title: IndividualName
+      type: object
+    BankAccountIdentifier_BankAccountACHIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - ACH
+            example: ACH
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountACHIdentifier'
+    BankAccountIdentifier_BankAccountRTPIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - RTP
+            example: RTP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountRTPIdentifier'
+    BankPostalAddress:
+      description: 'BankPostalAddress
+
+
+        The bank''s address. Only required for SWIFT accounts.'
+      properties:
+        city:
+          description: The city
+          maxLength: 100
+          minLength: 2
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        postal_code:
+          description: The postal code
+          maxLength: 20
+          minLength: 3
+          type: string
+        state:
+          description: The state
+          type: string
+        street:
+          description: The street address
+          maxLength: 256
+          minLength: 2
+          type: string
+      required:
+      - street
+      - city
+      - state
+      - country
+      - postal_code
+      title: BankPostalAddress
+      type: object
+    UpdateDisabledStatusRequest:
+      description: Request to update the disabled status of a verified crypto address
+      properties:
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        disabled:
+          description: Whether to disable the address
+          type: boolean
+      required:
+      - customer_id
+      - disabled
+      title: UpdateDisabledStatusRequest
+      type: object
+    RegisterPixAddressRequest:
+      description: 'Register PIX Address Request
+
+
+        Request to register a PIX payout destination (Brazil / BRL).'
+      properties:
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        label:
+          description: Optional label for the address
+          type: string
+        recipient:
+          $ref: '#/components/schemas/RecipientPix'
+      required:
+      - customer_id
+      - recipient
+      title: RegisterPixAddressRequest
+      type: object
+    RegisterHostedWalletRequest:
+      description: 'Hosted wallet registration request
+
+
+        Register a VASP-custodied wallet address for Travel Rule compliance
+
+        '
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        name:
+          description: Optional display name for this wallet address
+          type: string
+        vasp_did:
+          description: The VASP DID (decentraliced Identifier) that hosts the wallet
+          type: string
+        wallet_address:
+          description: The wallet address at the institution
+          type: string
+      required:
+      - customer_id
+      - wallet_address
+      - vasp_did
+      - blockchain
+      title: RegisterHostedWalletRequest
+      type: object
     PixBankDetails:
       description: 'PixBankDetails
 
@@ -1489,115 +1565,222 @@ components:
       - account_type
       title: PixBankDetails
       type: object
-    BankAccountIdentifier_BankAccountRTPIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - RTP
-            example: RTP
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountRTPIdentifier'
-    EmailAddress:
-      description: 'EmailAddress
+    RegisterFiatAddressRequest:
+      description: 'Register Fiat Address Request
 
 
-        An email address
-
-        An email address
-
-        '
-      example:
-        email: john.doe@example.com
-      properties:
-        email:
-          description: The email address
-          type: string
-      required:
-      - email
-      title: EmailAddress
-      type: object
-    RegisterSelfHostedWalletRequest:
-      description: 'Self-hosted wallet registration request
-
-
-        Proof of wallet ownership to register a self-hosted wallet for Travel Rule compliance
+        Request to register a fiat (bank) address
 
         '
       properties:
-        address:
-          description: The address of the wallet
-          type: string
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
+        bank_details:
+          $ref: '#/components/schemas/RecipientBankAccount'
+        currency:
+          $ref: '#/components/schemas/Fiat'
         customer_id:
           description: The customer ID
           format: uuid
           type: string
-        message:
-          description: The message that was signed
-          type: string
-        name:
-          description: Optional display name for this wallet address
-          type: string
-        signature:
-          description: The signature of the message
+        label:
+          description: Optional label for the address
           type: string
       required:
-      - blockchain
       - customer_id
-      - address
-      - signature
-      - message
-      title: RegisterSelfHostedWalletRequest
+      - bank_details
+      - currency
+      title: RegisterFiatAddressRequest
       type: object
-    BankAccountIdentifier_BankAccountCHAPSIdentifier:
+    PixPhoneKey:
+      description: 'PixPhoneKey
+
+
+        A PIX DICT key that is the recipient''s phone number.'
+      example:
+        key: '+5511987654321'
+      properties:
+        key:
+          description: International format with leading `+`, e.g. +5511987654321
+          pattern: ^\+[1-9][0-9]{1,14}$
+          type: string
+      required:
+      - key
+      title: PixPhoneKey
+      type: object
+    BankAccountSWIFTIdentifier:
+      example:
+        account_number: '1234567890'
+        bic: CHASUS33XXX
+      properties:
+        account_number:
+          type: string
+        bic:
+          type: string
+        intermediary_bic:
+          description: 'BIC of an intermediary correspondent bank in the SWIFT routing chain,
+
+            when the sender wants to override the auto-selected intermediary.
+
+            Optional — most senders leave this unset and let their provider pick.'
+          type: string
+      required:
+      - bic
+      - account_number
+      title: BankAccountSWIFTIdentifier
+      type: object
+    BankAccountACHIdentifier:
+      example:
+        account_number: '123456789'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountACHIdentifier
+      type: object
+    AddressType:
+      enum:
+      - Hosted
+      - SelfHosted
+      type: string
+    BankAccountIdentifier:
+      anyOf:
+      - $ref: '#/components/schemas/BankAccountIdentifier_Iban'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
+      discriminator:
+        mapping:
+          ACH: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
+          CHAPS: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
+          FEDNOW: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
+          FPS: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
+          RTP: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
+          SEPA: '#/components/schemas/BankAccountIdentifier_Iban'
+          SWIFT: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
+          Wire: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
+        propertyName: type
+      type: object
+    BankAccountIdentifier_BankAccountFedNowIdentifier:
       allOf:
       - properties:
           type:
             enum:
-            - CHAPS
-            example: CHAPS
+            - FEDNOW
+            example: FEDNOW
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/BankAccountCHAPSIdentifier'
-    RecipientPix:
-      description: 'RecipientPix
+      - $ref: '#/components/schemas/BankAccountFedNowIdentifier'
+    RecipientPostalAddress:
+      description: 'RecipientPostalAddress
 
 
-        A PIX payout recipient.'
-      example:
-        account:
-          key: '+5511987654321'
-          type: PHONE
-        recipient:
-          family_name: Turing
-          given_name: Alan
-          type: Individual
-        tax_id: '12345678909'
+        The account holder''s address.'
       properties:
-        account:
-          $ref: '#/components/schemas/PixAccountIdentifier'
-        recipient:
-          $ref: '#/components/schemas/RecipientName'
-        tax_id:
-          description: 'The recipient''s CPF (11 digits) or CNPJ (14 digits), with or without
-
-            the usual `.`/`-`/`/` formatting. The payout is rejected if the
-
-            destination account is not registered to this tax ID.'
-          pattern: ^([0-9]{11}|[0-9]{14}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+        city:
+          description: The city
+          maxLength: 100
+          minLength: 2
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        postal_code:
+          description: The postal code
+          maxLength: 20
+          minLength: 3
+          type: string
+        state:
+          description: The state
+          type: string
+        street:
+          description: The street address
+          maxLength: 256
+          minLength: 2
           type: string
       required:
+      - street
+      - city
+      - state
+      - country
+      - postal_code
+      title: RecipientPostalAddress
+      type: object
+    PixAddress:
+      description: 'PIX Address
+
+
+        Response containing PIX destination details.'
+      example:
+        created_at: 2024-01-15 10:30:00+00:00
+        customer_id: 123e4567-e89b-12d3-a456-426614174000
+        id: 550e8400-e29b-41d4-a716-446655440000
+        label: Primary PIX
+        recipient:
+          account:
+            key: '+5511987654321'
+            type: PHONE
+          recipient:
+            family_name: Turing
+            given_name: Alan
+            type: Individual
+          tax_id: '12345678909'
+        status: Registered
+        updated_at: 1970-01-01 00:00:00+00:00
+      properties:
+        created_at:
+          description: When the address was created
+          format: date-time
+          type: string
+        customer_id:
+          description: The customer ID
+          format: uuid
+          type: string
+        id:
+          description: The ID of the address
+          format: uuid
+          type: string
+        label:
+          description: Optional label for the address
+          type: string
+        recipient:
+          $ref: '#/components/schemas/RecipientPix'
+        status:
+          $ref: '#/components/schemas/PixAddressStatus'
+        updated_at:
+          description: When the address was last updated
+          format: date-time
+          type: string
+      required:
+      - id
+      - created_at
+      - updated_at
+      - customer_id
       - recipient
-      - tax_id
-      - account
-      title: RecipientPix
+      - status
+      title: PixAddress
+      type: object
+    Iban:
+      example:
+        iban: DE89370400440532013000
+      properties:
+        iban:
+          type: string
+      required:
+      - iban
+      title: Iban
       type: object
     PixEvpKey:
       description: 'PixEvpKey
@@ -1615,42 +1798,6 @@ components:
       - key
       title: PixEvpKey
       type: object
-    AddressFilter:
-      description: 'Filter for address types when retrieving signatures
-
-
-        Specifies which type of addresses to return
-
-        '
-      enum:
-      - Hosted
-      - SelfHosted
-      - All
-      type: string
-    BankAccountIdentifier_BankAccountWireIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Wire
-            example: Wire
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountWireIdentifier'
-    BankAccountIdentifier_Iban:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SEPA
-            example: SEPA
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/Iban'
     FiatAddress:
       description: 'Fiat Address
 
@@ -1751,91 +1898,17 @@ components:
       - is_third_party
       title: FiatAddress
       type: object
-    BankAccountIdentifier_BankAccountFPSIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - FPS
-            example: FPS
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountFPSIdentifier'
-    PixAccountIdentifier:
-      anyOf:
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-      discriminator:
-        mapping:
-          BANK_DETAILS: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
-          CNPJ: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
-          CPF: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
-          EMAIL: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
-          EVP: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
-          PHONE: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
-        propertyName: type
-      type: object
-    PixPhoneKey:
-      description: 'PixPhoneKey
-
-
-        A PIX DICT key that is the recipient''s phone number.'
+    Fiat:
+      description: A fiat currency
       example:
-        key: '+5511987654321'
+        code: USD
       properties:
-        key:
-          description: International format with leading `+`, e.g. +5511987654321
-          pattern: ^\+[1-9][0-9]{1,14}$
+        code:
+          description: The code of the currency e.g. 'USD'
           type: string
       required:
-      - key
-      title: PixPhoneKey
-      type: object
-    PixCpfKey:
-      description: 'PixCpfKey
-
-
-        A PIX DICT key that is the recipient''s CPF.'
-      example:
-        key: '12345678909'
-      properties:
-        key:
-          description: 11-digit CPF, with or without the `XXX.XXX.XXX-XX` formatting
-          pattern: ^([0-9]{11}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})$
-          type: string
-      required:
-      - key
-      title: PixCpfKey
-      type: object
-    BankAccountFedNowIdentifier:
-      example:
-        account_number: '456789123'
-        routing_number: '021000021'
-      properties:
-        account_number:
-          description: US account number (4-17 alphanumeric characters)
-          pattern: ^[0-9A-Z]{4,17}$
-          type: string
-        routing_number:
-          description: US routing number (exactly 9 digits)
-          pattern: ^[0-9]{9}$
-          type: string
-      required:
-      - routing_number
-      - account_number
-      title: BankAccountFedNowIdentifier
+      - code
+      title: Fiat
       type: object
     RegisterSelfAttestedWalletRequest:
       description: 'Self-attested wallet registration request
@@ -1865,6 +1938,36 @@ components:
       - address
       title: RegisterSelfAttestedWalletRequest
       type: object
+    PixAccountIdentifier_PixCpfKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CPF
+            example: CPF
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixCpfKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    BankAccountIdentifier_Iban:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SEPA
+            example: SEPA
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Iban'
     PixEmailKey:
       description: 'PixEmailKey
 
@@ -1881,64 +1984,6 @@ components:
       - key
       title: PixEmailKey
       type: object
-    RegisterHostedWalletRequest:
-      description: 'Hosted wallet registration request
-
-
-        Register a VASP-custodied wallet address for Travel Rule compliance
-
-        '
-      properties:
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
-        customer_id:
-          description: The customer ID
-          format: uuid
-          type: string
-        name:
-          description: Optional display name for this wallet address
-          type: string
-        vasp_did:
-          description: The VASP DID (decentraliced Identifier) that hosts the wallet
-          type: string
-        wallet_address:
-          description: The wallet address at the institution
-          type: string
-      required:
-      - customer_id
-      - wallet_address
-      - vasp_did
-      - blockchain
-      title: RegisterHostedWalletRequest
-      type: object
-    PixAccountIdentifier_PixEmailKey:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - EMAIL
-            example: EMAIL
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixEmailKey'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    RecipientName:
-      anyOf:
-      - $ref: '#/components/schemas/RecipientName_IndividualName'
-      - $ref: '#/components/schemas/RecipientName_BusinessName'
-      discriminator:
-        mapping:
-          Business: '#/components/schemas/RecipientName_BusinessName'
-          Individual: '#/components/schemas/RecipientName_IndividualName'
-        propertyName: type
-      type: object
     BankAccountFPSIdentifier:
       example:
         account_number: '55779911'
@@ -1953,42 +1998,6 @@ components:
       - account_number
       title: BankAccountFPSIdentifier
       type: object
-    BankAccountACHIdentifier:
-      example:
-        account_number: '123456789'
-        routing_number: '021000021'
-      properties:
-        account_number:
-          description: US account number (4-17 alphanumeric characters)
-          pattern: ^[0-9A-Z]{4,17}$
-          type: string
-        routing_number:
-          description: US routing number (exactly 9 digits)
-          pattern: ^[0-9]{9}$
-          type: string
-      required:
-      - routing_number
-      - account_number
-      title: BankAccountACHIdentifier
-      type: object
-    PixAccountIdentifier_PixBankDetails:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - BANK_DETAILS
-            example: BANK_DETAILS
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixBankDetails'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
     FiatAddressStatus:
       description: 'Verification Status
 
@@ -2003,38 +2012,31 @@ components:
       - RegistrationFailed
       - Registered
       type: string
-    PixCnpjKey:
-      description: 'PixCnpjKey
+    PagedList_PixAddress:
+      description: 'PagedList
 
 
-        A PIX DICT key that is the recipient''s CNPJ.'
-      example:
-        key: '12345678000195'
+        A list of items with cursors used to fetch the next or previous page
+
+        '
       properties:
-        key:
-          description: 14-digit CNPJ, with or without the `XX.XXX.XXX/XXXX-XX` formatting
-          pattern: ^([0-9]{14}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/PixAddress'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
           type: string
       required:
-      - key
-      title: PixCnpjKey
-      type: object
-    AddressType:
-      enum:
-      - Hosted
-      - SelfHosted
-      type: string
-    Fiat:
-      description: A fiat currency
-      example:
-        code: USD
-      properties:
-        code:
-          description: The code of the currency e.g. 'USD'
-          type: string
-      required:
-      - code
-      title: Fiat
+      - items
+      title: PagedList_PixAddress
       type: object
     RecipientBankAccount:
       description: 'RecipientBankAccount
@@ -2096,27 +2098,278 @@ components:
       - is_third_party
       title: RecipientBankAccount
       type: object
-    BankAccountSWIFTIdentifier:
+    BankAccountWireIdentifier:
       example:
-        account_number: '1234567890'
-        bic: CHASUS33XXX
+        account_number: '987654321'
+        routing_number: '021000021'
       properties:
         account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
           type: string
-        bic:
-          type: string
-        intermediary_bic:
-          description: 'BIC of an intermediary correspondent bank in the SWIFT routing chain,
-
-            when the sender wants to override the auto-selected intermediary.
-
-            Optional — most senders leave this unset and let their provider pick.'
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
           type: string
       required:
-      - bic
+      - routing_number
       - account_number
-      title: BankAccountSWIFTIdentifier
+      title: BankAccountWireIdentifier
       type: object
+    EmailAddress:
+      description: 'EmailAddress
+
+
+        An email address
+
+        An email address
+
+        '
+      example:
+        email: john.doe@example.com
+      properties:
+        email:
+          description: The email address
+          type: string
+      required:
+      - email
+      title: EmailAddress
+      type: object
+    AddressFilter:
+      description: 'Filter for address types when retrieving signatures
+
+
+        Specifies which type of addresses to return
+
+        '
+      enum:
+      - Hosted
+      - SelfHosted
+      - All
+      type: string
+    VerifiedAddressResponse:
+      description: 'Verified Address Response
+
+
+        Response containing verified address details
+
+        '
+      example:
+        address_type: SelfHosted
+        blockchain: Solana
+        created_at: 2024-01-15 10:30:00+00:00
+        disabled: false
+        id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        is_self: true
+        name: Primary Solana wallet
+        proof_message: I hereby verify that I own this wallet address
+        proof_signature: 5J9qvKhKqYbpjhCkqDnKXSp7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp...
+        vasp_did: null
+        wallet_address: 7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
+      properties:
+        address_type:
+          $ref: '#/components/schemas/AddressType'
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        created_at:
+          description: When the address was verified
+          format: date-time
+          type: string
+        disabled:
+          description: Whether the address is disabled
+          type: boolean
+        id:
+          description: The ID of the verified address
+          format: uuid
+          type: string
+        is_self:
+          description: Whether the wallet belongs to the customer themselves (true) or a third party
+          type: boolean
+        name:
+          description: Optional display name for this wallet address
+          type: string
+        proof_message:
+          description: The proof message
+          type: string
+        proof_signature:
+          description: The proof signature
+          type: string
+        vasp_did:
+          description: The VASP DID (decentralized Identifier) for hosted wallets
+          type: string
+        wallet_address:
+          description: The wallet address
+          type: string
+      required:
+      - id
+      - created_at
+      - wallet_address
+      - address_type
+      - blockchain
+      - disabled
+      - is_self
+      title: VerifiedAddressResponse
+      type: object
+    PixAccountIdentifier:
+      anyOf:
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+      discriminator:
+        mapping:
+          BANK_DETAILS: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
+          CNPJ: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
+          CPF: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
+          EMAIL: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
+          EVP: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
+          PHONE: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
+        propertyName: type
+      type: object
+    PixCnpjKey:
+      description: 'PixCnpjKey
+
+
+        A PIX DICT key that is the recipient''s CNPJ.'
+      example:
+        key: '12345678000195'
+      properties:
+        key:
+          description: 14-digit CNPJ, with or without the `XX.XXX.XXX/XXXX-XX` formatting
+          pattern: ^([0-9]{14}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+          type: string
+      required:
+      - key
+      title: PixCnpjKey
+      type: object
+    CountrySubdivision:
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+      required:
+      - code
+      - name
+      title: CountrySubdivision
+      type: object
+    RecipientName_IndividualName:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Individual
+            example: Individual
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IndividualName'
+    Blockchain:
+      description: 'Blockchain
+
+
+        A type of blockchain
+
+        '
+      enum:
+      - Solana
+      - Ethereum
+      - Polygon
+      - Arbitrum
+      - Base
+      - Stellar
+      - Citrea
+      - Plasma
+      - Avalanche
+      - Moca
+      - Tempo
+      - Tron
+      - Bsc
+      type: string
+    RecipientPix:
+      description: 'RecipientPix
+
+
+        A PIX payout recipient.'
+      example:
+        account:
+          key: '+5511987654321'
+          type: PHONE
+        recipient:
+          family_name: Turing
+          given_name: Alan
+          type: Individual
+        tax_id: '12345678909'
+      properties:
+        account:
+          $ref: '#/components/schemas/PixAccountIdentifier'
+        recipient:
+          $ref: '#/components/schemas/RecipientName'
+        tax_id:
+          description: 'The recipient''s CPF (11 digits) or CNPJ (14 digits), with or without
+
+            the usual `.`/`-`/`/` formatting. The payout is rejected if the
+
+            destination account is not registered to this tax ID.'
+          pattern: ^([0-9]{11}|[0-9]{14}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+          type: string
+      required:
+      - recipient
+      - tax_id
+      - account
+      title: RecipientPix
+      type: object
+    BankAccountFedNowIdentifier:
+      example:
+        account_number: '456789123'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountFedNowIdentifier
+      type: object
+    BankAccountIdentifier_BankAccountSWIFTIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SWIFT
+            example: SWIFT
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountSWIFTIdentifier'
+    BankAccountIdentifier_BankAccountFPSIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FPS
+            example: FPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountFPSIdentifier'
     PagedList_FiatAddress:
       description: 'PagedList
 
@@ -2143,123 +2396,21 @@ components:
       - items
       title: PagedList_FiatAddress
       type: object
-    BankAccountIdentifier:
-      anyOf:
-      - $ref: '#/components/schemas/BankAccountIdentifier_Iban'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
-      discriminator:
-        mapping:
-          ACH: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
-          CHAPS: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
-          FEDNOW: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
-          FPS: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
-          RTP: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
-          SEPA: '#/components/schemas/BankAccountIdentifier_Iban'
-          SWIFT: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
-          Wire: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
-        propertyName: type
-      type: object
-    Iban:
-      example:
-        iban: DE89370400440532013000
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
+
+        Includes a trace_id that clients can reference when reporting issues.'
       properties:
-        iban:
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
           type: string
       required:
-      - iban
-      title: Iban
-      type: object
-    PagedList_PixAddress:
-      description: 'PagedList
-
-
-        A list of items with cursors used to fetch the next or previous page
-
-        '
-      properties:
-        cursor:
-          description: The cursor used to fetch the next page
-          format: uuid
-          type: string
-        items:
-          description: The list of items
-          items:
-            $ref: '#/components/schemas/PixAddress'
-          type: array
-        prev_cursor:
-          default: null
-          description: The cursor used to fetch the previous page
-          format: uuid
-          type: string
-      required:
-      - items
-      title: PagedList_PixAddress
-      type: object
-    RegisterFiatAddressRequest:
-      description: 'Register Fiat Address Request
-
-
-        Request to register a fiat (bank) address
-
-        '
-      properties:
-        bank_details:
-          $ref: '#/components/schemas/RecipientBankAccount'
-        currency:
-          $ref: '#/components/schemas/Fiat'
-        customer_id:
-          description: The customer ID
-          format: uuid
-          type: string
-        label:
-          description: Optional label for the address
-          type: string
-      required:
-      - customer_id
-      - bank_details
-      - currency
-      title: RegisterFiatAddressRequest
-      type: object
-    PixAccountType:
-      description: 'PixAccountType
-
-
-        The type of a Brazilian bank account.'
-      enum:
-      - CHECKING
-      - SAVINGS
-      - SALARY
-      - TRANSACTION
-      type: string
-    BankAccountIdentifier_BankAccountSWIFTIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SWIFT
-            example: SWIFT
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountSWIFTIdentifier'
-    BusinessName:
-      example:
-        name: Aperture Science
-      properties:
-        name:
-          maxLength: 50
-          minLength: 1
-          type: string
-      required:
-      - name
-      title: BusinessName
+      - message
+      - trace_id
+      title: ApiError
       type: object
     PixAccountIdentifier_PixPhoneKey:
       allOf:
@@ -2279,93 +2430,6 @@ components:
         How the recipient''s PIX account is identified: a DICT key of one of the
 
         five key types, or full bank account details.'
-    PixAddress:
-      description: 'PIX Address
-
-
-        Response containing PIX destination details.'
-      example:
-        created_at: 2024-01-15 10:30:00+00:00
-        customer_id: 123e4567-e89b-12d3-a456-426614174000
-        id: 550e8400-e29b-41d4-a716-446655440000
-        label: Primary PIX
-        recipient:
-          account:
-            key: '+5511987654321'
-            type: PHONE
-          recipient:
-            family_name: Turing
-            given_name: Alan
-            type: Individual
-          tax_id: '12345678909'
-        status: Registered
-        updated_at: 1970-01-01 00:00:00+00:00
-      properties:
-        created_at:
-          description: When the address was created
-          format: date-time
-          type: string
-        customer_id:
-          description: The customer ID
-          format: uuid
-          type: string
-        id:
-          description: The ID of the address
-          format: uuid
-          type: string
-        label:
-          description: Optional label for the address
-          type: string
-        recipient:
-          $ref: '#/components/schemas/RecipientPix'
-        status:
-          $ref: '#/components/schemas/PixAddressStatus'
-        updated_at:
-          description: When the address was last updated
-          format: date-time
-          type: string
-      required:
-      - id
-      - created_at
-      - updated_at
-      - customer_id
-      - recipient
-      - status
-      title: PixAddress
-      type: object
-    PixAccountIdentifier_PixEvpKey:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - EVP
-            example: EVP
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixEvpKey'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    UpdateDisabledStatusRequest:
-      description: Request to update the disabled status of a verified crypto address
-      properties:
-        customer_id:
-          description: The customer ID
-          format: uuid
-          type: string
-        disabled:
-          description: Whether to disable the address
-          type: boolean
-      required:
-      - customer_id
-      - disabled
-      title: UpdateDisabledStatusRequest
-      type: object
     VaspSuggestion:
       description: Minimal VASP suggestion for hosted wallet providers
       properties:
@@ -2386,84 +2450,20 @@ components:
       - name
       title: VaspSuggestion
       type: object
-    RegisterPixAddressRequest:
-      description: 'Register PIX Address Request
-
-
-        Request to register a PIX payout destination (Brazil / BRL).'
-      properties:
-        customer_id:
-          description: The customer ID
-          format: uuid
-          type: string
-        label:
-          description: Optional label for the address
-          type: string
-        recipient:
-          $ref: '#/components/schemas/RecipientPix'
-      required:
-      - customer_id
-      - recipient
-      title: RegisterPixAddressRequest
-      type: object
-    IndividualName:
+    BankAccountCHAPSIdentifier:
       example:
-        family_name: Turing
-        given_name: Alan
-      properties:
-        family_name:
-          maxLength: 50
-          minLength: 1
-          type: string
-        given_name:
-          maxLength: 50
-          minLength: 1
-          type: string
-      required:
-      - given_name
-      - family_name
-      title: IndividualName
-      type: object
-    BankAccountWireIdentifier:
-      example:
-        account_number: '987654321'
-        routing_number: '021000021'
+        account_number: '12345678'
+        sort_code: 20-00-00
       properties:
         account_number:
-          description: US account number (4-17 alphanumeric characters)
-          pattern: ^[0-9A-Z]{4,17}$
           type: string
-        routing_number:
-          description: US routing number (exactly 9 digits)
-          pattern: ^[0-9]{9}$
+        sort_code:
           type: string
       required:
-      - routing_number
+      - sort_code
       - account_number
-      title: BankAccountWireIdentifier
+      title: BankAccountCHAPSIdentifier
       type: object
-    Blockchain:
-      description: 'Blockchain
-
-
-        A type of blockchain
-
-        '
-      enum:
-      - Solana
-      - Ethereum
-      - Polygon
-      - Arbitrum
-      - Base
-      - Stellar
-      - Citrea
-      - Plasma
-      - Avalanche
-      - Moca
-      - Tempo
-      - Tron
-      - Bsc
-      type: string
   parameters:
     XApiVersion:
       description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'

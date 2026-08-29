@@ -1,7 +1,7 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   description: The Stablecoin Payment Network
-  title: Iron API - Sandbox Addresses TermsAndConditions API
+  title: Iron API - Sandbox Terms And Conditions API
   version: 1.0-16988
 servers:
 - url: https://api.sandbox.iron.xyz/api

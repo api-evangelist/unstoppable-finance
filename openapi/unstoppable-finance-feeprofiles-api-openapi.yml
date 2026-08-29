@@ -1,7 +1,7 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   description: The Stablecoin Payment Network
-  title: Iron API - Sandbox Addresses FeeProfiles API
+  title: Iron API - Sandbox Fee Profiles API
   version: 1.0-16988
 servers:
 - url: https://api.sandbox.iron.xyz/api
@@ -115,6 +115,120 @@ paths:
       - FeeProfiles
 components:
   schemas:
+    WindowFee_VariableFee:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Tiered
+            example: Tiered
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/VariableFee'
+    PaymentNetwork:
+      description: 'PaymentNetwork
+
+
+        A payment network
+
+        '
+      enum:
+      - Sepa
+      - Swift
+      - Fps
+      - Chats
+      - Ach
+      - Wire
+      - Rtp
+      - Fednow
+      - Pix
+      - Spei
+      - AfricanBankTransfer
+      - MobileMoney
+      - Chaps
+      type: string
+    Currency_Crypto:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Crypto'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    PartnerFeeLabel:
+      enum:
+      - maintenance
+      - account_setup
+      - onboarding
+      - partner
+      - customer
+      - banking
+      - surcharge
+      type: string
+    PartnerFeeConfig:
+      description: 'Partner Fee
+
+
+        A partner fee config which is deducted immediately from the transaction amount
+
+
+        A Partner Fee'
+      properties:
+        billing_type:
+          $ref: '#/components/schemas/BillingType'
+        fee_type:
+          $ref: '#/components/schemas/PartnerFeeType'
+        label:
+          $ref: '#/components/schemas/PartnerFeeLabel'
+        settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+      required:
+      - label
+      - fee_type
+      - billing_type
+      - settlement
+      title: PartnerFeeConfig
+      type: object
+    FeeSchedule_BipsFeeRequest:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Bips
+            example: Bips
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BipsFeeRequest'
+      description: 'Fee Schedule
+
+
+        The Schedule of Fees associated with a Partner
+
+        '
+    PartnerFeeType:
+      anyOf:
+      - $ref: '#/components/schemas/PartnerFeeType_PartnerFixedFee'
+      - $ref: '#/components/schemas/PartnerFeeType_PartnerBipsFee'
+      discriminator:
+        mapping:
+          Bips: '#/components/schemas/PartnerFeeType_PartnerBipsFee'
+          Fixed: '#/components/schemas/PartnerFeeType_PartnerFixedFee'
+        propertyName: type
+      type: object
     FeeProfile:
       description: 'Fee Profile
 
@@ -187,6 +301,67 @@ components:
       - non_transactional_partner_fee_configs
       title: FeeProfile
       type: object
+    TieredFee:
+      description: 'Tiered Fee
+
+
+        A Tiered Fee associated with a Partner based on volume thresholds
+
+        '
+      properties:
+        fee_value_in_bips:
+          description: Fee value for this tier as a percentage in bips
+          format: uint32
+          type: integer
+        volume_threshold:
+          description: Minimum volume required to qualify for this fee tier
+          format: decimal
+          type: string
+      required:
+      - volume_threshold
+      - fee_value_in_bips
+      title: TieredFee
+      type: object
+    VariableFee:
+      description: 'Variable Fee
+
+
+        A Variable Fee associated with a Partner based on a variable fee schedule
+
+        '
+      properties:
+        volume_tiers:
+          description: The variable fees
+          items:
+            $ref: '#/components/schemas/TieredFee'
+          type: array
+      required:
+      - volume_tiers
+      title: VariableFee
+      type: object
+    AutorampType:
+      description: 'Autoramp type
+
+
+        The type (onramp, offramp, swap) of an autoramp'
+      enum:
+      - Onramp
+      - Offramp
+      - Swap
+      - Mint
+      - Redeem
+      type: string
+    FeeProfileType:
+      description: 'Fee Profile Type
+
+
+        The type of fee profile
+
+        '
+      enum:
+      - Invoicing
+      - Transactional
+      type: string
     WindowFee_BipsFeeRequest:
       allOf:
       - properties:
@@ -199,92 +374,6 @@ components:
         - type
         type: object
       - $ref: '#/components/schemas/BipsFeeRequest'
-    TimeWindowedFee:
-      properties:
-        fee:
-          $ref: '#/components/schemas/WindowFee'
-        valid_from:
-          format: date-time
-          type: string
-        valid_to:
-          format: date-time
-          type: string
-      required:
-      - valid_from
-      - fee
-      title: TimeWindowedFee
-      type: object
-    PartnerBipsFee:
-      description: 'Partner Bips Fee
-
-
-        A bips fee for a partner
-
-        '
-      properties:
-        bips:
-          description: The bips fee value
-          format: uint32
-          type: integer
-      required:
-      - bips
-      title: PartnerBipsFee
-      type: object
-    BillingType:
-      description: 'Billing Type
-
-
-        The type of billing for the partner fee
-
-        '
-      enum:
-      - One Time
-      - Monthly
-      - Quarterly
-      - Annual
-      - Semi Annual
-      - Per Transaction
-      type: string
-    PartnerFeeConfig:
-      description: 'Partner Fee
-
-
-        A partner fee config which is deducted immediately from the transaction amount
-
-
-        A Partner Fee'
-      properties:
-        billing_type:
-          $ref: '#/components/schemas/BillingType'
-        fee_type:
-          $ref: '#/components/schemas/PartnerFeeType'
-        label:
-          $ref: '#/components/schemas/PartnerFeeLabel'
-        settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-      required:
-      - label
-      - fee_type
-      - billing_type
-      - settlement
-      title: PartnerFeeConfig
-      type: object
-    Crypto:
-      description: A cryptocurrency
-      example:
-        blockchain: Solana
-        token: USDC
-      properties:
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
-        token:
-          description: The ticker of the token e.g. 'USDC'
-          type: string
-      required:
-      - token
-      - blockchain
-      title: Crypto
-      type: object
     FeeProfileRule:
       description: 'Fee Profile Rule
 
@@ -313,60 +402,165 @@ components:
           type: array
       title: FeeProfileRule
       type: object
-    Currency:
+    WindowFee:
       anyOf:
-      - $ref: '#/components/schemas/Currency_Crypto'
-      - $ref: '#/components/schemas/Currency_Fiat'
-      description: 'Currency
-
-
-        Can be either crypto or fiat
-
-        '
+      - $ref: '#/components/schemas/WindowFee_BipsFeeRequest'
+      - $ref: '#/components/schemas/WindowFee_VariableFee'
       discriminator:
         mapping:
-          Crypto: '#/components/schemas/Currency_Crypto'
-          Fiat: '#/components/schemas/Currency_Fiat'
+          Bips: '#/components/schemas/WindowFee_BipsFeeRequest'
+          Tiered: '#/components/schemas/WindowFee_VariableFee'
         propertyName: type
       type: object
-    FeeSchedule_BipsFeeRequest:
+    NonTransactionalPartnerFeeConfig:
+      description: 'Non-Transactional Partner Fee Config
+
+
+        A non-transactional partner fee config
+
+        '
+      properties:
+        billing_type:
+          $ref: '#/components/schemas/BillingType'
+        fee_type:
+          $ref: '#/components/schemas/PartnerFeeType'
+        label:
+          $ref: '#/components/schemas/PartnerFeeLabel'
+        settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+      required:
+      - label
+      - fee_type
+      - billing_type
+      - settlement
+      title: NonTransactionalPartnerFeeConfig
+      type: object
+    TimeWindowedFee:
+      properties:
+        fee:
+          $ref: '#/components/schemas/WindowFee'
+        valid_from:
+          format: date-time
+          type: string
+        valid_to:
+          format: date-time
+          type: string
+      required:
+      - valid_from
+      - fee
+      title: TimeWindowedFee
+      type: object
+    CurrencyPair:
+      description: 'Currency Pair
+
+
+        A currency pair for a fee profile rule
+
+        '
+      properties:
+        from_currency:
+          $ref: '#/components/schemas/Currency'
+        to_currency:
+          $ref: '#/components/schemas/Currency'
+      required:
+      - from_currency
+      - to_currency
+      title: CurrencyPair
+      type: object
+    PagedList_FeeProfile:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/FeeProfile'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_FeeProfile
+      type: object
+    FeeSchedule_TimeWindowedFeeSchedule:
       allOf:
       - properties:
           type:
             enum:
-            - Bips
-            example: Bips
+            - TimeWindowed
+            example: TimeWindowed
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/BipsFeeRequest'
+      - $ref: '#/components/schemas/TimeWindowedFeeSchedule'
       description: 'Fee Schedule
 
 
         The Schedule of Fees associated with a Partner
 
         '
-    TieredFee:
-      description: 'Tiered Fee
-
-
-        A Tiered Fee associated with a Partner based on volume thresholds
-
-        '
+    Fiat:
+      description: A fiat currency
+      example:
+        code: USD
       properties:
-        fee_value_in_bips:
-          description: Fee value for this tier as a percentage in bips
-          format: uint32
-          type: integer
-        volume_threshold:
-          description: Minimum volume required to qualify for this fee tier
-          format: decimal
+        code:
+          description: The code of the currency e.g. 'USD'
           type: string
       required:
-      - volume_threshold
-      - fee_value_in_bips
-      title: TieredFee
+      - code
+      title: Fiat
+      type: object
+    Amount:
+      description: 'An amount of money
+
+        '
+      example:
+        amount: '100.5'
+        currency:
+          code: USD
+          type: Fiat
+      properties:
+        amount:
+          description: The amount, a decimal number
+          format: decimal
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+      required:
+      - amount
+      - currency
+      title: Amount
+      type: object
+    FeeSchedule:
+      anyOf:
+      - $ref: '#/components/schemas/FeeSchedule_BipsFeeRequest'
+      - $ref: '#/components/schemas/FeeSchedule_VariableFee'
+      - $ref: '#/components/schemas/FeeSchedule_TimeWindowedFeeSchedule'
+      description: 'Fee Schedule
+
+
+        The Schedule of Fees associated with a Partner
+
+        '
+      discriminator:
+        mapping:
+          Bips: '#/components/schemas/FeeSchedule_BipsFeeRequest'
+          Tiered: '#/components/schemas/FeeSchedule_VariableFee'
+          TimeWindowed: '#/components/schemas/FeeSchedule_TimeWindowedFeeSchedule'
+        propertyName: type
       type: object
     CreatePartnerFeeProfileRequest:
       description: 'Create Partner Fee Profile Request
@@ -405,49 +599,58 @@ components:
       - banking_fee_configs
       title: CreatePartnerFeeProfileRequest
       type: object
-    PartnerFeeLabel:
+    FiatTransfer:
+      description: 'Fiat Transfer
+
+
+        The type of fiat transfer
+
+        '
       enum:
-      - maintenance
-      - account_setup
-      - onboarding
-      - partner
-      - customer
-      - banking
-      - surcharge
+      - PayIn
+      - PayOut
       type: string
-    VariableFee:
-      description: 'Variable Fee
+    PartnerFeeType_PartnerBipsFee:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Bips
+            example: Bips
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PartnerBipsFee'
+    PartnerFixedFee:
+      description: 'Partner Fixed Fee
 
 
-        A Variable Fee associated with a Partner based on a variable fee schedule
+        A fixed fee for a partner
 
         '
       properties:
-        volume_tiers:
-          description: The variable fees
-          items:
-            $ref: '#/components/schemas/TieredFee'
-          type: array
+        fixed_fee:
+          $ref: '#/components/schemas/Amount'
       required:
-      - volume_tiers
-      title: VariableFee
+      - fixed_fee
+      title: PartnerFixedFee
       type: object
-    CurrencyPair:
-      description: 'Currency Pair
+    PartnerBipsFee:
+      description: 'Partner Bips Fee
 
 
-        A currency pair for a fee profile rule
+        A bips fee for a partner
 
         '
       properties:
-        from_currency:
-          $ref: '#/components/schemas/Currency'
-        to_currency:
-          $ref: '#/components/schemas/Currency'
+        bips:
+          description: The bips fee value
+          format: uint32
+          type: integer
       required:
-      - from_currency
-      - to_currency
-      title: CurrencyPair
+      - bips
+      title: PartnerBipsFee
       type: object
     BankingFeeConfiguration:
       description: 'Banking Fee Config Request
@@ -471,330 +674,38 @@ components:
       - fiat_transfer_type
       title: BankingFeeConfiguration
       type: object
-    PagedList_FeeProfile:
-      description: 'PagedList
-
-
-        A list of items with cursors used to fetch the next or previous page
-
-        '
-      properties:
-        cursor:
-          description: The cursor used to fetch the next page
-          format: uuid
-          type: string
-        items:
-          description: The list of items
-          items:
-            $ref: '#/components/schemas/FeeProfile'
-          type: array
-        prev_cursor:
-          default: null
-          description: The cursor used to fetch the previous page
-          format: uuid
-          type: string
-      required:
-      - items
-      title: PagedList_FeeProfile
-      type: object
-    Currency_Fiat:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Fiat
-            example: Fiat
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/Fiat'
+    Currency:
+      anyOf:
+      - $ref: '#/components/schemas/Currency_Crypto'
+      - $ref: '#/components/schemas/Currency_Fiat'
       description: 'Currency
 
 
         Can be either crypto or fiat
 
         '
-    Amount:
-      description: 'An amount of money
-
-        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Currency_Crypto'
+          Fiat: '#/components/schemas/Currency_Fiat'
+        propertyName: type
+      type: object
+    Crypto:
+      description: A cryptocurrency
       example:
-        amount: '100.5'
-        currency:
-          code: USD
-          type: Fiat
+        blockchain: Solana
+        token: USDC
       properties:
-        amount:
-          description: The amount, a decimal number
-          format: decimal
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        token:
+          description: The ticker of the token e.g. 'USDC'
           type: string
-        currency:
-          $ref: '#/components/schemas/Currency'
       required:
-      - amount
-      - currency
-      title: Amount
+      - token
+      - blockchain
+      title: Crypto
       type: object
-    PartnerFeeType:
-      anyOf:
-      - $ref: '#/components/schemas/PartnerFeeType_PartnerFixedFee'
-      - $ref: '#/components/schemas/PartnerFeeType_PartnerBipsFee'
-      discriminator:
-        mapping:
-          Bips: '#/components/schemas/PartnerFeeType_PartnerBipsFee'
-          Fixed: '#/components/schemas/PartnerFeeType_PartnerFixedFee'
-        propertyName: type
-      type: object
-    PartnerFixedFee:
-      description: 'Partner Fixed Fee
-
-
-        A fixed fee for a partner
-
-        '
-      properties:
-        fixed_fee:
-          $ref: '#/components/schemas/Amount'
-      required:
-      - fixed_fee
-      title: PartnerFixedFee
-      type: object
-    AutorampType:
-      description: 'Autoramp type
-
-
-        The type (onramp, offramp, swap) of an autoramp'
-      enum:
-      - Onramp
-      - Offramp
-      - Swap
-      - Mint
-      - Redeem
-      type: string
-    FeeSchedule:
-      anyOf:
-      - $ref: '#/components/schemas/FeeSchedule_BipsFeeRequest'
-      - $ref: '#/components/schemas/FeeSchedule_VariableFee'
-      - $ref: '#/components/schemas/FeeSchedule_TimeWindowedFeeSchedule'
-      description: 'Fee Schedule
-
-
-        The Schedule of Fees associated with a Partner
-
-        '
-      discriminator:
-        mapping:
-          Bips: '#/components/schemas/FeeSchedule_BipsFeeRequest'
-          Tiered: '#/components/schemas/FeeSchedule_VariableFee'
-          TimeWindowed: '#/components/schemas/FeeSchedule_TimeWindowedFeeSchedule'
-        propertyName: type
-      type: object
-    BipsFeeRequest:
-      description: 'Bips Fee Request
-
-
-        The request for a bips fee
-
-        '
-      properties:
-        bips:
-          description: The bips fee value
-          format: uint32
-          type: integer
-      required:
-      - bips
-      title: BipsFeeRequest
-      type: object
-    WindowFee_VariableFee:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Tiered
-            example: Tiered
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/VariableFee'
-    Currency_Crypto:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Crypto
-            example: Crypto
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/Crypto'
-      description: 'Currency
-
-
-        Can be either crypto or fiat
-
-        '
-    PaymentNetwork:
-      description: 'PaymentNetwork
-
-
-        A payment network
-
-        '
-      enum:
-      - Sepa
-      - Swift
-      - Fps
-      - Chats
-      - Ach
-      - Wire
-      - Rtp
-      - Fednow
-      - Pix
-      - Spei
-      - AfricanBankTransfer
-      - MobileMoney
-      - Chaps
-      type: string
-    NonTransactionalPartnerFeeConfig:
-      description: 'Non-Transactional Partner Fee Config
-
-
-        A non-transactional partner fee config
-
-        '
-      properties:
-        billing_type:
-          $ref: '#/components/schemas/BillingType'
-        fee_type:
-          $ref: '#/components/schemas/PartnerFeeType'
-        label:
-          $ref: '#/components/schemas/PartnerFeeLabel'
-        settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-      required:
-      - label
-      - fee_type
-      - billing_type
-      - settlement
-      title: NonTransactionalPartnerFeeConfig
-      type: object
-    PartnerFeeType_PartnerFixedFee:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Fixed
-            example: Fixed
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PartnerFixedFee'
-    FeeSchedule_TimeWindowedFeeSchedule:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - TimeWindowed
-            example: TimeWindowed
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/TimeWindowedFeeSchedule'
-      description: 'Fee Schedule
-
-
-        The Schedule of Fees associated with a Partner
-
-        '
-    FiatTransfer:
-      description: 'Fiat Transfer
-
-
-        The type of fiat transfer
-
-        '
-      enum:
-      - PayIn
-      - PayOut
-      type: string
-    FeeSettlement:
-      description: 'Fee Settlement
-
-
-        The settlement type for the fee
-
-        '
-      enum:
-      - deductedImmediately
-      - settledLater
-      type: string
-    TimeWindowedFeeSchedule:
-      properties:
-        windows:
-          description: Non-overlapping, sorted windows; the last must be open-ended (`valid_to == None`).
-          items:
-            $ref: '#/components/schemas/TimeWindowedFee'
-          type: array
-      required:
-      - windows
-      title: TimeWindowedFeeSchedule
-      type: object
-    FeeSchedule_VariableFee:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Tiered
-            example: Tiered
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/VariableFee'
-      description: 'Fee Schedule
-
-
-        The Schedule of Fees associated with a Partner
-
-        '
-    WindowFee:
-      anyOf:
-      - $ref: '#/components/schemas/WindowFee_BipsFeeRequest'
-      - $ref: '#/components/schemas/WindowFee_VariableFee'
-      discriminator:
-        mapping:
-          Bips: '#/components/schemas/WindowFee_BipsFeeRequest'
-          Tiered: '#/components/schemas/WindowFee_VariableFee'
-        propertyName: type
-      type: object
-    PartnerFeeType_PartnerBipsFee:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Bips
-            example: Bips
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PartnerBipsFee'
-    FeeProfileType:
-      description: 'Fee Profile Type
-
-
-        The type of fee profile
-
-        '
-      enum:
-      - Invoicing
-      - Transactional
-      type: string
     BankingFeeConfig:
       description: 'Banking Fee Config Response
 
@@ -821,27 +732,6 @@ components:
       - settlement
       title: BankingFeeConfig
       type: object
-    Fiat:
-      description: A fiat currency
-      example:
-        code: USD
-      properties:
-        code:
-          description: The code of the currency e.g. 'USD'
-          type: string
-      required:
-      - code
-      title: Fiat
-      type: object
-    AutorampSource:
-      description: 'Autoramp Source
-
-
-        The source of the autoramp'
-      enum:
-      - Standalone
-      - Quote
-      type: string
     Blockchain:
       description: 'Blockchain
 
@@ -864,6 +754,116 @@ components:
       - Tron
       - Bsc
       type: string
+    AutorampSource:
+      description: 'Autoramp Source
+
+
+        The source of the autoramp'
+      enum:
+      - Standalone
+      - Quote
+      type: string
+    Currency_Fiat:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fiat
+            example: Fiat
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    FeeSchedule_VariableFee:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Tiered
+            example: Tiered
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/VariableFee'
+      description: 'Fee Schedule
+
+
+        The Schedule of Fees associated with a Partner
+
+        '
+    BipsFeeRequest:
+      description: 'Bips Fee Request
+
+
+        The request for a bips fee
+
+        '
+      properties:
+        bips:
+          description: The bips fee value
+          format: uint32
+          type: integer
+      required:
+      - bips
+      title: BipsFeeRequest
+      type: object
+    FeeSettlement:
+      description: 'Fee Settlement
+
+
+        The settlement type for the fee
+
+        '
+      enum:
+      - deductedImmediately
+      - settledLater
+      type: string
+    BillingType:
+      description: 'Billing Type
+
+
+        The type of billing for the partner fee
+
+        '
+      enum:
+      - One Time
+      - Monthly
+      - Quarterly
+      - Annual
+      - Semi Annual
+      - Per Transaction
+      type: string
+    TimeWindowedFeeSchedule:
+      properties:
+        windows:
+          description: Non-overlapping, sorted windows; the last must be open-ended (`valid_to == None`).
+          items:
+            $ref: '#/components/schemas/TimeWindowedFee'
+          type: array
+      required:
+      - windows
+      title: TimeWindowedFeeSchedule
+      type: object
+    PartnerFeeType_PartnerFixedFee:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fixed
+            example: Fixed
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PartnerFixedFee'
   parameters:
     XApiVersion:
       description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
