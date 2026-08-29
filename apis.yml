@@ -8,6 +8,18 @@ description: Unstoppable Finance is the Berlin fintech behind Iron (iron.xyz), t
   verification, virtual accounts, fee profiles, exchange rates, stablecoin issuance, and Standard Webhooks
   event delivery, with a fully simulated sandbox environment.
 url: https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
