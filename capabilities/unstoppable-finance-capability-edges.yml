@@ -1,0 +1,48 @@
+slug: unstoppable-finance
+provider: Unstoppable Finance (Iron)
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Banking & Capital Markets
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 3
+edges:
+- tag: Customer
+  spec_file: unstoppable-finance-customer-api-openapi.yml
+  capability_id: BC-1300.20
+  capability_id_l1: BC-1300
+  capability_name: KYC & Customer Due Diligence Management
+  confidence: 0.85
+  evidence: 'POST /customers/{id}/identifications/v2 createCustomerIdentificationV2; schemas: KycQuestionnaire,
+    Identification, IdentificationStatus, VerificationStepDetail, ApproximateNetWorth, RevenueSource'
+  reason: Customer records are created and then subjected to identification/verification with a KYC questionnaire,
+    source-of-funds, net-worth and beneficial-owner data plus spending limits — plainly KYC/CDD onboarding
+    for a regulated financial service. Onboarding (BC-1300.10) overlaps, but the KYC evidence dominates.
+- tag: Webhooks
+  spec_file: unstoppable-finance-webhooks-api-openapi.yml
+  capability_id: BC-4270.80
+  capability_id_l1: BC-4270
+  capability_name: Webhook & Event Subscription Management
+  confidence: 0.85
+  evidence: 'GET /webhooks listWebhooks List all webhooks; POST /webhooks/{id}/ping pingWebhook; schemas:
+    WebhookEventType, WebhookEventMessage, WebhookNotification'
+  reason: Manages outbound webhook subscriptions, their event message schemas and delivery testing — the
+    platform's event-subscription surface for integrators, which maps directly to webhook & event subscription
+    management.
+- tag: Autoramp
+  spec_file: unstoppable-finance-autoramp-api-openapi.yml
+  capability_id: BC-1340.20
+  capability_id_l1: BC-1340
+  capability_name: Payment Processing Management
+  confidence: 0.7
+  evidence: GET /autoramp-transactions getAutorampTransactions List autoramp transactions; GET /autoramps/quote
+    Get a quote for an autoramp; DepositRail_ACHDepositInfo, DepositRail_FedNowDepositInfo, FpsDepositInfo
+  reason: 'Autoramps are the vendor''s fiat-to-stablecoin/stablecoin-to-fiat payment flows: transactions,
+    quotes, deposit rails (ACH, FedNow, SWIFT, FPS, Pix) and open-banking payments. This is payment processing
+    and routing across rails; cross-border/FX is a possible alternative L2 hence 0.7.'

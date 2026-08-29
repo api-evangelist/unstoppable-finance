@@ -236,6 +236,9 @@ apis:
     url: >-
       https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
 common:
+- type: CapabilityMap
+  url: capabilities/unstoppable-finance-capability-edges.yml
+  name: Unstoppable Finance (Iron) Business Capability Map
 - type: PostmanWorkspace
   url: https://www.postman.com/kinlaneapi/unstoppable-finance-iron/overview
 - type: DomainSecurity
