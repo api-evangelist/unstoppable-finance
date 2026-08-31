@@ -51,8 +51,8 @@ tags:
 - Company
 - Stablecoins
 - Payments
-- On-Ramp
-- Off-Ramp
+- Onramp
+- Offramp
 - Cryptocurrency
 - Banking
 - Fintech
@@ -158,7 +158,7 @@ apis:
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
-  - Exchange Rate
+  - ExchangeRate
   tags_raw:
   - ExchangeRate
   properties:
@@ -175,7 +175,7 @@ apis:
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
-  - Fee Profiles
+  - FeeProfiles
   tags_raw:
   - FeeProfiles
   properties:
