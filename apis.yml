@@ -154,40 +154,6 @@ apis:
   - type: APIReference
     url: >-
       https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-exchangerate-api
-  name: Unstoppable Finance (Iron) ExchangeRate API
-  description: Operations on Exchange Rate
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Exchange Rate
-  tags_raw:
-  - ExchangeRate
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-exchangerate-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-feeprofiles-api
-  name: Unstoppable Finance (Iron) FeeProfiles API
-  description: Operations on Fee Profiles
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Fee Profiles
-  tags_raw:
-  - FeeProfiles
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-feeprofiles-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
 - aid: unstoppable-finance:unstoppable-finance-sandbox-api
   name: Unstoppable Finance (Iron) Sandbox API
   description: Operations for Sandbox Testing
@@ -198,23 +164,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/unstoppable-finance-sandbox-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-termsandconditions-api
-  name: Unstoppable Finance (Iron) TermsAndConditions API
-  description: Operations on Terms and Conditions
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Terms And Conditions
-  tags_raw:
-  - TermsAndConditions
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-termsandconditions-api-openapi.yml
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
@@ -232,6 +181,51 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/unstoppable-finance-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+- aid: unstoppable-finance:unstoppable-finance-exchange-rate-api
+  name: Unstoppable Finance (Iron) Exchange Rate API
+  description: Operations on Exchange Rate
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Exchange Rate
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-exchange-rate-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+- aid: unstoppable-finance:unstoppable-finance-fee-profiles-api
+  name: Unstoppable Finance (Iron) Fee Profiles API
+  description: Operations on Fee Profiles
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Fee Profiles
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-fee-profiles-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+- aid: unstoppable-finance:unstoppable-finance-terms-and-conditions-api
+  name: Unstoppable Finance (Iron) Terms And Conditions API
+  description: Operations on Terms and Conditions
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Terms And Conditions
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-terms-and-conditions-api-openapi.yml
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
