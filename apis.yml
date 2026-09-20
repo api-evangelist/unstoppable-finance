@@ -232,6 +232,8 @@ apis:
     url: >-
       https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
 common:
+- type: Plans
+  url: plans/unstoppable-finance-plans-pricing.yml
 - type: CapabilityMap
   url: capabilities/unstoppable-finance-capability-edges.yml
   name: Unstoppable Finance (Iron) Business Capability Map
