@@ -14,22 +14,26 @@
     "unstoppable-finance-termsandconditions-api-openapi.yml",
     "unstoppable-finance-webhooks-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "deleted 3 superseded output(s) from the previous generation"
+  ],
   "errors": [],
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "unstoppable-finance-iron-openapi-original.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0"
+    "unstoppable-finance-iron-openapi-original.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "superseded outputs removed: unstoppable-finance-exchange-rate-api-openapi.yml, unstoppable-finance-fee-profiles-api-openapi.yml, unstoppable-finance-terms-and-conditions-api-openapi.yml",
+    "apis.yml register: written (+3 apis, 9 total)"
   ],
   "skipped": [
     "unstoppable-finance-addresses-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "unstoppable-finance-autoramp-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "unstoppable-finance-currencies-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "unstoppable-finance-customer-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "unstoppable-finance-exchangerate-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "unstoppable-finance-feeprofiles-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-exchange-rate-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-fee-profiles-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "unstoppable-finance-sandbox-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "unstoppable-finance-termsandconditions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unstoppable-finance-terms-and-conditions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "unstoppable-finance-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
   ]
 }

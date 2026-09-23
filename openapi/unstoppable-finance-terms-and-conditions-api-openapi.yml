@@ -7,13 +7,11 @@ servers:
 - url: https://api.sandbox.iron.xyz/api
 tags:
 - description: Operations on Terms and Conditions
-  name: TermsAndConditions
+  name: Terms And Conditions
 paths:
   /terms-and-conditions:
     get:
-      description: 'Retrieve all latest terms and conditions signings are required for a specific country
-
-        '
+      description: Retrieve all latest terms and conditions signings are required for a specific country
       operationId: getAllCurrentTermsAndConditions
       parameters:
       - deprecated: false
@@ -61,8 +59,16 @@ paths:
       - ApiKeyAuth: []
       summary: Get all current terms and conditions
       tags:
-      - TermsAndConditions
+      - Terms And Conditions
 components:
+  parameters:
+    XApiVersion:
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      in: header
+      name: X-API-Version
+      required: false
+      schema:
+        type: string
   schemas:
     TermsAndConditionsLink:
       description: A terms and conditions link
@@ -87,14 +93,6 @@ components:
       - display_name
       title: TermsAndConditionsLink
       type: object
-  parameters:
-    XApiVersion:
-      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
-      in: header
-      name: X-API-Version
-      required: false
-      schema:
-        type: string
   securitySchemes:
     ApiKeyAuth:
       description: API Key

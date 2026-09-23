@@ -11,9 +11,7 @@ tags:
 paths:
   /webhooks:
     get:
-      description: 'Lists all webhooks for the currently authenticated partner
-
-        '
+      description: Lists all webhooks for the currently authenticated partner
       operationId: listWebhooks
       parameters:
       - deprecated: false
@@ -63,9 +61,7 @@ paths:
       - Webhooks
   /webhooks/{id}:
     patch:
-      description: 'Updates an existing webhook for the currently authenticated partner
-
-        '
+      description: Updates an existing webhook for the currently authenticated partner
       operationId: updateWebhook
       parameters:
       - deprecated: false
@@ -220,9 +216,9 @@ webhooks:
         ## Headers
 
 
-        The following headers will be included in the request, adhering to [the
+        The following headers will be included in the request, adhering to the
 
-        Standard Webhooks specification](https://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md):
+        Standard Webhooks specification:
 
 
         - `content-type: application/json`: Indicates the payload format.
@@ -237,7 +233,7 @@ webhooks:
 
         - `webhook-signature`: A signature to verify the authenticity and integrity
 
-        of the payload. The format is `v1=<signature>`, where `<signature>` is
+        of the payload. The format is `v1=`, where `` is
 
         an HMAC-SHA256 hash.
 
@@ -277,105 +273,33 @@ webhooks:
       responses:
         '200':
           description: ''
-      summary: Dispatches an event notification to a configured webhook endpoint.
+      summary: Dispatches an event notification to a configured webhook endpoint
       tags:
       - Webhooks
 components:
   schemas:
-    CustomerStatus:
-      description: 'The status of the Customer
-
-        '
-      enum:
-      - UserRequired
-      - SigningsRequired
-      - IdentificationRequired
-      - Active
-      - Suspended
-      - Archived
-      type: string
-    PagedList_Webhook:
-      description: 'PagedList
+    WebhookContainer:
+      description: 'Webhook Container
 
 
-        A list of items with cursors used to fetch the next or previous page
+        Top-level container for webhook notifications
 
         '
       properties:
-        cursor:
-          description: The cursor used to fetch the next page
-          format: uuid
+        data:
+          $ref: '#/components/schemas/WebhookNotification'
+        timestamp:
+          description: ISO timestamp when the notification was sent
           type: string
-        items:
-          description: The list of items
-          items:
-            $ref: '#/components/schemas/Webhook'
-          type: array
-        prev_cursor:
-          default: null
-          description: The cursor used to fetch the previous page
-          format: uuid
+        type:
+          description: The type of notification
           type: string
       required:
-      - items
-      title: PagedList_Webhook
+      - type
+      - timestamp
+      - data
+      title: WebhookContainer
       type: object
-    AutorampTransactionStatus:
-      description: 'Autoramp Transaction Status
-
-
-        The status of the autoramp transaction
-
-        '
-      enum:
-      - FundsReviewInProgress
-      - ConversionInProgress
-      - PayoutInProgress
-      - Completed
-      - Failed
-      - RejectedAml
-      - RejectedFraud
-      - RejectedMinAmount
-      type: string
-    WebhookEventMessage:
-      description: 'Webhook Event Message
-
-
-        Contains details about a general event notification
-
-        '
-      properties:
-        id:
-          description: Unique identifier for the event
-          format: uuid
-          type: string
-        kind:
-          $ref: '#/components/schemas/WebhookEventKind'
-      required:
-      - id
-      - kind
-      title: WebhookEventMessage
-      type: object
-    WebhookEventType:
-      description: 'Webhook Event Types
-
-
-        Represents the different types of webhook events that can be sent
-
-        '
-      enum:
-      - Transaction
-      - NewBankAccount
-      - NewAutoramp
-      - DepositAddressCreated
-      - RegisterFiatAddressStatus
-      - RegisterAutorampStatus
-      - TransactionStatus
-      - CustomerCreated
-      - CustomerStatus
-      - IdentificationStatus
-      - Ping
-      type: string
     WebhookTransactionStatusMessage:
       description: 'Webhook Transaction Status Message
 
@@ -406,32 +330,6 @@ components:
       - transaction_status
       title: WebhookTransactionStatusMessage
       type: object
-    IdentificationStatus:
-      description: 'The Process status of the identification
-
-
-        The various state transitions an identification can go through.
-
-        '
-      enum:
-      - Pending
-      - Processed
-      - PendingReview
-      - Approved
-      - Declined
-      - Expired
-      - Archived
-      type: string
-    PingWebhookParams:
-      properties:
-        customer_id:
-          description: Customer ID to use for the webhook ping
-          format: uuid
-          type: string
-      required:
-      - customer_id
-      title: PingWebhookParams
-      type: object
     UpdateWebhookRequest:
       description: 'Update Webhook Request
 
@@ -456,28 +354,194 @@ components:
           type: string
       title: UpdateWebhookRequest
       type: object
-    WebhookContainer:
-      description: 'Webhook Container
+    FiatAddressStatus:
+      description: 'Verification Status
 
 
-        Top-level container for webhook notifications
+        The status of the verification of a fiat address
+
+        '
+      enum:
+      - AuthorizationRequired
+      - AuthorizationFailed
+      - RegistrationPending
+      - RegistrationFailed
+      - Registered
+      type: string
+    PingWebhookParams:
+      properties:
+        customer_id:
+          description: Customer ID to use for the webhook ping
+          format: uuid
+          type: string
+      required:
+      - customer_id
+      title: PingWebhookParams
+      type: object
+    WebhookAutorampStatusMessage:
+      description: 'Webhook Autoramp Status Message
+
+
+        Contains details about an autoramp status change
 
         '
       properties:
-        data:
-          $ref: '#/components/schemas/WebhookNotification'
-        timestamp:
-          description: ISO timestamp when the notification was sent
+        id:
+          description: Unique identifier for the autoramp
+          format: uuid
           type: string
-        type:
-          description: The type of notification
+        status:
+          $ref: '#/components/schemas/AutorampStatus'
+      required:
+      - id
+      - status
+      title: WebhookAutorampStatusMessage
+      type: object
+    PagedList_Webhook:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Webhook'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
           type: string
       required:
-      - type
-      - timestamp
-      - data
-      title: WebhookContainer
+      - items
+      title: PagedList_Webhook
       type: object
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
+
+        Includes a trace_id that clients can reference when reporting issues.'
+      properties:
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
+          type: string
+      required:
+      - message
+      - trace_id
+      title: ApiError
+      type: object
+    WebhookNotification:
+      description: 'Webhook Notification
+
+
+        Notification sent to a webhook subscriber containing event details
+
+        '
+      properties:
+        customer_id:
+          description: The ID of the customer associated with this notification
+          format: uuid
+          type: string
+        message:
+          $ref: '#/components/schemas/WebhookMessage'
+      required:
+      - customer_id
+      - message
+      title: WebhookNotification
+      type: object
+    WebhookFiatAddressStatusMessage:
+      description: 'Webhook Fiat Address Status Message
+
+
+        Contains details about a fiat address status change
+
+        '
+      properties:
+        id:
+          description: Unique identifier for the fiat address
+          format: uuid
+          type: string
+        status:
+          $ref: '#/components/schemas/FiatAddressStatus'
+      required:
+      - id
+      - status
+      title: WebhookFiatAddressStatusMessage
+      type: object
+    WebhookIdentificationStatusMessage:
+      description: 'Webhook Identification Status Message
+
+
+        Contains details about an identification status change
+
+        '
+      properties:
+        id:
+          description: Unique identifier for the identification
+          format: uuid
+          type: string
+        status:
+          $ref: '#/components/schemas/IdentificationStatus'
+      required:
+      - id
+      - status
+      title: WebhookIdentificationStatusMessage
+      type: object
+    IdentificationStatus:
+      description: 'The Process status of the identification
+
+
+        The various state transitions an identification can go through.
+
+        '
+      enum:
+      - Pending
+      - Processed
+      - PendingReview
+      - Approved
+      - Declined
+      - Expired
+      - Archived
+      type: string
+    WebhookMessage:
+      anyOf:
+      - $ref: '#/components/schemas/WebhookEventMessage'
+      - $ref: '#/components/schemas/WebhookFiatAddressStatusMessage'
+      - $ref: '#/components/schemas/WebhookAutorampStatusMessage'
+      - $ref: '#/components/schemas/WebhookTransactionStatusMessage'
+      - $ref: '#/components/schemas/WebhookCustomerStatusMessage'
+      - $ref: '#/components/schemas/WebhookIdentificationStatusMessage'
+      - $ref: '#/components/schemas/WebhookPingMessage'
+      description: 'Webhook Message
+
+
+        Union type representing different kinds of webhook messages
+
+        '
+      type: object
+    WebhookEventKind:
+      description: 'Webhook Event Kind
+
+
+        Types of events that can be included in webhook notifications
+
+        '
+      enum:
+      - Transaction
+      - NewBankAccount
+      - NewAutoramp
+      - DepositAddressCreated
+      - CustomerCreated
+      type: string
     WebhookCustomerStatusMessage:
       description: 'Webhook Customer Status Message
 
@@ -497,64 +561,22 @@ components:
       - status
       title: WebhookCustomerStatusMessage
       type: object
-    WebhookMessage:
-      anyOf:
-      - $ref: '#/components/schemas/WebhookEventMessage'
-      - $ref: '#/components/schemas/WebhookFiatAddressStatusMessage'
-      - $ref: '#/components/schemas/WebhookAutorampStatusMessage'
-      - $ref: '#/components/schemas/WebhookTransactionStatusMessage'
-      - $ref: '#/components/schemas/WebhookCustomerStatusMessage'
-      - $ref: '#/components/schemas/WebhookIdentificationStatusMessage'
-      - $ref: '#/components/schemas/WebhookPingMessage'
-      description: 'Webhook Message
+    AutorampTransactionStatus:
+      description: 'Autoramp Transaction Status
 
 
-        Union type representing different kinds of webhook messages
-
-        '
-      type: object
-    AutorampStatus:
-      enum:
-      - Created
-      - EditPending
-      - Authorized
-      - DepositAccountAdded
-      - Approved
-      - Rejected
-      - Cancelled
-      type: string
-    AutorampTransactionState:
-      description: 'Autoramp Transaction State
-
-
-        The state of the autoramp transaction
+        The status of the autoramp transaction
 
         '
       enum:
-      - Pending
-      - PayoutPending
-      - Payout
-      - PayoutCompleted
+      - FundsReviewInProgress
+      - ConversionInProgress
+      - PayoutInProgress
       - Completed
       - Failed
-      - InAmlReview
-      - AmlRejected
-      - AmountRejected
-      - FraudRejected
-      type: string
-    FiatAddressStatus:
-      description: 'Verification Status
-
-
-        The status of the verification of a fiat address
-
-        '
-      enum:
-      - AuthorizationRequired
-      - AuthorizationFailed
-      - RegistrationPending
-      - RegistrationFailed
-      - Registered
+      - RejectedAml
+      - RejectedFraud
+      - RejectedMinAmount
       type: string
     WebhookPingMessage:
       description: 'Webhook Ping Message
@@ -628,84 +650,30 @@ components:
       - enabled
       title: Webhook
       type: object
-    WebhookFiatAddressStatusMessage:
-      description: 'Webhook Fiat Address Status Message
+    AutorampTransactionState:
+      description: 'Autoramp Transaction State
 
 
-        Contains details about a fiat address status change
-
-        '
-      properties:
-        id:
-          description: Unique identifier for the fiat address
-          format: uuid
-          type: string
-        status:
-          $ref: '#/components/schemas/FiatAddressStatus'
-      required:
-      - id
-      - status
-      title: WebhookFiatAddressStatusMessage
-      type: object
-    WebhookAutorampStatusMessage:
-      description: 'Webhook Autoramp Status Message
-
-
-        Contains details about an autoramp status change
+        The state of the autoramp transaction
 
         '
-      properties:
-        id:
-          description: Unique identifier for the autoramp
-          format: uuid
-          type: string
-        status:
-          $ref: '#/components/schemas/AutorampStatus'
-      required:
-      - id
-      - status
-      title: WebhookAutorampStatusMessage
-      type: object
-    WebhookNotification:
-      description: 'Webhook Notification
+      enum:
+      - Pending
+      - PayoutPending
+      - Payout
+      - PayoutCompleted
+      - Completed
+      - Failed
+      - InAmlReview
+      - AmlRejected
+      - AmountRejected
+      - FraudRejected
+      type: string
+    WebhookEventType:
+      description: 'Webhook Event Types
 
 
-        Notification sent to a webhook subscriber containing event details
-
-        '
-      properties:
-        customer_id:
-          description: The ID of the customer associated with this notification
-          format: uuid
-          type: string
-        message:
-          $ref: '#/components/schemas/WebhookMessage'
-      required:
-      - customer_id
-      - message
-      title: WebhookNotification
-      type: object
-    ApiError:
-      description: 'Standard error response returned to API clients for server errors.
-
-        Includes a trace_id that clients can reference when reporting issues.'
-      properties:
-        message:
-          description: Human-readable error message
-          type: string
-        trace_id:
-          description: Trace ID that can be used to look up request details in logs
-          type: string
-      required:
-      - message
-      - trace_id
-      title: ApiError
-      type: object
-    WebhookEventKind:
-      description: 'Webhook Event Kind
-
-
-        Types of events that can be included in webhook notifications
+        Represents the different types of webhook events that can be sent
 
         '
       enum:
@@ -713,27 +681,55 @@ components:
       - NewBankAccount
       - NewAutoramp
       - DepositAddressCreated
+      - RegisterFiatAddressStatus
+      - RegisterAutorampStatus
+      - TransactionStatus
       - CustomerCreated
+      - CustomerStatus
+      - IdentificationStatus
+      - Ping
       type: string
-    WebhookIdentificationStatusMessage:
-      description: 'Webhook Identification Status Message
+    AutorampStatus:
+      enum:
+      - Created
+      - EditPending
+      - Authorized
+      - DepositAccountAdded
+      - Approved
+      - Rejected
+      - Cancelled
+      type: string
+    WebhookEventMessage:
+      description: 'Webhook Event Message
 
 
-        Contains details about an identification status change
+        Contains details about a general event notification
 
         '
       properties:
         id:
-          description: Unique identifier for the identification
+          description: Unique identifier for the event
           format: uuid
           type: string
-        status:
-          $ref: '#/components/schemas/IdentificationStatus'
+        kind:
+          $ref: '#/components/schemas/WebhookEventKind'
       required:
       - id
-      - status
-      title: WebhookIdentificationStatusMessage
+      - kind
+      title: WebhookEventMessage
       type: object
+    CustomerStatus:
+      description: 'The status of the Customer
+
+        '
+      enum:
+      - UserRequired
+      - SigningsRequired
+      - IdentificationRequired
+      - Active
+      - Suspended
+      - Archived
+      type: string
   parameters:
     XApiVersion:
       description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
