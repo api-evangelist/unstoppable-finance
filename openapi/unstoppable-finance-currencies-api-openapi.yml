@@ -57,6 +57,39 @@ paths:
       - Currencies
 components:
   schemas:
+    FiatCurrency:
+      properties:
+        code:
+          description: The ISO 4217 code of a currency. E.g. `EUR`
+          type: string
+        countries:
+          description: A list of all the countries where this currency is supported
+          items:
+            $ref: '#/components/schemas/Country'
+          type: array
+        name:
+          description: The user readable name of a currency. E.g. `Euro`
+          type: string
+      required:
+      - code
+      - name
+      - countries
+      title: FiatCurrency
+      type: object
+    Country:
+      description: A country
+      example:
+        code: DE
+      properties:
+        code:
+          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - code
+      title: Country
+      type: object
     CryptoCurrency:
       properties:
         address:
@@ -79,39 +112,6 @@ components:
       - chain
       - mint_only
       title: CryptoCurrency
-      type: object
-    Country:
-      description: A country
-      example:
-        code: DE
-      properties:
-        code:
-          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
-          maxLength: 2
-          minLength: 2
-          type: string
-      required:
-      - code
-      title: Country
-      type: object
-    FiatCurrency:
-      properties:
-        code:
-          description: The ISO 4217 code of a currency. E.g. `EUR`
-          type: string
-        countries:
-          description: A list of all the countries where this currency is supported
-          items:
-            $ref: '#/components/schemas/Country'
-          type: array
-        name:
-          description: The user readable name of a currency. E.g. `Euro`
-          type: string
-      required:
-      - code
-      - name
-      - countries
-      title: FiatCurrency
       type: object
   parameters:
     XApiVersion:
