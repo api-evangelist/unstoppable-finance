@@ -131,57 +131,6 @@ paths:
       - Exchange Rate
 components:
   schemas:
-    CurrencyType:
-      description: 'Currency Type
-
-
-        The type of currency
-
-        '
-      enum:
-      - fiat
-      - crypto
-      type: string
-    NetworkFeeWithSettlement:
-      description: 'Network Fee with Settlement
-
-
-        The network fee with settlement for a given currency
-
-        '
-      properties:
-        fee_amount:
-          $ref: '#/components/schemas/Amount'
-        fee_type:
-          $ref: '#/components/schemas/NetworkFeeType'
-        settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-      required:
-      - fee_type
-      - fee_amount
-      title: NetworkFeeWithSettlement
-      type: object
-    PartnerFee:
-      description: 'Partner Fee
-
-
-        A partner fee
-
-        '
-      properties:
-        fee:
-          $ref: '#/components/schemas/Amount'
-        label:
-          description: The label of the partner fee
-          type: string
-        settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-      required:
-      - label
-      - fee
-      - settlement
-      title: PartnerFee
-      type: object
     Currency_Crypto:
       allOf:
       - properties:
@@ -200,170 +149,6 @@ components:
         Can be either crypto or fiat
 
         '
-    NetworkFee_Amount:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SwiftOut
-            example: SwiftOut
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/Amount'
-      description: 'Network Fee
-
-
-        The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
-
-        '
-    NetworkFeeType:
-      description: 'Network Fee Type
-
-
-        The type of network fee
-
-        '
-      enum:
-      - SepaIn
-      - SepaOut
-      - EthereumGas
-      - CitreaGas
-      - SolanaTransactionFee
-      - StellarTransactionFee
-      - PolygonGas
-      - BaseGas
-      - AvalancheGas
-      - TronGas
-      - BscGas
-      - RailFee
-      - AchIn
-      - AchOut
-      - WireIn
-      - WireOut
-      - SwiftIn
-      - SwiftOut
-      - FpsIn
-      - FpsOut
-      - ChapsIn
-      - ChapsOut
-      - RtpIn
-      - RtpOut
-      - FednowIn
-      - FednowOut
-      type: string
-    Blockchain:
-      description: 'Blockchain
-
-
-        A type of blockchain
-
-        '
-      enum:
-      - Solana
-      - Ethereum
-      - Polygon
-      - Arbitrum
-      - Base
-      - Stellar
-      - Citrea
-      - Plasma
-      - Avalanche
-      - Moca
-      - Tempo
-      - Tron
-      - Bsc
-      type: string
-    PaymentNetwork:
-      description: 'PaymentNetwork
-
-
-        A payment network
-
-        '
-      enum:
-      - Sepa
-      - Swift
-      - Fps
-      - Chats
-      - Ach
-      - Wire
-      - Rtp
-      - Fednow
-      - Pix
-      - Spei
-      - AfricanBankTransfer
-      - MobileMoney
-      - Chaps
-      type: string
-    ExchangeRate:
-      description: 'Exchange Rate
-
-
-        The exchange rate for a given currency pair
-
-        '
-      properties:
-        effective_rate:
-          description: The effective rate
-          format: decimal
-          type: string
-        fee:
-          $ref: '#/components/schemas/Fee'
-        from:
-          $ref: '#/components/schemas/Currency'
-        out_amount:
-          $ref: '#/components/schemas/Amount'
-        to:
-          $ref: '#/components/schemas/Currency'
-      required:
-      - from
-      - to
-      - out_amount
-      - effective_rate
-      - fee
-      title: ExchangeRate
-      type: object
-    Currency:
-      anyOf:
-      - $ref: '#/components/schemas/Currency_Crypto'
-      - $ref: '#/components/schemas/Currency_Fiat'
-      description: 'Currency
-
-
-        Can be either crypto or fiat
-
-        '
-      discriminator:
-        mapping:
-          Crypto: '#/components/schemas/Currency_Crypto'
-          Fiat: '#/components/schemas/Currency_Fiat'
-        propertyName: type
-      type: object
-    FeeSettlement:
-      description: 'Fee Settlement
-
-
-        The settlement type for the fee
-
-        '
-      enum:
-      - deductedImmediately
-      - settledLater
-      type: string
-    Fiat:
-      description: A fiat currency
-      example:
-        code: USD
-      properties:
-        code:
-          description: The code of the currency e.g. 'USD'
-          type: string
-      required:
-      - code
-      title: Fiat
-      type: object
     NetworkFee:
       anyOf:
       - $ref: '#/components/schemas/NetworkFee_Amount'
@@ -401,6 +186,68 @@ components:
           WireIn: '#/components/schemas/NetworkFee_Amount'
           WireOut: '#/components/schemas/NetworkFee_Amount'
         propertyName: type
+      type: object
+    CurrencyType:
+      description: 'Currency Type
+
+
+        The type of currency
+
+        '
+      enum:
+      - fiat
+      - crypto
+      type: string
+    NetworkFeeType:
+      description: 'Network Fee Type
+
+
+        The type of network fee
+
+        '
+      enum:
+      - SepaIn
+      - SepaOut
+      - EthereumGas
+      - CitreaGas
+      - SolanaTransactionFee
+      - StellarTransactionFee
+      - PolygonGas
+      - BaseGas
+      - AvalancheGas
+      - TronGas
+      - BscGas
+      - RailFee
+      - AchIn
+      - AchOut
+      - WireIn
+      - WireOut
+      - SwiftIn
+      - SwiftOut
+      - FpsIn
+      - FpsOut
+      - ChapsIn
+      - ChapsOut
+      - RtpIn
+      - RtpOut
+      - FednowIn
+      - FednowOut
+      type: string
+    Crypto:
+      description: A cryptocurrency
+      example:
+        blockchain: Solana
+        token: USDC
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        token:
+          description: The ticker of the token e.g. 'USDC'
+          type: string
+      required:
+      - token
+      - blockchain
+      title: Crypto
       type: object
     Fee:
       description: 'Fee
@@ -461,27 +308,135 @@ components:
       - network_fee
       title: Fee
       type: object
-    Amount:
-      description: 'An amount of money
+    NetworkFee_Amount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SwiftOut
+            example: SwiftOut
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Amount'
+      description: 'Network Fee
+
+
+        The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
 
         '
-      example:
-        amount: '100.5'
-        currency:
-          code: USD
-          type: Fiat
+    ExchangeRate:
+      description: 'Exchange Rate
+
+
+        The exchange rate for a given currency pair
+
+        '
       properties:
-        amount:
-          description: The amount, a decimal number
+        effective_rate:
+          description: The effective rate
           format: decimal
           type: string
-        currency:
+        fee:
+          $ref: '#/components/schemas/Fee'
+        from:
+          $ref: '#/components/schemas/Currency'
+        out_amount:
+          $ref: '#/components/schemas/Amount'
+        to:
           $ref: '#/components/schemas/Currency'
       required:
-      - amount
-      - currency
-      title: Amount
+      - from
+      - to
+      - out_amount
+      - effective_rate
+      - fee
+      title: ExchangeRate
       type: object
+    Fiat:
+      description: A fiat currency
+      example:
+        code: USD
+      properties:
+        code:
+          description: The code of the currency e.g. 'USD'
+          type: string
+      required:
+      - code
+      title: Fiat
+      type: object
+    FeeSettlement:
+      description: 'Fee Settlement
+
+
+        The settlement type for the fee
+
+        '
+      enum:
+      - deductedImmediately
+      - settledLater
+      type: string
+    PaymentNetwork:
+      description: 'PaymentNetwork
+
+
+        A payment network
+
+        '
+      enum:
+      - Sepa
+      - Swift
+      - Fps
+      - Chats
+      - Ach
+      - Wire
+      - Rtp
+      - Fednow
+      - Pix
+      - Spei
+      - AfricanBankTransfer
+      - MobileMoney
+      - Chaps
+      type: string
+    Currency:
+      anyOf:
+      - $ref: '#/components/schemas/Currency_Crypto'
+      - $ref: '#/components/schemas/Currency_Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Currency_Crypto'
+          Fiat: '#/components/schemas/Currency_Fiat'
+        propertyName: type
+      type: object
+    Blockchain:
+      description: 'Blockchain
+
+
+        A type of blockchain
+
+        '
+      enum:
+      - Solana
+      - Ethereum
+      - Polygon
+      - Arbitrum
+      - Base
+      - Stellar
+      - Citrea
+      - Plasma
+      - Avalanche
+      - Moca
+      - Tempo
+      - Tron
+      - Bsc
+      type: string
     Currency_Fiat:
       allOf:
       - properties:
@@ -516,21 +471,66 @@ components:
       - trace_id
       title: ApiError
       type: object
-    Crypto:
-      description: A cryptocurrency
-      example:
-        blockchain: Solana
-        token: USDC
+    NetworkFeeWithSettlement:
+      description: 'Network Fee with Settlement
+
+
+        The network fee with settlement for a given currency
+
+        '
       properties:
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
-        token:
-          description: The ticker of the token e.g. 'USDC'
-          type: string
+        fee_amount:
+          $ref: '#/components/schemas/Amount'
+        fee_type:
+          $ref: '#/components/schemas/NetworkFeeType'
+        settlement:
+          $ref: '#/components/schemas/FeeSettlement'
       required:
-      - token
-      - blockchain
-      title: Crypto
+      - fee_type
+      - fee_amount
+      title: NetworkFeeWithSettlement
+      type: object
+    PartnerFee:
+      description: 'Partner Fee
+
+
+        A partner fee
+
+        '
+      properties:
+        fee:
+          $ref: '#/components/schemas/Amount'
+        label:
+          description: The label of the partner fee
+          type: string
+        settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+      required:
+      - label
+      - fee
+      - settlement
+      title: PartnerFee
+      type: object
+    Amount:
+      description: 'An amount of money
+
+        '
+      example:
+        amount: '100.5'
+        currency:
+          code: USD
+          type: Fiat
+      properties:
+        amount:
+          description: The amount, a decimal number
+          format: decimal
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+      required:
+      - amount
+      - currency
+      title: Amount
       type: object
   parameters:
     XApiVersion:
