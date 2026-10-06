@@ -48,7 +48,7 @@ x-aka:
 x-parent-company: MoonPay
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-10-06'
 tags:
 - Company
 - Stablecoins
@@ -232,6 +232,8 @@ apis:
     url: >-
       https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
 common:
+- url: https://iron.xyz/blog/
+  type: Blog
 - type: Plans
   url: plans/unstoppable-finance-plans-pricing.yml
 - type: CapabilityMap
