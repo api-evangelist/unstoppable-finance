@@ -1,81 +1,114 @@
-# Iron
+# MoonPay Enterprise
 
-> Iron is a set of Stablecoin APIs for on-chain banking, payments, money transfers, and treasury management. Fiat-to-stablecoin and stablecoin-to-fiat infrastructure for businesses. Iron runs several banking partners in the background, providing redundancy and fallback if a bank cannot process a customer or an industry. A customer onboarded with a banking partner always keeps their named account. Iron is a MoonPay company.
+> MoonPay Enterprise is a set of Stablecoin APIs for on-chain banking, payments, money transfers, and treasury management. Fiat-to-stablecoin and stablecoin-to-fiat infrastructure for businesses. MoonPay Enterprise runs several banking partners in the background, providing redundancy and fallback if a bank cannot process a customer or an industry. A customer onboarded with a banking partner always keeps their named account. MoonPay Enterprise is a MoonPay company.
 
 - **Authentication**: All API requests require a valid API key included in the `X-API-Key` header. Keys are created and managed in the Partner Dashboard under Developer → API Keys.
-- **Rate Limits**: Iron implements per-API-key rate limits and infrastructure-level protections. Exceeding limits returns HTTP 429. Use exponential backoff for retries. Contact support for high-volume needs.
-- **Environments**: Two environments are available — Sandbox (`api.sandbox.iron.xyz`) for testing and Production (`api.iron.xyz`) for live operations.
-- **Idempotency**: Certain API endpoints require an `IDEMPOTENCY-KEY` header with a unique UUID to prevent duplicate processing. Applicable endpoints are marked in the API documentation.
+- **Rate Limits**: MoonPay Enterprise implements per-API-key rate limits and infrastructure-level protections. Exceeding limits returns HTTP 429. Use exponential backoff for retries. Contact support for high-volume needs.
+- **Environments**: Two environments are available. Sandbox (`api.sandbox.iron.xyz`) for testing and Production (`api.iron.xyz`) for live operations.
+- **Idempotency**: Every `POST` under `/api` requires an `Idempotency-Key` header with a unique UUID. A missing key returns 400. `PUT`, `PATCH`, and `DELETE` are not deduplicated. MoonPay Enterprise stores successful responses only, so a retry after an error runs the request again. Same key with a different body or path returns 409. Keys never expire.
+- **Versioning**: The API is versioned by date via the optional `X-API-Version` header (for example `2026-07-01`). Routes are not versioned. Omitting the header serves the default version, `2025-03-13`. `GET /spec/versions` lists supported versions and where to fetch each version's OpenAPI spec. Spec routes are unauthenticated and served from both environments.
 
-## Authentication & Setup
+## Getting Started
 
-- [Introduction](https://docs.iron.xyz/overview.md): Iron developer portal landing page. Overview of products (Onramp, Offramp, Swap, Virtual Accounts, Issuance) and how to start integrating. Several banking partners in the background provide redundancy and fallback.
-- [Authentication](https://docs.iron.xyz/authentication.md): Authenticate Iron API requests using the X-API-Key header. Includes example requests, 401 error handling, and common troubleshooting steps.
-- [API Access](https://docs.iron.xyz/api-access.md): Obtain and manage API keys for authenticating with the Iron API. Covers Sandbox and Production environments, key creation, and permissions.
-- [Sandbox](https://docs.iron.xyz/sandbox.md): Test your Iron integration against api.sandbox.iron.xyz. Covers sandbox access, differences from production, and simulating transactions.
-- [Idempotency](https://docs.iron.xyz/idempotency.md): Use the IDEMPOTENCY-KEY header to ensure write operations are processed only once. Prevents duplicate resource creation from retried requests.
-- [CLI](https://docs.iron.xyz/cli.md): Access Iron via the MoonPay CLI (mp). Manage virtual accounts, onramps, KYC verification, wallets, and more from the terminal.
-- [Partner Dashboard](https://docs.iron.xyz/partner-dashboard.md): Web UI for managing partners, customers, API keys, webhooks, autoramps, and compliance workflows at app.iron.xyz.
+- [Introduction](https://dev.enterprise.moonpay.com/overview.md): MoonPay Enterprise developer portal landing page. What MoonPay Enterprise is, and how to request access and start integrating. Points to Rails & Capabilities for the product set.
+- [Rails & Capabilities](https://dev.enterprise.moonpay.com/rails-and-capabilities.md): September 2026 overview of Virtual Accounts, payment rails, coverage, onboarding models, and related services. Includes planned October 2026 rails.
+- [API Access](https://dev.enterprise.moonpay.com/api-access.md): Obtain and manage API keys for authenticating with the MoonPay Enterprise API. Covers Sandbox and Production environments, key creation, and permissions.
+- [CLI](https://dev.enterprise.moonpay.com/cli.md): Access MoonPay Enterprise via the MoonPay CLI (mp). Manage virtual accounts, onramps, KYC verification, wallets, and more from the terminal.
+- [Authentication](https://dev.enterprise.moonpay.com/authentication.md): Authenticate MoonPay Enterprise API requests using the X-API-Key header. Includes example requests, 401 error handling, and common troubleshooting steps.
+- [Idempotency](https://dev.enterprise.moonpay.com/idempotency.md): Use the Idempotency-Key header to replay a POST safely. Covers what MoonPay Enterprise caches, what it does not, and why a retry after an error runs again.
+- [API Versions](https://dev.enterprise.moonpay.com/versioning.md): Select an API version with the X-API-Version header. Covers the default version, supported versions, per-version OpenAPI specs, and version rejection errors.
+- [API changelog](https://dev.enterprise.moonpay.com/changelog.md): Changes to what the API accepts, returns, and does, newest first. Dated changes that apply to every version (new endpoints and fields, new validation tagged Action required) plus each dated API version with migration notes.
+- [What's new](https://dev.enterprise.moonpay.com/whats-new.md): New MoonPay Enterprise products, features, and improvements, newest first. Updated weekly.
 
-## Core API (Autoramp)
+## Dashboard
 
-- [Autoramp](https://docs.iron.xyz/autoramp.md): Create standing conversion rules between fiat, crypto, and cross-chain assets. The core primitive powering onramp, offramp, and swap flows.
-- [Autoramp Status](https://docs.iron.xyz/autoramp-status.md): Interpret autoramp lifecycle statuses: Created, Authorized, Approved, Rejected, Cancelled.
-- [Quotes](https://docs.iron.xyz/quotes.md): Lock an exchange rate before creating an Autoramp. Covers rate locks, expiry, slippage tolerance, and exact-in/exact-out semantics.
-- [Transaction Status](https://docs.iron.xyz/transaction-status.md): Track transaction lifecycle from FundsReviewInProgress through Completed or Failed.
-- [Limits and Minimums](https://docs.iron.xyz/limits-and-minimum.md): Transaction spending limits and minimum amounts per risk tier. Covers annual limits, verification requirements, and minimum transaction sizes.
+- [Dashboard Overview](https://dev.enterprise.moonpay.com/partner-dashboard.md): Web UI for managing partners, customers, API keys, webhooks, routes, and compliance workflows at app.enterprise.moonpay.com. Covers the Dashboard and App views and what each screen does.
+- [Sandbox](https://dev.enterprise.moonpay.com/sandbox.md): Test your MoonPay Enterprise integration against api.sandbox.iron.xyz. Covers sandbox access, differences from production, and simulating transactions.
 
-## Tutorials
+## Customer operations
 
-- [Onramp](https://docs.iron.xyz/onramp.md): Convert fiat to stablecoins via virtual IBANs tied to autoramp rules. Includes API request/response examples for EUR to USDC flows.
-- [Offramp](https://docs.iron.xyz/offramp.md): Convert stablecoins to fiat by setting up autoramp rules that offramp crypto received at a deposit address to a registered bank account.
-- [Swap](https://docs.iron.xyz/swap.md): Swap one stablecoin for another across chains using autoramp rules. Examples: USDC on Solana to EURC on Ethereum, USDT to USDC.
-- [Virtual Accounts](https://docs.iron.xyz/account.md): Create named virtual bank accounts in USD, EUR, and GBP. Incoming funds auto-mint to stablecoins and deliver to self-custodial wallets.
-
-## Issuance
-
-- [Create your Stablecoin](https://docs.iron.xyz/issuance/create-your-stablecoin.md): Launch, manage, and scale your own stablecoin with a fully regulated US issuer.
+- [Ops and Customer Service](https://dev.enterprise.moonpay.com/ops-and-customer-service.md): Unblock a stalled customer from the dashboard Compliance Review panel: read outstanding requirements and reject reasons, share a KYC and terms link, upload replacement documents, trigger EDD. API parity lists the endpoint behind each action.
+- [Resume a stalled onboarding](https://dev.enterprise.moonpay.com/finish-onboarding.md): Find customers who stalled partway through verification under Compliance > Incomplete, see which requirements are missing, and send them a KYC & Terms link from the dashboard.
+- [Resolve rejected documents](https://dev.enterprise.moonpay.com/rejected-documents.md): Find customers under Compliance > Change Requested, read each reject reason and whether it is retryable, then resend a link, upload a replacement document, or create a new KYC.
+- [Customer in EDD](https://dev.enterprise.moonpay.com/enhanced-due-diligence.md): Confirm what enhanced due diligence is asking for from the Compliance > EDD queue, guide the customer through proof of address and source of wealth, or trigger EDD on a standard customer.
+- [API parity](https://dev.enterprise.moonpay.com/api-parity.md): The API endpoint behind each Customer operations dashboard action, for automating the same workflow. Upload documents and the combined onboarding link have no public endpoint.
 
 ## Onboarding & Compliance
 
-- [Onboarding Lifecycle](https://docs.iron.xyz/onboarding.md): End-to-end onboarding flow for partners and customers. Covers customer creation, identification, status tracking, and activation.
-- [Roles & Entities](https://docs.iron.xyz/roles-entities.md): Organizational roles and entity types within Iron. Covers partners, customers, users, and their relationships and permissions.
-- [Individual KYC](https://docs.iron.xyz/kyc.md): KYC requirements for onboarding individual customers. Covers standard, enhanced, and high-risk verification tiers with required documents.
-- [Business KYB](https://docs.iron.xyz/kyb.md): Onboard business customers using Iron's hosted Link flow or the programmatic Business API.
-- [Hosted Identification](https://docs.iron.xyz/hosted.md): The simplest identification method. Create an identification with type Link and receive a URL to pass to your customer for completing verification.
-- [Outsourcing Identification](https://docs.iron.xyz/outsourcing.md): Provide identification data on your customers directly to Iron's API instead of using our verification providers.
-- [SumSub Token Sharing](https://docs.iron.xyz/reliance-kyc-token-sharing.md): Share existing SumSub KYC data with Iron to onboard verified applicants in seconds.
-- [Proof of Address](https://docs.iron.xyz/proof-of-address.md): When proof of address (POA) is required, accepted documents, and criteria. All documents must be under 3 months old; IDs are not accepted for proof of address.
-- [Source of Wealth](https://docs.iron.xyz/source-of-wealth.md): When source of wealth (SOW) is required for Tier 2 and EDD, accepted documents by source, and validity windows.
-- [2FA](https://docs.iron.xyz/2fa.md): Email-based two-factor authentication for sensitive operations like autoramp creation, fiat address registration, and customer actions.
+- [Onboarding Lifecycle](https://dev.enterprise.moonpay.com/onboarding.md): End-to-end onboarding flow for partners and customers. Covers customer creation, terms and conditions, identification, status tracking, and activation.
+- [Individual KYC](https://dev.enterprise.moonpay.com/kyc.md): KYC requirements for onboarding individual customers. Covers standard, enhanced, and high-risk verification tiers with required documents.
+- [Business KYB](https://dev.enterprise.moonpay.com/kyb.md): Onboard business customers using MoonPay Enterprise's hosted Link flow or the programmatic Business API.
+- [Hosted Identification](https://dev.enterprise.moonpay.com/hosted.md): The simplest identification method. Create an identification with type Link and receive a URL to pass to your customer for completing verification.
+- [KYC/KYB Sharing](https://dev.enterprise.moonpay.com/sharing.md): Provide identification data on your customers directly to MoonPay Enterprise's API instead of using our verification providers. Requires a signed KYC/KYB Data Sharing Agreement.
+- [SumSub Token Sharing](https://dev.enterprise.moonpay.com/reliance-kyc-token-sharing.md): Share existing SumSub KYC data with MoonPay Enterprise to onboard verified applicants in seconds.
+- [Identification Errors](https://dev.enterprise.moonpay.com/errors.md): Machine-readable error codes returned by `POST /api/customers/{id}/identifications/v2` when a Business, Person, or Token submission fails validation. A structured array under `X-API-Version: 2026-08-01` or later; earlier versions return the plain error string.
+- [Information Requests (RFIs)](https://dev.enterprise.moonpay.com/rfi.md): Read open information requests for a customer, answer the questions in the latest round, and upload requested documents. Covers RFI types, rounds, statuses, and the response endpoints. RFIs have no webhooks, so poll `GET /api/rfis`.
+- [Proof of Address](https://dev.enterprise.moonpay.com/proof-of-address.md): When proof of address (POA) is required, accepted documents, and criteria. All documents must be under 3 months old; IDs are not accepted for proof of address.
+- [Source of Wealth](https://dev.enterprise.moonpay.com/source-of-wealth.md): When source of wealth (SOW) is required, accepted documents by source, and acceptance criteria.
+- [TIN Format Validation](https://dev.enterprise.moonpay.com/tin-format-validation.md): Expected tax identification number format per country, separator and whitespace handling, and the errors a malformed TIN returns.
+- [2FA](https://dev.enterprise.moonpay.com/2fa.md): Email-based two-factor authentication for sensitive operations: editing an Autoramp destination address, registering a fiat address that needs authorization, reusing an existing vIBAN, and changing a customer's email. The entity enters `AuthorizationRequired` until the customer confirms.
 
 ## Addresses & Travel Rule
 
-- [Crypto Addresses](https://docs.iron.xyz/crypto-addresses.md): Register wallet addresses for Travel Rule compliance before using them in any Autoramp flow. Supports self-hosted and hosted wallets.
-- [Fiat Addresses](https://docs.iron.xyz/fiat-addresses.md): Register and manage bank accounts for payouts. Supports multiple payment rails including SEPA, ACH, Wire, and SWIFT.
-- [Travel Rule](https://docs.iron.xyz/travel-rule.md): Overview of the Travel Rule, when it applies, and steps to ensure compliance for crypto transfers.
+- [Crypto Addresses](https://dev.enterprise.moonpay.com/crypto-addresses.md): Register wallet addresses for Travel Rule compliance before using them in any Autoramp flow. Supports self-hosted and hosted wallets.
+- [Fiat Addresses](https://dev.enterprise.moonpay.com/fiat-addresses.md): Register and manage bank accounts for payouts. Supports multiple payment rails including SEPA, ACH, Wire, and SWIFT.
+- [Travel Rule](https://dev.enterprise.moonpay.com/travel-rule.md): Overview of the Travel Rule, when it applies, and steps to ensure compliance for crypto transfers.
+
+## Autoramp & Transactions
+
+- [Autoramp](https://dev.enterprise.moonpay.com/autoramp.md): Create standing conversion rules between fiat, crypto, and cross-chain assets. The core primitive powering onramp, offramp, and swap flows.
+- [Autoramp Status](https://dev.enterprise.moonpay.com/autoramp-status.md): Interpret autoramp lifecycle statuses: Created, EditPending, Authorized, DepositAccountAdded, Approved, Rejected, Cancelled. Deposit rails are populated at DepositAccountAdded but only verified at Approved.
+- [Quotes](https://dev.enterprise.moonpay.com/quotes.md): Lock an exchange rate before creating an Autoramp, and attach further quotes to a running one via `POST /api/autoramps/{autoramp_id}/quotes`. Covers rate locks, the `Return` and `Slippage` expiry policies, `slippage_tolerance_in_bips`, and `amount_in`/`amount_out` semantics.
+- [Transaction Status](https://dev.enterprise.moonpay.com/transaction-status.md): Track transaction lifecycle from FundsReviewInProgress through Completed or Failed.
+- [Limits and Minimums](https://dev.enterprise.moonpay.com/limits-and-minimum.md): Transaction spending limits and minimum amounts per risk tier. Tier 1 limits are 52-week rolling and apply per direction, tracked separately for fiat onramp and crypto offramp. Business customers (KYB) have no enforced limit. Covers verification requirements and minimum transaction sizes.
 
 ## Webhooks & Events
 
-- [Webhooks](https://docs.iron.xyz/webhooks.md): Subscribe to event notifications for transactions, autoramp status, customer status, and identification changes. HMAC-SHA256 signature verification following the Standard Webhooks spec.
+- [Webhooks](https://dev.enterprise.moonpay.com/webhooks.md): Subscribe to event notifications for transactions, autoramp status, customer status, customer fiat abilities, and identification changes. HMAC-SHA256 signature verification following the Standard Webhooks spec.
 
 ## Billing & Settlement
 
-- [Fees and Invoices](https://docs.iron.xyz/fees-and-invoices.md): Fee structures for Iron transactions including transaction fees, banking fees, and network fees. Covers fee profiles and invoicing.
-- [End of Day Settlement](https://docs.iron.xyz/end-of-day-settlement.md): Batch fiat payouts into a single daily settlement instead of paying out each transaction individually.
+- [Fees and Invoices](https://dev.enterprise.moonpay.com/fees-and-invoices.md): Fee structures for MoonPay Enterprise transactions including transaction fees, banking fees, and network fees. Covers fee profiles and invoicing.
+- [End of Day Settlement](https://dev.enterprise.moonpay.com/end-of-day-settlement.md): Batch fiat payouts into a single daily settlement instead of paying out each transaction individually.
 
-## Coverage & Supported Assets
+## Tutorials
 
-- [Countries](https://docs.iron.xyz/country.md): Supported onboarding countries organized by risk tier. Covers OFAC restrictions, country risk ratings, and virtual account eligibility.
-- [Currencies](https://docs.iron.xyz/currencies.md): Supported currencies and their availability for onramp, offramp, and swap transactions.
-- [Blockchains](https://docs.iron.xyz/stablecoins-and-blockchains.md): Supported blockchains and stablecoins including Ethereum, Solana, Arbitrum, Base, Polygon, and tokens like USDC, USDT, EURC.
-- [Payment Methods](https://docs.iron.xyz/fiat-payment-methods.md): Supported payment rails and virtual accounts including SEPA, ACH, Wire, and SWIFT. Several banking partners in the background provide redundancy and fallback.
-- [Integration Models](https://docs.iron.xyz/integration-models.md): Iron supports B2B, B2B2B, and B2B2C setups. Integrate via API, the Partner Dashboard, or offer Iron App as a whitelabel frontend.
+- [Onramp](https://dev.enterprise.moonpay.com/onramp.md): Create a named virtual fiat account in USD, EUR, or GBP that settles into stablecoins in your wallet. Covers onboarding, autoramp routes, quotes, deposit rails, and webhook monitoring.
+- [Offramp](https://dev.enterprise.moonpay.com/offramp.md): Create a liquidation address that accepts stablecoins and settles in fiat into a bank account. Covers exact-out quotes and standing autoramp routes.
+- [Stable to Stable](https://dev.enterprise.moonpay.com/stable-to-stable.md): Setup a stables swap channel. Send Stablecoin 1 and receive Stablecoin 2 across chains, via a standing autoramp or an exact-out quote.
 
+## Issuance
+
+- [Create your Stablecoin](https://dev.enterprise.moonpay.com/issuance/create-your-stablecoin.md): Launch, manage, and scale a branded stablecoin with MoonPay as a fully regulated US issuer.
+- [Mint, Redeem and Swap](https://dev.enterprise.moonpay.com/issuance/mint-redeem-swap.md): Move between your stablecoin and USD, USDC, and USDT.
+- [Reserve Management and Rewards](https://dev.enterprise.moonpay.com/issuance/reserves-and-rewards.md): How MoonPay manages stablecoin reserves and how to claim reserves for your stablecoin.
+- [PYUSDx](https://dev.enterprise.moonpay.com/issuance/pyusdx.md): DeFi-oriented issuance platform from MoonPay and M0, built with PayPal. Launch a stablecoin backed 1:1 by PYUSD, with programmable rewards and shared liquidity.
+- [Stablecoin FAQ](https://dev.enterprise.moonpay.com/issuance/faq.md): Common questions about issuance, reserves, rewards, and conversions.
+
+## Wallets
+
+- [Wallet as a Service](https://dev.enterprise.moonpay.com/wallet/wallet-as-a-service.md): MoonPay WaaS, self-custodial embedded wallets with 2-of-2 MPC signing. Create wallets on Ethereum/EVM, Solana, and Tron, import and export keys, delegate signing to scoped agents, and fund via card onramp or cash out to fiat. A separate integration with its own SDK and credentials, not part of the MoonPay Enterprise API. SDK docs at https://x-docs.moonpay.com.
+
+## Coverage
+
+- [Stables and Blockchains](https://dev.enterprise.moonpay.com/stablecoins-and-blockchains.md): Supported blockchains and stablecoins including Ethereum, Solana, Arbitrum, Base, Polygon, and tokens like USDC, USDT, EURC.
+- [Currencies and Rails](https://dev.enterprise.moonpay.com/currencies-and-rails.md): Supported fiat currencies (USD, EUR, GBP, BRL), the payment rails that move them (SEPA, ACH, Wire, FedNow, CHAPS, FPS, SWIFT, PIX), virtual accounts, and Lead Bank and Erebor cutoff windows. Several banking partners in the background provide redundancy and fallback.
+- [Countries](https://dev.enterprise.moonpay.com/country.md): Supported onboarding countries organized by risk tier. Covers OFAC restrictions, country risk ratings, fiat rail availability, and virtual account eligibility.
+- [Integration Models](https://dev.enterprise.moonpay.com/integration-models.md): MoonPay Enterprise supports B2B, B2B2B, and B2B2C setups. Integrate via API, the Partner Dashboard, or offer MoonPay Enterprise App as a whitelabel frontend.
+- [Roles & Entities](https://dev.enterprise.moonpay.com/roles-entities.md): Organizational roles and entity types within MoonPay Enterprise. Covers partners, customers, users, and their relationships and permissions.
+
+<!-- BEGIN GENERATED: api-reference-specs -->
 ## API Reference
 
-- [OpenAPI Specification (YAML)](https://docs.iron.xyz/spec.yaml): Full Iron API OpenAPI 3.1.0 specification — all endpoints, schemas, and authentication.
+- [OpenAPI Specification (YAML)](https://dev.enterprise.moonpay.com/spec.yaml): Full MoonPay Enterprise API OpenAPI specification, latest surface. All endpoints, schemas, and authentication.
+- Spec routes (`/spec`, `/spec/<date>`, `/spec/versions`) are served unauthenticated from **both** environments: `https://api.sandbox.iron.xyz` and `https://api.iron.xyz`. The per-version links below use sandbox; swap the host for the production document, which declares the production server and omits the `/sandbox/*` simulation endpoints.
+- [OpenAPI Specification, version 2026-10-15](https://api.sandbox.iron.xyz/spec/2026-10-15): Frozen OpenAPI specification for API version 2026-10-15. Request it with the header `X-API-Version: 2026-10-15`.
+- [OpenAPI Specification, version 2026-10-01](https://api.sandbox.iron.xyz/spec/2026-10-01): Frozen OpenAPI specification for API version 2026-10-01. Request it with the header `X-API-Version: 2026-10-01`.
+- [OpenAPI Specification, version 2026-08-01](https://api.sandbox.iron.xyz/spec/2026-08-01): Frozen OpenAPI specification for API version 2026-08-01. Request it with the header `X-API-Version: 2026-08-01`.
+- [OpenAPI Specification, version 2026-07-01](https://api.sandbox.iron.xyz/spec/2026-07-01): Frozen OpenAPI specification for API version 2026-07-01. Request it with the header `X-API-Version: 2026-07-01`.
+- [OpenAPI Specification, version 2025-03-13](https://api.sandbox.iron.xyz/spec/2025-03-13): Frozen OpenAPI specification for API version 2025-03-13. Request it with the header `X-API-Version: 2025-03-13`. This is the default version, served when no `X-API-Version` header is sent.
+<!-- END GENERATED: api-reference-specs -->
 
 ## Support
 
-- [Support](https://docs.iron.xyz/support.md): Contact information, support channels, and how to get help with Iron integration.
+- [Support](https://dev.enterprise.moonpay.com/support.md): Contact information, support channels, and how to get help with MoonPay Enterprise integration.

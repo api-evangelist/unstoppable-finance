@@ -4,8 +4,9 @@ source: https://docs.iron.xyz/cli
 name: MoonPay CLI
 binary: mp
 official: true
-description: Iron is accessed through the unified MoonPay CLI (mp) - "MoonPay CLI - how agents move money". Provides
-  terminal access to virtual accounts, fiat-to-stablecoin onramps, KYC verification, and local wallet management.
+description: Iron is accessed through the unified MoonPay CLI (mp) - "MoonPay CLI
+  - how agents move money". Provides terminal access to virtual accounts, fiat-to-stablecoin
+  onramps, KYC verification, and local wallet management.
 install:
 - method: npm
   command: npm install -g @moonpay/cli
@@ -16,9 +17,10 @@ auth:
   - mp verify --email <email> --code <code>
   - mp user retrieve
   - mp logout
-command_groups:
+command_groups: &id001
 - group: wallet
-  description: Local HD wallets (Solana, Ethereum, Tron); private keys AES-256-GCM encrypted with OS-keychain key
+  description: Local HD wallets (Solana, Ethereum, Tron); private keys AES-256-GCM
+    encrypted with OS-keychain key
   commands:
   - mp wallet create --name <name>
   - mp wallet import --name <name> --mnemonic|--key
@@ -46,3 +48,4 @@ command_groups:
   - mp virtual-account onramp payment create
   - mp virtual-account onramp payment retrieve
 package: packages/unstoppable-finance-packages.yml
+commands: *id001

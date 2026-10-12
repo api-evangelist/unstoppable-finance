@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-sandbox-sandbox-transaction-schema.json",
+  "title": "SandboxSandboxTransaction",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-sandbox-api-openapi.yml#/components/schemas/SandboxSandboxTransaction",
+  "properties": {
+    "amount_in": {
+      "description": "The amount deposited",
+      "format": "decimal",
+      "type": "string"
+    },
+    "amount_out": {
+      "description": "The amount to be paid out",
+      "format": "decimal",
+      "type": "string"
+    },
+    "autoramp_id": {
+      "description": "The autoramp ID used",
+      "format": "uuid",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "When the transaction was created",
+      "format": "date-time",
+      "type": "string"
+    },
+    "currency_in": {
+      "description": "The input currency",
+      "type": "string"
+    },
+    "currency_out": {
+      "description": "The output currency",
+      "type": "string"
+    },
+    "customer_id": {
+      "description": "The customer ID",
+      "format": "uuid",
+      "type": "string"
+    },
+    "id": {
+      "description": "The ID of the created ramp transaction",
+      "format": "uuid",
+      "type": "string"
+    },
+    "state": {
+      "description": "The initial state",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "autoramp_id",
+    "amount_in",
+    "currency_in",
+    "amount_out",
+    "currency_out",
+    "customer_id",
+    "state",
+    "created_at"
+  ],
+  "type": "object"
+}

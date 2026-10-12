@@ -1,0 +1,261 @@
+name: Unstoppable Finance (Iron) / MoonPay Enterprise API changelog
+generated: '2026-10-12'
+method: searched
+source: https://dev.enterprise.moonpay.com/changelog.md
+scheme: date-based API versions via X-API-Version header (default 2025-03-13)
+current_version: '2026-10-15'
+entries:
+- version: '2026-10-15'
+  date: '2026-10-15'
+  breaking: true
+  highlights:
+  - API version
+  tags:
+  - API version
+  - Action required
+  - Individual customers
+  - Business customers
+- version: null
+  date: '2026-10-08'
+  breaking: true
+  highlights:
+  - UK postal codes validated, newlines in wire_message
+  tags:
+  - Action required
+  - Relaxed
+  - All customers
+- version: null
+  date: '2026-10-08'
+  breaking: false
+  highlights:
+  - Three Generic questionnaire fields removed
+  tags:
+  - Changed
+  - Business customers
+- version: null
+  date: '2026-10-08'
+  breaking: false
+  highlights:
+  - Identity document expiry date on beneficiaries
+  tags:
+  - Added
+  - Business customers
+- version: null
+  date: '2026-10-07'
+  breaking: false
+  highlights:
+  - bips_decimal on fee profiles
+  tags:
+  - Added
+  - All customers
+- version: null
+  date: '2026-10-05'
+  breaking: false
+  highlights:
+  - Optional birth_place, 8 documents per company
+  tags:
+  - Changed
+  - Business customers
+- version: null
+  date: '2026-10-01'
+  breaking: false
+  highlights:
+  - User-Agent on webhooks
+  tags:
+  - Webhooks
+  - All customers
+- version: null
+  date: '2026-09-30'
+  breaking: false
+  highlights:
+  - country_not_supported replaces a 500
+  tags:
+  - Changed
+  - Business customers
+- version: null
+  date: '2026-09-30'
+  breaking: false
+  highlights:
+  - Liveness RFIs close on approval
+  tags:
+  - Changed
+  - All customers
+- version: null
+  date: '2026-09-29'
+  breaking: false
+  highlights:
+  - Completed RFIs, outcome removed
+  tags:
+  - Added
+  - Changed
+  - All customers
+- version: null
+  date: '2026-09-29'
+  breaking: false
+  highlights:
+  - Steps awaiting review return Pending
+  tags:
+  - Changed
+  - All customers
+- version: null
+  date: '2026-09-29'
+  breaking: true
+  highlights:
+  - SWIFT account number validation
+  tags:
+  - Action required
+  - All customers
+- version: null
+  date: '2026-09-28'
+  breaking: false
+  highlights:
+  - Liveness RFIs
+  tags:
+  - Added
+  - All customers
+- version: null
+  date: '2026-09-22'
+  breaking: false
+  highlights:
+  - AML/CFT policy document, 6 documents per company
+  tags:
+  - Added
+  - Business customers
+- version: null
+  date: '2026-09-15'
+  breaking: true
+  highlights:
+  - blocking_abilities, all_deposit_rails_blocked, sandbox FX
+  tags:
+  - Added
+  - Action required
+  - Sandbox
+  - All customers
+  - Individual customers
+- version: null
+  date: '2026-09-11'
+  breaking: true
+  highlights:
+  - Company address state, non-US foundations
+  tags:
+  - Relaxed
+  - Action required
+  - Business customers
+- version: null
+  date: '2026-09-10'
+  breaking: false
+  highlights:
+  - RFI endpoints, documents on Token identifications
+  tags:
+  - Added
+  - All customers
+  - Individual customers
+- version: null
+  date: '2026-09-08'
+  breaking: true
+  highlights:
+  - Duplicate customer emails rejected
+  tags:
+  - Action required
+  - All customers
+- version: null
+  date: '2026-09-04'
+  breaking: true
+  highlights:
+  - UK applicants checked at submission
+  tags:
+  - Action required
+  - All customers
+- version: null
+  date: '2026-08-31'
+  breaking: false
+  highlights:
+  - Brazil digital driver's license
+  tags:
+  - Added
+  - All customers
+- version: null
+  date: '2026-08-27'
+  breaking: true
+  highlights:
+  - Private IP addresses rejected
+  tags:
+  - Action required
+  - All customers
+- version: null
+  date: '2026-08-26'
+  breaking: true
+  highlights:
+  - Miscellaneous industry deprecated
+  tags:
+  - Action required
+  - Business customers
+- version: null
+  date: '2026-08-24'
+  breaking: false
+  highlights:
+  - Fewer required fiat address fields
+  tags:
+  - Relaxed
+  - All customers
+- version: null
+  date: '2026-08-21'
+  breaking: false
+  highlights:
+  - Prohibited industries rejected at submission
+  tags:
+  - Changed
+  - Business customers
+- version: null
+  date: '2026-08-13'
+  breaking: false
+  highlights:
+  - external_id reusable after archiving
+  tags:
+  - Relaxed
+  - All customers
+- version: null
+  date: '2026-08-12'
+  breaking: false
+  highlights:
+  - Sandbox sends Processed before Approved
+  tags:
+  - Sandbox
+  - Webhooks
+  - All customers
+- version: null
+  date: '2026-08-11'
+  breaking: false
+  highlights:
+  - TIN step-up for EEA customers
+  tags:
+  - Added
+  - Individual customers
+- version: null
+  date: '2026-08-07'
+  breaking: false
+  highlights:
+  - Backfill tax IDs, US registry match
+  tags:
+  - Added
+  - Relaxed
+  - Business customers
+  - Individual customers
+- version: null
+  date: '2026-08-05'
+  breaking: false
+  highlights:
+  - Two new webhook events
+  tags:
+  - Added
+  - Webhooks
+  - All customers
+- version: '2026-08-01'
+  date: '2026-08-01'
+  breaking: false
+  highlights:
+  - API version
+  tags:
+  - API version
+  - All customers
+  - Business customers

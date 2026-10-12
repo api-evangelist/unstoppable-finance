@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-register-self-attested-wallet-request-schema.json",
+  "title": "RegisterSelfAttestedWalletRequest",
+  "description": "Self-attested wallet registration request\n\nRegister a self-hosted wallet the customer declares as their own, **without** a\ncryptographic signature. For direct customers who can't sign from a custody UI\n(e.g. Fireblocks). Scoped to US and RoW customers.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-addresses-api-openapi.yml#/components/schemas/RegisterSelfAttestedWalletRequest",
+  "properties": {
+    "address": {
+      "description": "The address of the wallet",
+      "type": "string"
+    },
+    "blockchain": {
+      "$ref": "#/$defs/Blockchain"
+    },
+    "customer_id": {
+      "description": "The customer ID",
+      "format": "uuid",
+      "type": "string"
+    },
+    "name": {
+      "description": "Optional display name for this wallet address",
+      "type": "string"
+    }
+  },
+  "required": [
+    "blockchain",
+    "customer_id",
+    "address"
+  ],
+  "type": "object",
+  "$defs": {
+    "Blockchain": {
+      "description": "Blockchain\n\nA type of blockchain\n",
+      "enum": [
+        "Solana",
+        "Ethereum",
+        "Polygon",
+        "Arbitrum",
+        "Base",
+        "Stellar",
+        "Citrea",
+        "Plasma",
+        "Avalanche",
+        "Moca",
+        "Tempo",
+        "Tron",
+        "Bsc"
+      ],
+      "type": "string"
+    }
+  }
+}

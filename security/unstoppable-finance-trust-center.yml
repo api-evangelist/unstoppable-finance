@@ -30,6 +30,8 @@ evidence:
   - MSB
   - VASP
   - money transmitter
-notes: Iron is a MoonPay company; security certifications and the licensing program are published at iron.xyz/security
-  and iron.xyz/compliance, with full detail at moonpay.com/security and moonpay.com/legal/licenses. Data encrypted
-  in transit (TLS 1.2+) and at rest (AES-256) in PCI DSS / ISO 27001 compliant data centers.
+notes: Iron is a MoonPay company; security certifications and the licensing program
+  are published at iron.xyz/security and iron.xyz/compliance, with full detail at
+  moonpay.com/security and moonpay.com/legal/licenses. Data encrypted in transit (TLS
+  1.2+) and at rest (AES-256) in PCI DSS / ISO 27001 compliant data centers.
+source: https://iron.xyz/security

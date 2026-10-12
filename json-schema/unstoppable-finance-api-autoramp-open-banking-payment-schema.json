@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-api-autoramp-open-banking-payment-schema.json",
+  "title": "ApiAutorampOpenBankingPayment",
+  "description": "Autoramp Open Banking Payment with link to initiate flow\n\nOne payment attempt against a provider for an autoramp's open-banking flow.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-autoramp-api-openapi.yml#/components/schemas/ApiAutorampOpenBankingPayment",
+  "properties": {
+    "id": {
+      "description": "The provider's payment ID (e.g. tokenio's payment ID). Use this with\nthe GET-by-id endpoint to look up the latest status.",
+      "type": "string"
+    },
+    "iron_payment_id": {
+      "description": "Iron's internal identifier for this open banking payment. Use this\nas the pagination cursor when listing payments.",
+      "format": "uuid",
+      "type": "string"
+    },
+    "payment_link": {
+      "type": "string"
+    },
+    "settlement_status": {
+      "$ref": "#/$defs/ApiAutorampOpenBankingPaymentSettlementStatus"
+    },
+    "status": {
+      "$ref": "#/$defs/ApiAutorampOpenBankingPaymentStatus"
+    }
+  },
+  "required": [
+    "id",
+    "iron_payment_id",
+    "status"
+  ],
+  "type": "object",
+  "$defs": {
+    "ApiAutorampOpenBankingPaymentSettlementStatus": {
+      "enum": [
+        "InProgress",
+        "Completed",
+        "Incomplete"
+      ],
+      "type": "string"
+    },
+    "ApiAutorampOpenBankingPaymentStatus": {
+      "description": "Autoramp Payment Link Status\n\nThe status of the autoramp payment link\n",
+      "enum": [
+        "Pending",
+        "Ready",
+        "Processing",
+        "Completed",
+        "Failed"
+      ],
+      "type": "string"
+    }
+  }
+}

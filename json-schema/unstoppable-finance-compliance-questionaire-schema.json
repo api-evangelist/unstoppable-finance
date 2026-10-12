@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-compliance-questionaire-schema.json",
+  "title": "ComplianceQuestionaire",
+  "description": "V1 Compliance Questionnaire\n\nLegacy compliance questionnaire format\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-customer-api-openapi.yml#/components/schemas/ComplianceQuestionaire",
+  "properties": {
+    "employment_status": {
+      "$ref": "#/$defs/EmploymentStatus"
+    },
+    "expected_monthly_volume": {
+      "$ref": "#/$defs/PersonProfileExpectedMonthlyTransactionVolume"
+    },
+    "id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "intended_use": {
+      "$ref": "#/$defs/IntendedUse"
+    },
+    "monthly_income": {
+      "$ref": "#/$defs/PersonProfileMonthlyIncome"
+    },
+    "occupation": {
+      "$ref": "#/$defs/Occupation"
+    },
+    "source_of_funds": {
+      "$ref": "#/$defs/PersonProfileSourceOfFunds"
+    },
+    "source_of_funds_proof": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "intended_use"
+  ],
+  "type": "object",
+  "$defs": {
+    "EmploymentStatus": {
+      "description": "Employment Status\n\nThe employment status of the person\n",
+      "enum": [
+        "Employed",
+        "SelfEmployed",
+        "Unemployed",
+        "Retired",
+        "Student"
+      ],
+      "type": "string"
+    },
+    "IntendedUse": {
+      "description": "Intended Purpose\n\nThe intended purpose the person wants to use the account for\n",
+      "enum": [
+        "Investing",
+        "PaymentToFriendsFamilyorOthers",
+        "PurchaseDigitalAssets",
+        "OnlinePurchasesOfGoodsOrServices",
+        "Trading"
+      ],
+      "type": "string"
+    },
+    "Occupation": {
+      "description": "Occupation\n\nThe occupation of the person\n",
+      "enum": [
+        "Agriculture",
+        "ArtsAndEntertainment",
+        "Construction",
+        "Education",
+        "FinancialServices",
+        "InformationAndTechnology",
+        "Retail",
+        "RealEstate",
+        "Other",
+        "BusinessOwner",
+        "Healthcare",
+        "Industrial",
+        "LegalServices",
+        "PublicSector",
+        "SeniorManagement"
+      ],
+      "type": "string"
+    },
+    "PersonProfileExpectedMonthlyTransactionVolume": {
+      "description": "Expected Monthly Transaction Volume\n\nThe expected monthly transaction volume of the person\n",
+      "enum": [
+        "LessThan1000",
+        "Between1000And5000",
+        "Between5000And10000",
+        "Between10000And20000",
+        "Over20000"
+      ],
+      "type": "string"
+    },
+    "PersonProfileMonthlyIncome": {
+      "description": "Monthly Income\n\nThe monthly income of the person\n",
+      "enum": [
+        "Between1000And2000",
+        "Between2000And3000",
+        "Between3000And5000",
+        "Between5000And10000",
+        "Over10000"
+      ],
+      "type": "string"
+    },
+    "PersonProfileSourceOfFunds": {
+      "description": "Source of Funds\n\nThe sources of funds for a person\n",
+      "enum": [
+        "SalaryAndWages",
+        "PersonalSavings",
+        "PensionOrRetirementPayments",
+        "ProceedsFromSellingAssets",
+        "CryptocurrencyTradingOrInvestment",
+        "InvestmentReturns",
+        "GamblingOrLotteryWinnings",
+        "GiftOrInheritanceReceived",
+        "LoanFromBankOrOtherFinancialInstitution"
+      ],
+      "type": "string"
+    }
+  }
+}

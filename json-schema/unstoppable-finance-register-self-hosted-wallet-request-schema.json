@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-register-self-hosted-wallet-request-schema.json",
+  "title": "RegisterSelfHostedWalletRequest",
+  "description": "Self-hosted wallet registration request\n\nProof of wallet ownership to register a self-hosted wallet for Travel Rule compliance\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-addresses-api-openapi.yml#/components/schemas/RegisterSelfHostedWalletRequest",
+  "properties": {
+    "address": {
+      "description": "The address of the wallet",
+      "type": "string"
+    },
+    "blockchain": {
+      "$ref": "#/$defs/Blockchain"
+    },
+    "customer_id": {
+      "description": "The customer ID",
+      "format": "uuid",
+      "type": "string"
+    },
+    "message": {
+      "description": "The message that was signed",
+      "type": "string"
+    },
+    "name": {
+      "description": "Optional display name for this wallet address",
+      "type": "string"
+    },
+    "signature": {
+      "description": "The signature of the message",
+      "type": "string"
+    }
+  },
+  "required": [
+    "blockchain",
+    "customer_id",
+    "address",
+    "signature",
+    "message"
+  ],
+  "type": "object",
+  "$defs": {
+    "Blockchain": {
+      "description": "Blockchain\n\nA type of blockchain\n",
+      "enum": [
+        "Solana",
+        "Ethereum",
+        "Polygon",
+        "Arbitrum",
+        "Base",
+        "Stellar",
+        "Citrea",
+        "Plasma",
+        "Avalanche",
+        "Moca",
+        "Tempo",
+        "Tron",
+        "Bsc"
+      ],
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,869 @@
+{
+  "@context": {
+    "@vocab": "https://iron.xyz/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "unstoppable": "https://iron.xyz/schema#",
+    "IndividualName": "unstoppable:IndividualName",
+    "family_name": {
+      "@id": "unstoppable:family_name",
+      "@type": "xsd:string"
+    },
+    "given_name": {
+      "@id": "unstoppable:given_name",
+      "@type": "xsd:string"
+    },
+    "PixCpfKey": "unstoppable:PixCpfKey",
+    "key": {
+      "@id": "unstoppable:key",
+      "@type": "xsd:string"
+    },
+    "BankAccountFPSIdentifier": "unstoppable:BankAccountFPSIdentifier",
+    "account_number": {
+      "@id": "unstoppable:account_number",
+      "@type": "xsd:string"
+    },
+    "sort_code": {
+      "@id": "unstoppable:sort_code",
+      "@type": "xsd:string"
+    },
+    "PagedList_FiatAddress": "unstoppable:PagedList_FiatAddress",
+    "cursor": {
+      "@id": "unstoppable:cursor",
+      "@type": "xsd:string"
+    },
+    "items": {
+      "@id": "unstoppable:items",
+      "@container": "@list"
+    },
+    "prev_cursor": {
+      "@id": "unstoppable:prev_cursor",
+      "@type": "xsd:string"
+    },
+    "PixEvpKey": "unstoppable:PixEvpKey",
+    "AddressType": "unstoppable:AddressType",
+    "SelfHostedWalletResponse": "unstoppable:SelfHostedWalletResponse",
+    "address": {
+      "@id": "unstoppable:address",
+      "@type": "xsd:string"
+    },
+    "created_at": {
+      "@id": "unstoppable:created_at",
+      "@type": "xsd:dateTime"
+    },
+    "customer_id": {
+      "@id": "unstoppable:customer_id",
+      "@type": "xsd:string"
+    },
+    "disabled": {
+      "@id": "unstoppable:disabled",
+      "@type": "xsd:boolean"
+    },
+    "id": {
+      "@id": "unstoppable:id",
+      "@type": "xsd:string"
+    },
+    "name": {
+      "@id": "unstoppable:name",
+      "@type": "xsd:string"
+    },
+    "signature": {
+      "@id": "unstoppable:signature",
+      "@type": "xsd:string"
+    },
+    "RecipientBankAccount": "unstoppable:RecipientBankAccount",
+    "account_identifier": {
+      "@id": "unstoppable:account_identifier",
+      "@type": "@id"
+    },
+    "bank_address": {
+      "@id": "unstoppable:bank_address",
+      "@type": "@id"
+    },
+    "email_address": {
+      "@id": "unstoppable:email_address",
+      "@type": "@id"
+    },
+    "is_third_party": {
+      "@id": "unstoppable:is_third_party",
+      "@type": "xsd:boolean"
+    },
+    "phone_number": {
+      "@id": "unstoppable:phone_number",
+      "@type": "xsd:string"
+    },
+    "provider_country": {
+      "@id": "unstoppable:provider_country",
+      "@type": "@id"
+    },
+    "provider_name": {
+      "@id": "unstoppable:provider_name",
+      "@type": "xsd:string"
+    },
+    "recipient": {
+      "@id": "unstoppable:recipient",
+      "@type": "@id"
+    },
+    "PixCnpjKey": "unstoppable:PixCnpjKey",
+    "RecipientPix": "unstoppable:RecipientPix",
+    "account": {
+      "@id": "unstoppable:account",
+      "@type": "@id"
+    },
+    "tax_id": {
+      "@id": "unstoppable:tax_id",
+      "@type": "xsd:string"
+    },
+    "EmailAddress": "unstoppable:EmailAddress",
+    "email": {
+      "@id": "unstoppable:email",
+      "@type": "xsd:string"
+    },
+    "FiatAddress": "unstoppable:FiatAddress",
+    "bank_account_identifier": {
+      "@id": "unstoppable:bank_account_identifier",
+      "@type": "@id"
+    },
+    "bank_details": {
+      "@id": "unstoppable:bank_details",
+      "@type": "@id"
+    },
+    "bank_name": {
+      "@id": "unstoppable:bank_name",
+      "@type": "xsd:string"
+    },
+    "country": {
+      "@id": "unstoppable:country",
+      "@type": "xsd:string"
+    },
+    "currency": {
+      "@id": "unstoppable:currency",
+      "@type": "xsd:string"
+    },
+    "label": {
+      "@id": "unstoppable:label",
+      "@type": "xsd:string"
+    },
+    "ownership_verified": {
+      "@id": "unstoppable:ownership_verified",
+      "@type": "xsd:boolean"
+    },
+    "status": {
+      "@id": "unstoppable:status",
+      "@type": "@id"
+    },
+    "updated_at": {
+      "@id": "unstoppable:updated_at",
+      "@type": "xsd:dateTime"
+    },
+    "FiatAddressStatus": "unstoppable:FiatAddressStatus",
+    "BankAccountWireIdentifier": "unstoppable:BankAccountWireIdentifier",
+    "routing_number": {
+      "@id": "unstoppable:routing_number",
+      "@type": "xsd:string"
+    },
+    "BankAccountCHAPSIdentifier": "unstoppable:BankAccountCHAPSIdentifier",
+    "RegisterPixAddressRequest": "unstoppable:RegisterPixAddressRequest",
+    "RegisterHostedWalletRequest": "unstoppable:RegisterHostedWalletRequest",
+    "blockchain": {
+      "@id": "unstoppable:blockchain",
+      "@type": "@id"
+    },
+    "vasp_did": {
+      "@id": "unstoppable:vasp_did",
+      "@type": "xsd:string"
+    },
+    "wallet_address": {
+      "@id": "unstoppable:wallet_address",
+      "@type": "xsd:string"
+    },
+    "ApiError": "unstoppable:ApiError",
+    "message": {
+      "@id": "unstoppable:message",
+      "@type": "xsd:string"
+    },
+    "trace_id": {
+      "@id": "unstoppable:trace_id",
+      "@type": "xsd:string"
+    },
+    "PixEmailKey": "unstoppable:PixEmailKey",
+    "RegisterFiatAddressRequest": "unstoppable:RegisterFiatAddressRequest",
+    "PixAddress": "unstoppable:PixAddress",
+    "PixAccountType": "unstoppable:PixAccountType",
+    "VerifiedAddressResponse": "unstoppable:VerifiedAddressResponse",
+    "address_type": {
+      "@id": "unstoppable:address_type",
+      "@type": "@id"
+    },
+    "is_self": {
+      "@id": "unstoppable:is_self",
+      "@type": "xsd:boolean"
+    },
+    "proof_message": {
+      "@id": "unstoppable:proof_message",
+      "@type": "xsd:string"
+    },
+    "proof_signature": {
+      "@id": "unstoppable:proof_signature",
+      "@type": "xsd:string"
+    },
+    "RecipientPostalAddress": "unstoppable:RecipientPostalAddress",
+    "city": {
+      "@id": "unstoppable:city",
+      "@type": "xsd:string"
+    },
+    "postal_code": {
+      "@id": "unstoppable:postal_code",
+      "@type": "xsd:string"
+    },
+    "state": {
+      "@id": "unstoppable:state",
+      "@type": "xsd:string"
+    },
+    "street": {
+      "@id": "unstoppable:street",
+      "@type": "xsd:string"
+    },
+    "BankAccountFedNowIdentifier": "unstoppable:BankAccountFedNowIdentifier",
+    "PixPhoneKey": "unstoppable:PixPhoneKey",
+    "Fiat": "unstoppable:Fiat",
+    "code": {
+      "@id": "unstoppable:code",
+      "@type": "xsd:string"
+    },
+    "PagedList_PixAddress": "unstoppable:PagedList_PixAddress",
+    "RegisterSelfHostedWalletRequest": "unstoppable:RegisterSelfHostedWalletRequest",
+    "PixAddressStatus": "unstoppable:PixAddressStatus",
+    "VaspSuggestion": "unstoppable:VaspSuggestion",
+    "did": {
+      "@id": "unstoppable:did",
+      "@type": "xsd:string"
+    },
+    "website": {
+      "@id": "unstoppable:website",
+      "@type": "xsd:string"
+    },
+    "BankAccountSWIFTIdentifier": "unstoppable:BankAccountSWIFTIdentifier",
+    "bic": {
+      "@id": "unstoppable:bic",
+      "@type": "xsd:string"
+    },
+    "intermediary_bic": {
+      "@id": "unstoppable:intermediary_bic",
+      "@type": "xsd:string"
+    },
+    "BankPostalAddress": "unstoppable:BankPostalAddress",
+    "BankAccountACHIdentifier": "unstoppable:BankAccountACHIdentifier",
+    "BusinessName": "unstoppable:BusinessName",
+    "AddressFilter": "unstoppable:AddressFilter",
+    "Country": "unstoppable:Country",
+    "Iban": "unstoppable:Iban",
+    "iban": {
+      "@id": "unstoppable:iban",
+      "@type": "xsd:string"
+    },
+    "RegisterSelfAttestedWalletRequest": "unstoppable:RegisterSelfAttestedWalletRequest",
+    "Blockchain": "unstoppable:Blockchain",
+    "BankAccountRTPIdentifier": "unstoppable:BankAccountRTPIdentifier",
+    "UpdateDisabledStatusRequest": "unstoppable:UpdateDisabledStatusRequest",
+    "PixBankDetails": "unstoppable:PixBankDetails",
+    "account_type": {
+      "@id": "unstoppable:account_type",
+      "@type": "@id"
+    },
+    "bank_code": {
+      "@id": "unstoppable:bank_code",
+      "@type": "xsd:string"
+    },
+    "branch_code": {
+      "@id": "unstoppable:branch_code",
+      "@type": "xsd:string"
+    },
+    "CountrySubdivision": "unstoppable:CountrySubdivision",
+    "Crypto": "unstoppable:Crypto",
+    "token": {
+      "@id": "unstoppable:token",
+      "@type": "xsd:string"
+    },
+    "Fee": "unstoppable:Fee",
+    "banking_fee": {
+      "@id": "unstoppable:banking_fee",
+      "@type": "@id"
+    },
+    "banking_fee_network": {
+      "@id": "unstoppable:banking_fee_network",
+      "@type": "@id"
+    },
+    "deducted_fee": {
+      "@id": "unstoppable:deducted_fee"
+    },
+    "iron_fee": {
+      "@id": "unstoppable:iron_fee",
+      "@type": "@id"
+    },
+    "iron_fee_settlement": {
+      "@id": "unstoppable:iron_fee_settlement",
+      "@type": "@id"
+    },
+    "network_fee": {
+      "@id": "unstoppable:network_fee",
+      "@type": "@id"
+    },
+    "network_fees": {
+      "@id": "unstoppable:network_fees",
+      "@container": "@list"
+    },
+    "network_fees_with_settlement": {
+      "@id": "unstoppable:network_fees_with_settlement",
+      "@container": "@list"
+    },
+    "partner_fee": {
+      "@id": "unstoppable:partner_fee",
+      "@type": "@id"
+    },
+    "partner_fees": {
+      "@id": "unstoppable:partner_fees",
+      "@container": "@list"
+    },
+    "total_fee": {
+      "@id": "unstoppable:total_fee",
+      "@type": "@id"
+    },
+    "transaction_fee": {
+      "@id": "unstoppable:transaction_fee",
+      "@type": "@id"
+    },
+    "CreateAutorampParameters": "unstoppable:CreateAutorampParameters",
+    "ach_payment_reference": {
+      "@id": "unstoppable:ach_payment_reference",
+      "@type": "xsd:string"
+    },
+    "additional_partner_fee_in_bips": {
+      "@id": "unstoppable:additional_partner_fee_in_bips",
+      "@type": "xsd:string"
+    },
+    "batch_payout": {
+      "@id": "unstoppable:batch_payout",
+      "@type": "xsd:boolean"
+    },
+    "destination_currency": {
+      "@id": "unstoppable:destination_currency",
+      "@type": "@id"
+    },
+    "external_id": {
+      "@id": "unstoppable:external_id",
+      "@type": "xsd:string"
+    },
+    "fee_profile_id": {
+      "@id": "unstoppable:fee_profile_id",
+      "@type": "xsd:string"
+    },
+    "fps_payment_reference": {
+      "@id": "unstoppable:fps_payment_reference",
+      "@type": "xsd:string"
+    },
+    "pay_by_reference": {
+      "@id": "unstoppable:pay_by_reference",
+      "@type": "xsd:boolean"
+    },
+    "recipient_account": {
+      "@id": "unstoppable:recipient_account",
+      "@type": "@id"
+    },
+    "sepa_payment_reference": {
+      "@id": "unstoppable:sepa_payment_reference",
+      "@type": "xsd:string"
+    },
+    "source_currencies": {
+      "@id": "unstoppable:source_currencies",
+      "@container": "@list"
+    },
+    "source_is_third_party": {
+      "@id": "unstoppable:source_is_third_party",
+      "@type": "xsd:boolean"
+    },
+    "swift_payment_reference": {
+      "@id": "unstoppable:swift_payment_reference",
+      "@type": "xsd:string"
+    },
+    "wire_message": {
+      "@id": "unstoppable:wire_message",
+      "@type": "xsd:string"
+    },
+    "CreateAutorampOpenBankingPayment": "unstoppable:CreateAutorampOpenBankingPayment",
+    "amount_in": {
+      "@id": "unstoppable:amount_in",
+      "@type": "@id"
+    },
+    "callback_url": {
+      "@id": "unstoppable:callback_url",
+      "@type": "xsd:string"
+    },
+    "PagedList_AutorampTransaction": "unstoppable:PagedList_AutorampTransaction",
+    "CryptoWallet": "unstoppable:CryptoWallet",
+    "chain": {
+      "@id": "unstoppable:chain",
+      "@type": "@id"
+    },
+    "AutorampQuote": "unstoppable:AutorampQuote",
+    "amount_out": {
+      "@id": "unstoppable:amount_out",
+      "@type": "@id"
+    },
+    "fee": {
+      "@id": "unstoppable:fee",
+      "@type": "@id"
+    },
+    "fee_settlement": {
+      "@id": "unstoppable:fee_settlement",
+      "@type": "@id"
+    },
+    "partner_fee_settlement": {
+      "@id": "unstoppable:partner_fee_settlement",
+      "@type": "@id"
+    },
+    "quote_id": {
+      "@id": "unstoppable:quote_id",
+      "@type": "xsd:string"
+    },
+    "rate": {
+      "@id": "unstoppable:rate",
+      "@type": "xsd:string"
+    },
+    "rate_expiry_policy": {
+      "@id": "unstoppable:rate_expiry_policy",
+      "@type": "@id"
+    },
+    "rate_lock_valid_until": {
+      "@id": "unstoppable:rate_lock_valid_until",
+      "@type": "xsd:dateTime"
+    },
+    "slippage_tolerance_in_bips": {
+      "@id": "unstoppable:slippage_tolerance_in_bips",
+      "@type": "xsd:string"
+    },
+    "valid_until": {
+      "@id": "unstoppable:valid_until",
+      "@type": "xsd:dateTime"
+    },
+    "SpeiDepositInfo": "unstoppable:SpeiDepositInfo",
+    "clabe": {
+      "@id": "unstoppable:clabe",
+      "@type": "xsd:string"
+    },
+    "instruction": {
+      "@id": "unstoppable:instruction",
+      "@type": "xsd:string"
+    },
+    "FeeSettlement": "unstoppable:FeeSettlement",
+    "ApiBankAccountSource": "unstoppable:ApiBankAccountSource",
+    "SignedAutorampQuote": "unstoppable:SignedAutorampQuote",
+    "additional_in_currencies": {
+      "@id": "unstoppable:additional_in_currencies",
+      "@container": "@list"
+    },
+    "deposit_account_type": {
+      "@id": "unstoppable:deposit_account_type",
+      "@type": "@id"
+    },
+    "source_currency": {
+      "@id": "unstoppable:source_currency",
+      "@type": "@id"
+    },
+    "Autoramp": "unstoppable:Autoramp",
+    "deposit_account": {
+      "@id": "unstoppable:deposit_account"
+    },
+    "deposit_rails": {
+      "@id": "unstoppable:deposit_rails",
+      "@container": "@list"
+    },
+    "inbound_payment_reference": {
+      "@id": "unstoppable:inbound_payment_reference",
+      "@type": "xsd:string"
+    },
+    "kind": {
+      "@id": "unstoppable:kind",
+      "@type": "@id"
+    },
+    "payment_reference": {
+      "@id": "unstoppable:payment_reference",
+      "@type": "xsd:string"
+    },
+    "quote": {
+      "@id": "unstoppable:quote"
+    },
+    "quotes": {
+      "@id": "unstoppable:quotes",
+      "@container": "@list"
+    },
+    "source": {
+      "@id": "unstoppable:source",
+      "@type": "@id"
+    },
+    "travel_address": {
+      "@id": "unstoppable:travel_address",
+      "@type": "xsd:string"
+    },
+    "DepositAccountType": "unstoppable:DepositAccountType",
+    "PixAccount": "unstoppable:PixAccount",
+    "ApiAutorampOpenBankingPayment": "unstoppable:ApiAutorampOpenBankingPayment",
+    "iron_payment_id": {
+      "@id": "unstoppable:iron_payment_id",
+      "@type": "xsd:string"
+    },
+    "payment_link": {
+      "@id": "unstoppable:payment_link",
+      "@type": "xsd:string"
+    },
+    "settlement_status": {
+      "@id": "unstoppable:settlement_status",
+      "@type": "@id"
+    },
+    "AfricanBankTransferDepositInfo": "unstoppable:AfricanBankTransferDepositInfo",
+    "account_name": {
+      "@id": "unstoppable:account_name",
+      "@type": "xsd:string"
+    },
+    "amount": {
+      "@id": "unstoppable:amount",
+      "@type": "xsd:string"
+    },
+    "financial_institution": {
+      "@id": "unstoppable:financial_institution",
+      "@type": "@id"
+    },
+    "reference_id": {
+      "@id": "unstoppable:reference_id",
+      "@type": "xsd:string"
+    },
+    "RecipientWallet": "unstoppable:RecipientWallet",
+    "RtpDepositInfo": "unstoppable:RtpDepositInfo",
+    "recipient_address": {
+      "@id": "unstoppable:recipient_address",
+      "@type": "xsd:string"
+    },
+    "recipient_name": {
+      "@id": "unstoppable:recipient_name",
+      "@type": "xsd:string"
+    },
+    "SignedAutorampRateQuote": "unstoppable:SignedAutorampRateQuote",
+    "autoramp_id": {
+      "@id": "unstoppable:autoramp_id",
+      "@type": "xsd:string"
+    },
+    "AutorampTransactionStatus": "unstoppable:AutorampTransactionStatus",
+    "FpsDepositInfo": "unstoppable:FpsDepositInfo",
+    "beneficiary_name": {
+      "@id": "unstoppable:beneficiary_name",
+      "@type": "xsd:string"
+    },
+    "PatchAutorampMarketParameters": "unstoppable:PatchAutorampMarketParameters",
+    "PayoutCryptoTransaction": "unstoppable:PayoutCryptoTransaction",
+    "transaction_hash": {
+      "@id": "unstoppable:transaction_hash",
+      "@type": "xsd:string"
+    },
+    "Amount": "unstoppable:Amount",
+    "AutorampTransaction": "unstoppable:AutorampTransaction",
+    "batch_id": {
+      "@id": "unstoppable:batch_id",
+      "@type": "xsd:string"
+    },
+    "destination_amount": {
+      "@id": "unstoppable:destination_amount",
+      "@type": "@id"
+    },
+    "exchange_rate": {
+      "@id": "unstoppable:exchange_rate",
+      "@type": "xsd:string"
+    },
+    "fee_breakdown": {
+      "@id": "unstoppable:fee_breakdown",
+      "@type": "@id"
+    },
+    "ob_payment_id": {
+      "@id": "unstoppable:ob_payment_id",
+      "@type": "xsd:string"
+    },
+    "payment_tracking": {
+      "@id": "unstoppable:payment_tracking",
+      "@type": "@id"
+    },
+    "payout_crypto_transaction": {
+      "@id": "unstoppable:payout_crypto_transaction",
+      "@type": "@id"
+    },
+    "source_amount": {
+      "@id": "unstoppable:source_amount",
+      "@type": "@id"
+    },
+    "third_party_classification": {
+      "@id": "unstoppable:third_party_classification",
+      "@type": "@id"
+    },
+    "AutorampType": "unstoppable:AutorampType",
+    "ChapsFpsDepositInfo": "unstoppable:ChapsFpsDepositInfo",
+    "FedNowDepositInfo": "unstoppable:FedNowDepositInfo",
+    "RateExpiryPolicy": "unstoppable:RateExpiryPolicy",
+    "IbanDepositInfo": "unstoppable:IbanDepositInfo",
+    "phone": {
+      "@id": "unstoppable:phone",
+      "@type": "xsd:string"
+    },
+    "Bank": "unstoppable:Bank",
+    "ACHDepositInfo": "unstoppable:ACHDepositInfo",
+    "ApiCanCreateAutorampResponse": "unstoppable:ApiCanCreateAutorampResponse",
+    "can_create": {
+      "@id": "unstoppable:can_create",
+      "@type": "xsd:boolean"
+    },
+    "ChapsDepositInfo": "unstoppable:ChapsDepositInfo",
+    "SwiftDepositInfo": "unstoppable:SwiftDepositInfo",
+    "memo": {
+      "@id": "unstoppable:memo",
+      "@type": "xsd:string"
+    },
+    "AutorampTransactionState": "unstoppable:AutorampTransactionState",
+    "ApiAutorampQuotePreview": "unstoppable:ApiAutorampQuotePreview",
+    "assumed_payout_rail": {
+      "@id": "unstoppable:assumed_payout_rail",
+      "@type": "@id"
+    },
+    "PaymentNetwork": "unstoppable:PaymentNetwork",
+    "FiatAccount": "unstoppable:FiatAccount",
+    "SortOrder": "unstoppable:SortOrder",
+    "ApiAutorampOpenBankingPaymentStatus": "unstoppable:ApiAutorampOpenBankingPaymentStatus",
+    "AchWireDepositInfo": "unstoppable:AchWireDepositInfo",
+    "AutorampStatus": "unstoppable:AutorampStatus",
+    "PagedList_ApiAutorampOpenBankingPayment": "unstoppable:PagedList_ApiAutorampOpenBankingPayment",
+    "NetworkFeeType": "unstoppable:NetworkFeeType",
+    "AutorampSource": "unstoppable:AutorampSource",
+    "PagedList_Autoramp": "unstoppable:PagedList_Autoramp",
+    "MobileMoneyDepositInfo": "unstoppable:MobileMoneyDepositInfo",
+    "mobile_number": {
+      "@id": "unstoppable:mobile_number",
+      "@type": "xsd:string"
+    },
+    "ApiThirdPartyClassification": "unstoppable:ApiThirdPartyClassification",
+    "AuthenticationCode": "unstoppable:AuthenticationCode",
+    "attempts": {
+      "@id": "unstoppable:attempts",
+      "@type": "xsd:integer"
+    },
+    "entity_id": {
+      "@id": "unstoppable:entity_id",
+      "@type": "xsd:string"
+    },
+    "expires_at": {
+      "@id": "unstoppable:expires_at",
+      "@type": "xsd:dateTime"
+    },
+    "PaymentTracking": "unstoppable:PaymentTracking",
+    "ach_trace_number": {
+      "@id": "unstoppable:ach_trace_number",
+      "@type": "xsd:string"
+    },
+    "imad": {
+      "@id": "unstoppable:imad",
+      "@type": "xsd:string"
+    },
+    "omad": {
+      "@id": "unstoppable:omad",
+      "@type": "xsd:string"
+    },
+    "uetr": {
+      "@id": "unstoppable:uetr",
+      "@type": "xsd:string"
+    },
+    "PixDepositInfo": "unstoppable:PixDepositInfo",
+    "pix_key": {
+      "@id": "unstoppable:pix_key",
+      "@type": "xsd:string"
+    },
+    "ApiAutorampOpenBankingPaymentSettlementStatus": "unstoppable:ApiAutorampOpenBankingPaymentSettlementStatus",
+    "AuthenticationCodeStatus": "unstoppable:AuthenticationCodeStatus",
+    "ApiWalletDepositSource": "unstoppable:ApiWalletDepositSource",
+    "deposit_tx_hash": {
+      "@id": "unstoppable:deposit_tx_hash",
+      "@type": "xsd:string"
+    },
+    "WireDepositInfo": "unstoppable:WireDepositInfo",
+    "NetworkFeeWithSettlement": "unstoppable:NetworkFeeWithSettlement",
+    "fee_amount": {
+      "@id": "unstoppable:fee_amount",
+      "@type": "@id"
+    },
+    "fee_type": {
+      "@id": "unstoppable:fee_type",
+      "@type": "@id"
+    },
+    "settlement": {
+      "@id": "unstoppable:settlement",
+      "@type": "@id"
+    },
+    "PartnerFee": "unstoppable:PartnerFee",
+    "FiatCurrency": "unstoppable:FiatCurrency",
+    "countries": {
+      "@id": "unstoppable:countries",
+      "@container": "@list"
+    },
+    "CryptoCurrency": "unstoppable:CryptoCurrency",
+    "mint_only": {
+      "@id": "unstoppable:mint_only",
+      "@type": "xsd:boolean"
+    },
+    "AbilityStatus": "unstoppable:AbilityStatus",
+    "BusinessIndustryType": "unstoppable:BusinessIndustryType",
+    "IdentificationLinkparams": "unstoppable:IdentificationLinkparams",
+    "with_edd": {
+      "@id": "unstoppable:with_edd",
+      "@type": "xsd:boolean"
+    },
+    "BusinessQuestionnairePlannedActivities": "unstoppable:BusinessQuestionnairePlannedActivities",
+    "estimated_monthly_transactions": {
+      "@id": "unstoppable:estimated_monthly_transactions",
+      "@type": "@id"
+    },
+    "estimated_monthly_volume": {
+      "@id": "unstoppable:estimated_monthly_volume",
+      "@type": "@id"
+    },
+    "flow_of_funds_diagram": {
+      "@id": "unstoppable:flow_of_funds_diagram",
+      "@type": "xsd:string"
+    },
+    "purpose_and_intended_use": {
+      "@id": "unstoppable:purpose_and_intended_use",
+      "@type": "@id"
+    },
+    "sends_funds_on_customer_behalf": {
+      "@id": "unstoppable:sends_funds_on_customer_behalf",
+      "@type": "xsd:boolean"
+    },
+    "sends_funds_on_customer_behalf_description": {
+      "@id": "unstoppable:sends_funds_on_customer_behalf_description",
+      "@type": "xsd:string"
+    },
+    "source_of_funds_document": {
+      "@id": "unstoppable:source_of_funds_document",
+      "@type": "xsd:string"
+    },
+    "Signing": "unstoppable:Signing",
+    "content_id": {
+      "@id": "unstoppable:content_id",
+      "@type": "xsd:string"
+    },
+    "document_id": {
+      "@id": "unstoppable:document_id",
+      "@type": "xsd:string"
+    },
+    "SolePropBusinessQuestionnaire": "unstoppable:SolePropBusinessQuestionnaire",
+    "business_details": {
+      "@id": "unstoppable:business_details",
+      "@type": "@id"
+    },
+    "planned_activities": {
+      "@id": "unstoppable:planned_activities",
+      "@type": "@id"
+    },
+    "source_of_funds": {
+      "@id": "unstoppable:source_of_funds",
+      "@type": "@id"
+    },
+    "SubmitAuthenticationCodeParams": "unstoppable:SubmitAuthenticationCodeParams",
+    "BusinessQuestionnaireBusinessDetails": "unstoppable:BusinessQuestionnaireBusinessDetails",
+    "business_model_description": {
+      "@id": "unstoppable:business_model_description",
+      "@type": "xsd:string"
+    },
+    "estimated_annual_revenue": {
+      "@id": "unstoppable:estimated_annual_revenue",
+      "@type": "@id"
+    },
+    "has_licenses_or_registrations": {
+      "@id": "unstoppable:has_licenses_or_registrations",
+      "@type": "xsd:boolean"
+    },
+    "industry_type": {
+      "@id": "unstoppable:industry_type",
+      "@type": "@id"
+    },
+    "main_business_countries": {
+      "@id": "unstoppable:main_business_countries",
+      "@container": "@list"
+    },
+    "requires_aml_program": {
+      "@id": "unstoppable:requires_aml_program",
+      "@type": "xsd:boolean"
+    },
+    "ApiFiatAbilities": "unstoppable:ApiFiatAbilities",
+    "eur": {
+      "@id": "unstoppable:eur",
+      "@type": "@id"
+    },
+    "gbp": {
+      "@id": "unstoppable:gbp",
+      "@type": "@id"
+    },
+    "usd": {
+      "@id": "unstoppable:usd",
+      "@type": "@id"
+    },
+    "CustomerStatus": "unstoppable:CustomerStatus",
+    "ApproximateNetWorth": "unstoppable:ApproximateNetWorth",
+    "RevenueSource": "unstoppable:RevenueSource",
+    "PersonProfileSourceOfFunds": "unstoppable:PersonProfileSourceOfFunds",
+    "CompanyInfo": "unstoppable:CompanyInfo",
+    "alternative_names": {
+      "@id": "unstoppable:alternative_names",
+      "@container": "@list"
+    },
+    "company_name": {
+      "@id": "unstoppable:company_name",
+      "@type": "xsd:string"
+    },
+    "company_type": {
+      "@id": "unstoppable:company_type",
+      "@type": "@id"
+    },
+    "incorporation_date": {
+      "@id": "unstoppable:incorporation_date",
+      "@type": "xsd:string"
+    },
+    "legal_address": {
+      "@id": "unstoppable:legal_address",
+      "@type": "xsd:string"
+    },
+    "postal_address": {
+      "@id": "unstoppable:postal_address",
+      "@type": "xsd:string"
+    },
+    "registration_number": {
+      "@id": "unstoppable:registration_number",
+      "@type": "xsd:string"
+    },
+    "tax_identification_number": {
+      "@id": "unstoppable:tax_identification_number",
+      "@type": "xsd:string"
+    },
+    "BusinessBeneficiaryInfo": "unstoppable:BusinessBeneficiaryInfo",
+    "company_data": {
+      "@id": "unstoppable:company_data",
+      "@type": "@id"
+    },
+    "RequirementCode": "unstoppable:RequirementCode"
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "Unstoppable Finance (Iron) API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects Unstoppable Finance (Iron)'s own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-12) from openapi/unstoppable-finance-addresses-api-openapi.yml, openapi/unstoppable-finance-autoramp-api-openapi.yml, openapi/unstoppable-finance-currencies-api-openapi.yml.",
+  "dcterms:created": "2026-10-12",
+  "dcterms:source": [
+    "openapi/unstoppable-finance-addresses-api-openapi.yml",
+    "openapi/unstoppable-finance-autoramp-api-openapi.yml",
+    "openapi/unstoppable-finance-currencies-api-openapi.yml",
+    "openapi/unstoppable-finance-customer-api-openapi.yml",
+    "openapi/unstoppable-finance-exchange-rate-api-openapi.yml"
+  ]
+}

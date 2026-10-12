@@ -1,0 +1,445 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-pix-address-schema.json",
+  "title": "PixAddress",
+  "description": "PIX Address\n\nResponse containing PIX destination details.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-addresses-api-openapi.yml#/components/schemas/PixAddress",
+  "properties": {
+    "created_at": {
+      "description": "When the address was created",
+      "format": "date-time",
+      "type": "string"
+    },
+    "customer_id": {
+      "description": "The customer ID",
+      "format": "uuid",
+      "type": "string"
+    },
+    "id": {
+      "description": "The ID of the address",
+      "format": "uuid",
+      "type": "string"
+    },
+    "label": {
+      "description": "Optional label for the address",
+      "type": "string"
+    },
+    "recipient": {
+      "$ref": "#/$defs/RecipientPix"
+    },
+    "status": {
+      "$ref": "#/$defs/PixAddressStatus"
+    },
+    "updated_at": {
+      "description": "When the address was last updated",
+      "format": "date-time",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "updated_at",
+    "customer_id",
+    "recipient",
+    "status"
+  ],
+  "type": "object",
+  "$defs": {
+    "BusinessName": {
+      "properties": {
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BusinessName",
+      "type": "object"
+    },
+    "IndividualName": {
+      "properties": {
+        "family_name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "type": "string"
+        },
+        "given_name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "given_name",
+        "family_name"
+      ],
+      "title": "IndividualName",
+      "type": "object"
+    },
+    "PixAccountIdentifier": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PixAccountIdentifier_PixCpfKey"
+        },
+        {
+          "$ref": "#/$defs/PixAccountIdentifier_PixCnpjKey"
+        },
+        {
+          "$ref": "#/$defs/PixAccountIdentifier_PixEmailKey"
+        },
+        {
+          "$ref": "#/$defs/PixAccountIdentifier_PixPhoneKey"
+        },
+        {
+          "$ref": "#/$defs/PixAccountIdentifier_PixEvpKey"
+        },
+        {
+          "$ref": "#/$defs/PixAccountIdentifier_PixBankDetails"
+        }
+      ],
+      "description": "PixAccountIdentifier\n\nHow the recipient's PIX account is identified: a DICT key of one of the\nfive key types, or full bank account details.",
+      "type": "object"
+    },
+    "PixAccountIdentifier_PixBankDetails": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "BANK_DETAILS"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PixBankDetails"
+        }
+      ],
+      "description": "PixAccountIdentifier\n\nHow the recipient's PIX account is identified: a DICT key of one of the\nfive key types, or full bank account details."
+    },
+    "PixAccountIdentifier_PixCnpjKey": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "CNPJ"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PixCnpjKey"
+        }
+      ],
+      "description": "PixAccountIdentifier\n\nHow the recipient's PIX account is identified: a DICT key of one of the\nfive key types, or full bank account details."
+    },
+    "PixAccountIdentifier_PixCpfKey": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "CPF"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PixCpfKey"
+        }
+      ],
+      "description": "PixAccountIdentifier\n\nHow the recipient's PIX account is identified: a DICT key of one of the\nfive key types, or full bank account details."
+    },
+    "PixAccountIdentifier_PixEmailKey": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "EMAIL"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PixEmailKey"
+        }
+      ],
+      "description": "PixAccountIdentifier\n\nHow the recipient's PIX account is identified: a DICT key of one of the\nfive key types, or full bank account details."
+    },
+    "PixAccountIdentifier_PixEvpKey": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "EVP"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PixEvpKey"
+        }
+      ],
+      "description": "PixAccountIdentifier\n\nHow the recipient's PIX account is identified: a DICT key of one of the\nfive key types, or full bank account details."
+    },
+    "PixAccountIdentifier_PixPhoneKey": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "PHONE"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PixPhoneKey"
+        }
+      ],
+      "description": "PixAccountIdentifier\n\nHow the recipient's PIX account is identified: a DICT key of one of the\nfive key types, or full bank account details."
+    },
+    "PixAccountType": {
+      "description": "PixAccountType\n\nThe type of a Brazilian bank account.",
+      "enum": [
+        "CHECKING",
+        "SAVINGS",
+        "SALARY",
+        "TRANSACTION"
+      ],
+      "type": "string"
+    },
+    "PixAddressStatus": {
+      "description": "PIX Address Status",
+      "enum": [
+        "RegistrationPending",
+        "Registered",
+        "RegistrationFailed"
+      ],
+      "type": "string"
+    },
+    "PixBankDetails": {
+      "description": "PixBankDetails\n\nFull Brazilian bank account details identifying the recipient's account,\nfor recipients without a registered PIX key.",
+      "properties": {
+        "account_number": {
+          "description": "Account number including the verification (check) digit, with no\nseparator, e.g. `7140025418`.",
+          "maxLength": 20,
+          "minLength": 1,
+          "type": "string"
+        },
+        "account_type": {
+          "$ref": "#/$defs/PixAccountType"
+        },
+        "bank_code": {
+          "description": "3-digit COMPE bank code or 8-digit ISPB, distinguished by length",
+          "pattern": "^([0-9]{3}|[0-9]{8})$",
+          "type": "string"
+        },
+        "branch_code": {
+          "description": "Branch number without the verification digit",
+          "pattern": "^[0-9]{1,4}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bank_code",
+        "branch_code",
+        "account_number",
+        "account_type"
+      ],
+      "title": "PixBankDetails",
+      "type": "object"
+    },
+    "PixCnpjKey": {
+      "description": "PixCnpjKey\n\nA PIX DICT key that is the recipient's CNPJ.",
+      "properties": {
+        "key": {
+          "description": "14-digit CNPJ, with or without the `XX.XXX.XXX/XXXX-XX` formatting",
+          "pattern": "^([0-9]{14}|[0-9]{2}\\.[0-9]{3}\\.[0-9]{3}/[0-9]{4}-[0-9]{2})$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "PixCnpjKey",
+      "type": "object"
+    },
+    "PixCpfKey": {
+      "description": "PixCpfKey\n\nA PIX DICT key that is the recipient's CPF.",
+      "properties": {
+        "key": {
+          "description": "11-digit CPF, with or without the `XXX.XXX.XXX-XX` formatting",
+          "pattern": "^([0-9]{11}|[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2})$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "PixCpfKey",
+      "type": "object"
+    },
+    "PixEmailKey": {
+      "description": "PixEmailKey\n\nA PIX DICT key that is the recipient's email address.",
+      "properties": {
+        "key": {
+          "maxLength": 77,
+          "pattern": "^[^@\\s]+@[^@\\s]+$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "PixEmailKey",
+      "type": "object"
+    },
+    "PixEvpKey": {
+      "description": "PixEvpKey\n\nA random PIX DICT key (EVP) generated by the recipient's bank.",
+      "properties": {
+        "key": {
+          "description": "A lowercase UUID, e.g. 123e4567-e89b-12d3-a456-426614174000",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "PixEvpKey",
+      "type": "object"
+    },
+    "PixPhoneKey": {
+      "description": "PixPhoneKey\n\nA PIX DICT key that is the recipient's phone number.",
+      "properties": {
+        "key": {
+          "description": "International format with leading `+`, e.g. +5511987654321",
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "PixPhoneKey",
+      "type": "object"
+    },
+    "RecipientName": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RecipientName_IndividualName"
+        },
+        {
+          "$ref": "#/$defs/RecipientName_BusinessName"
+        }
+      ],
+      "type": "object"
+    },
+    "RecipientName_BusinessName": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Business"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BusinessName"
+        }
+      ]
+    },
+    "RecipientName_IndividualName": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Individual"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/IndividualName"
+        }
+      ]
+    },
+    "RecipientPix": {
+      "description": "RecipientPix\n\nA PIX payout recipient.",
+      "properties": {
+        "account": {
+          "$ref": "#/$defs/PixAccountIdentifier"
+        },
+        "recipient": {
+          "$ref": "#/$defs/RecipientName"
+        },
+        "tax_id": {
+          "description": "The recipient's CPF (11 digits) or CNPJ (14 digits), with or without\nthe usual `.`/`-`/`/` formatting. The payout is rejected if the\ndestination account is not registered to this tax ID.",
+          "pattern": "^([0-9]{11}|[0-9]{14}|[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}|[0-9]{2}\\.[0-9]{3}\\.[0-9]{3}/[0-9]{4}-[0-9]{2})$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipient",
+        "tax_id",
+        "account"
+      ],
+      "title": "RecipientPix",
+      "type": "object"
+    }
+  }
+}

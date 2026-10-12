@@ -1,13 +1,15 @@
 aid: unstoppable-finance
+
 name: Unstoppable Finance (Iron)
-description: Unstoppable Finance is the Berlin fintech behind Iron (iron.xyz), the Stablecoin Payment
-  Network - fiat-to-stablecoin and stablecoin-to-fiat infrastructure for businesses. Founded as Unstoppable
-  Finance GmbH and builder of the Ultimate self-custodial DeFi wallet, the company rebranded to Iron and
-  was acquired by MoonPay in 2025. The Iron API provides onramp, offramp, and swap flows via Autoramps
-  (standing fiat/crypto conversion rules), customer onboarding with tiered KYC/KYB, Travel Rule wallet
-  verification, virtual accounts, fee profiles, exchange rates, stablecoin issuance, and Standard Webhooks
-  event delivery, with a fully simulated sandbox environment.
+
+description: Unstoppable Finance is the Berlin fintech behind Iron (iron.xyz), the Stablecoin Payment Network - fiat-to-stablecoin and stablecoin-to-fiat
+  infrastructure for businesses. Founded as Unstoppable Finance GmbH and builder of the Ultimate self-custodial DeFi wallet, the company rebranded
+  to Iron and was acquired by MoonPay in 2025. The Iron API provides onramp, offramp, and swap flows via Autoramps (standing fiat/crypto conversion
+  rules), customer onboarding with tiered KYC/KYB, Travel Rule wallet verification, virtual accounts, fee profiles, exchange rates, stablecoin
+  issuance, and Standard Webhooks event delivery, with a fully simulated sandbox environment.
+
 url: https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/refs/heads/main/apis.yml
+
 deliveryModel:
   model: saas
   open_source: false
@@ -20,6 +22,7 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+
 accessModel:
   pricing: unknown
   onboarding: unknown
@@ -34,21 +37,33 @@ accessModel:
   - sandbox
   generated: '2026-09-03'
   method: derived
+
 image: https://framerusercontent.com/images/HAx7iVFXocaeIm27aAOhEsYTyfE.png
+
 x-type: company
+
 x-source: vc-portfolio
+
 x-backed-by:
 - speedinvest
+
 x-tier: profile
+
 x-tier-reason: enriched-provider
+
 x-aka:
 - Iron
 - iron.xyz
 - Ultimate
+
 x-parent-company: MoonPay
+
 specificationVersion: '0.23'
+
 created: '2026-07-17'
-modified: '2026-10-06'
+
+modified: '2026-10-12'
+
 tags:
 - Company
 - Stablecoins
@@ -59,6 +74,7 @@ tags:
 - Banking
 - Fintech
 - Compliance
+
 tags_raw:
 - Company
 - Stablecoins
@@ -69,169 +85,34 @@ tags_raw:
 - Banking
 - Fintech
 - Compliance
-apis:
-- aid: unstoppable-finance:unstoppable-finance-addresses-api
-  name: Unstoppable Finance (Iron) Addresses API
-  description: >-
-    Wallet and bank account registration
 
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
+- FN: APIs.json
+  email: info@apis.io
 
-    Every wallet address that interacts with Iron must be registered (linked) to a customer **before**
-    it can be used in any flow — onramp, offramp, or swap. This is a regulatory requirement under the
-    **Travel Rule**, which obliges Virtual Asset Service Providers to exchange originator and beneficiary
-    information for crypto transfers.
-
-
-    Iron supports two wallet types:
-
-
-    - **Self-hosted wallets** — the customer controls the private key. Registration requires a signed
-    proof-of-ownership message.
-
-    - **Hosted wallets** — the wallet is custodied by another VASP (e.g. Coinbase, Kraken). Registration
-    requires the VASP's DID so Iron can exchange travel-rule data with the custodian.
-
-
-    Similarly, fiat bank accounts must be registered before they can receive offramp payouts.
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Addresses
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-addresses-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-autoramp-api
-  name: Unstoppable Finance (Iron) Autoramp API
-  description: Operations on Autoramp
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Autoramp
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-autoramp-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-currencies-api
-  name: Unstoppable Finance (Iron) Currencies API
-  description: Operations on Currencies
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Currency
-  tags_raw:
-  - Currencies
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-currencies-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-customer-api
-  name: Unstoppable Finance (Iron) Customer API
-  description: Operations on Customers
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Customers
-  tags_raw:
-  - Customer
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-customer-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-sandbox-api
-  name: Unstoppable Finance (Iron) Sandbox API
-  description: Operations for Sandbox Testing
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Sandbox
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-sandbox-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-webhooks-api
-  name: Unstoppable Finance (Iron) Webhooks API
-  description: Operations on Webhooks
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Webhook
-  tags_raw:
-  - Webhooks
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-webhooks-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-exchange-rate-api
-  name: Unstoppable Finance (Iron) Exchange Rate API
-  description: Operations on Exchange Rate
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Exchange Rate
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-exchange-rate-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-fee-profiles-api
-  name: Unstoppable Finance (Iron) Fee Profiles API
-  description: Operations on Fee Profiles
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Fee Profiles
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-fee-profiles-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
-- aid: unstoppable-finance:unstoppable-finance-terms-and-conditions-api
-  name: Unstoppable Finance (Iron) Terms And Conditions API
-  description: Operations on Terms and Conditions
-  humanURL: https://docs.iron.xyz/overview
-  baseURL: https://api.iron.xyz/api
-  tags:
-  - Terms And Conditions
-  properties:
-  - type: OpenAPI
-    url: openapi/unstoppable-finance-terms-and-conditions-api-openapi.yml
-  - type: Documentation
-    url: https://docs.iron.xyz/overview
-  - type: APIReference
-    url: >-
-      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
 common:
+- type: AgenticAccess
+  url: agentic-access/unstoppable-finance-agentic-access.yml
+- type: RateLimits
+  url: rate-limits/unstoppable-finance-rate-limits.yml
+- type: Spectral
+  url: rules/unstoppable-finance-rules.yml
+- type: JSONLD
+  url: json-ld/unstoppable-finance-context.jsonld
+- type: Vocabulary
+  url: vocabulary/unstoppable-finance-vocabulary.yml
+- type: ChangeLog
+  url: changelog/unstoppable-finance-changelog.yml
+- type: AgentCard
+  url: a2a/unstoppable-finance-a2a.yml
+- type: Hosts
+  url: hosts/unstoppable-finance-hosts.yml
+- type: Vendors
+  url: vendors/unstoppable-finance-vendors.yml
+- type: SDKs
+  url: packages/unstoppable-finance-packages.yml
 - url: https://iron.xyz/blog/
   type: Blog
 - type: Plans
@@ -265,7 +146,9 @@ common:
   url: well-known/unstoppable-finance-well-known.yml
 - type: X-MCPServerCandidate
   url: mcp/unstoppable-finance-mcp.yml
-  note: 'Renamed from MCPServer 2026-09-03 (roadmap#247): the manifest self-describes as status: candidate — a tool list derived from the published API contracts, not an existing server. The scorer already read the manifest and reported mcp_server correctly; the MCPServer type was crediting the artifact-type surfaces with a server that does not exist.'
+  note: 'Renamed from MCPServer 2026-09-03 (roadmap#247): the manifest self-describes as status: candidate — a tool list derived from the published
+    API contracts, not an existing server. The scorer already read the manifest and reported mcp_server correctly; the MCPServer type was crediting
+    the artifact-type surfaces with a server that does not exist.'
 - type: LLMsTxt
   url: llms/unstoppable-finance-llms.txt
 - type: Overlay
@@ -304,13 +187,230 @@ common:
   url: https://www.moonpay.com/legal/privacy_policy
 - type: Login
   url: https://app.iron.xyz/signin
-maintainers:
-- FN: Kin Lane
-  email: kin@apievangelist.com
-- FN: APIs.json
-  email: info@apis.io
+
+apis:
+- aid: unstoppable-finance:unstoppable-finance-addresses-api
+  name: Unstoppable Finance (Iron) Addresses API
+  description: 'Wallet and bank account registration
+
+
+    Every wallet address that interacts with Iron must be registered (linked) to a customer **before** it can be used in any flow — onramp, offramp,
+    or swap. This is a regulatory requirement under the **Travel Rule**, which obliges Virtual Asset Service Providers to exchange originator
+    and beneficiary information for crypto transfers.
+
+
+    Iron supports two wallet types:
+
+
+    - **Self-hosted wallets** — the customer controls the private key. Registration requires a signed proof-of-ownership message.
+
+    - **Hosted wallets** — the wallet is custodied by another VASP (e.g. Coinbase, Kraken). Registration requires the VASP''s DID so Iron can
+    exchange travel-rule data with the custodian.
+
+
+    Similarly, fiat bank accounts must be registered before they can receive offramp payouts.'
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Addresses
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-addresses-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-fiat-address-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-verified-address-response-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-pix-address-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-self-hosted-wallet-response-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-register-self-hosted-wallet-request-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-register-self-attested-wallet-request-schema.json
+- aid: unstoppable-finance:unstoppable-finance-autoramp-api
+  name: Unstoppable Finance (Iron) Autoramp API
+  description: Operations on Autoramp
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Autoramp
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-autoramp-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-signed-autoramp-quote-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-autoramp-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-signed-autoramp-rate-quote-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-api-autoramp-quote-preview-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-api-autoramp-open-banking-payment-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-create-autoramp-schema.json
+- aid: unstoppable-finance:unstoppable-finance-currencies-api
+  name: Unstoppable Finance (Iron) Currencies API
+  description: Operations on Currencies
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Currency
+  tags_raw:
+  - Currencies
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-currencies-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-crypto-currency-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-fiat-currency-schema.json
+- aid: unstoppable-finance:unstoppable-finance-customer-api
+  name: Unstoppable Finance (Iron) Customer API
+  description: Operations on Customers
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Customers
+  tags_raw:
+  - Customer
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-customer-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-customer-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-identification-create-params-v2-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-customer-requirements-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-identification-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-signing-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-compliance-questionaire-schema.json
+- aid: unstoppable-finance:unstoppable-finance-sandbox-api
+  name: Unstoppable Finance (Iron) Sandbox API
+  description: Operations for Sandbox Testing
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Sandbox
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-sandbox-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-autoramp-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-fiat-address-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-create-sandbox-transaction-params-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-identification-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-sandbox-sandbox-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-fiat-address-status-schema.json
+- aid: unstoppable-finance:unstoppable-finance-webhooks-api
+  name: Unstoppable Finance (Iron) Webhooks API
+  description: Operations on Webhooks
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Webhook
+  tags_raw:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-webhook-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-paged-list-webhook-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-update-webhook-request-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-ping-webhook-params-schema.json
+- aid: unstoppable-finance:unstoppable-finance-exchange-rate-api
+  name: Unstoppable Finance (Iron) Exchange Rate API
+  description: Operations on Exchange Rate
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Exchange Rate
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-exchange-rate-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-exchange-rate-schema.json
+- aid: unstoppable-finance:unstoppable-finance-fee-profiles-api
+  name: Unstoppable Finance (Iron) Fee Profiles API
+  description: Operations on Fee Profiles
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Fee Profiles
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-fee-profiles-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-fee-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-create-partner-fee-profile-request-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-paged-list-fee-profile-schema.json
+- aid: unstoppable-finance:unstoppable-finance-terms-and-conditions-api
+  name: Unstoppable Finance (Iron) Terms And Conditions API
+  description: Operations on Terms and Conditions
+  humanURL: https://docs.iron.xyz/overview
+  baseURL: https://api.iron.xyz/api
+  tags:
+  - Terms And Conditions
+  properties:
+  - type: OpenAPI
+    url: openapi/unstoppable-finance-terms-and-conditions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.iron.xyz/overview
+  - type: APIReference
+    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-terms-and-conditions-link-schema.json
+
 x-enrichment:
-  date: '2026-07-21'
+  date: '2026-10-12'
   status: enriched
-  artifacts_added: 19
-  pass: local-v1
+  artifacts_added: 2
+  pass: local-v5

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-ping-webhook-params-schema.json",
+  "title": "PingWebhookParams",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-webhooks-api-openapi.yml#/components/schemas/PingWebhookParams",
+  "properties": {
+    "customer_id": {
+      "description": "Customer ID to use for the webhook ping",
+      "format": "uuid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "customer_id"
+  ],
+  "type": "object"
+}

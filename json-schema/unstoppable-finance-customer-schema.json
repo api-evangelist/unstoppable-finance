@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-customer-schema.json",
+  "title": "Customer",
+  "description": "Customer\n\nThe customer object in Iron\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-customer-api-openapi.yml#/components/schemas/Customer",
+  "properties": {
+    "active_email": {
+      "description": "Active email for receiving transaction emails (if different from primary email)",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "Created at timestamp of Customer",
+      "format": "date-time",
+      "type": "string"
+    },
+    "customer_type": {
+      "$ref": "#/$defs/CustomerType"
+    },
+    "email": {
+      "description": "Email of Customer, collected during identification process",
+      "type": "string"
+    },
+    "external_id": {
+      "description": "External ID for the customer, provided by the partner",
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique ID of Customer",
+      "format": "uuid",
+      "type": "string"
+    },
+    "identification_ids": {
+      "description": "Identifications associated with Customer",
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "identification_status": {
+      "$ref": "#/$defs/IdentificationStatus"
+    },
+    "name": {
+      "description": "Name of Customer",
+      "type": "string"
+    },
+    "partner_id": {
+      "description": "Partner ID of the customer",
+      "format": "uuid",
+      "type": "string"
+    },
+    "signing_ids": {
+      "description": "Signings associated with Customer",
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "spending_limit_euro": {
+      "deprecated": true,
+      "description": "Deprecated — always null. Spending limits are dynamic per customer and per\ndirection; use `GET /customers/{id}/spending-limit` (`threshold_eur`) instead.",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CustomerStatus"
+    },
+    "updated_at": {
+      "description": "Updated at timestamp of Customer",
+      "format": "date-time",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "customer_type",
+    "identification_ids",
+    "signing_ids",
+    "created_at",
+    "updated_at",
+    "status",
+    "name",
+    "email",
+    "partner_id"
+  ],
+  "type": "object",
+  "$defs": {
+    "CustomerStatus": {
+      "description": "The status of the Customer\n",
+      "enum": [
+        "UserRequired",
+        "SigningsRequired",
+        "IdentificationRequired",
+        "Active",
+        "Suspended",
+        "Archived"
+      ],
+      "type": "string"
+    },
+    "CustomerType": {
+      "description": "CustomerType\n\nCustomers can either be a commercial business or a natural person\n",
+      "enum": [
+        "Business",
+        "Person"
+      ],
+      "type": "string"
+    },
+    "IdentificationStatus": {
+      "description": "The Process status of the identification\n\nThe various state transitions an identification can go through.\n",
+      "enum": [
+        "Pending",
+        "Processed",
+        "PendingReview",
+        "Approved",
+        "Declined",
+        "Expired",
+        "Archived"
+      ],
+      "type": "string"
+    }
+  }
+}

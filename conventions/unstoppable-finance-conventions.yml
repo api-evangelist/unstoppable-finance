@@ -11,9 +11,18 @@ idempotency:
   header: IDEMPOTENCY-KEY
   format: uuid
   docs: https://docs.iron.xyz/idempotency
-  semantics: Required on marked write endpoints (e.g. POST /autoramps, sandbox mutation endpoints). First request
-    result is stored under the key; retries with the same key return the stored result (including stored error responses).
-    Use a fresh UUID per operation.
+  semantics: Required on marked write endpoints (e.g. POST /autoramps, sandbox mutation
+    endpoints). First request result is stored under the key; retries with the same
+    key return the stored result (including stored error responses). Use a fresh UUID
+    per operation.
+  coverage: partial
+  mechanism: request header / body token declared in the OpenAPI
+  evidence: IDEMPOTENCY-KEY on 18 of 31 mutating operations
+  verified: derived
+  scope:
+  - 'POST operations under /api (docs: "Every POST under /api requires an Idempotency-Key
+    header"; PUT, PATCH, DELETE are not deduplicated)'
+  docs_current: https://dev.enterprise.moonpay.com/idempotency.md
 pagination:
   style: cursor
   params:
@@ -21,7 +30,8 @@ pagination:
   - prev_cursor
   - page_size
   - limit
-  notes: Cursor-based pagination on list endpoints (cursor/prev_cursor with page_size); some endpoints use limit.
+  notes: Cursor-based pagination on list endpoints (cursor/prev_cursor with page_size);
+    some endpoints use limit.
 versioning:
   style: header
   header: X-API-Version
@@ -37,14 +47,15 @@ environments:
   docs: https://docs.iron.xyz/api-access
 error_envelope:
   format: plain
-  notes: Errors are HTTP status driven; 401 returns a plain-text authorization error body. No RFC 9457 problem+json
-    envelope.
+  notes: Errors are HTTP status driven; 401 returns a plain-text authorization error
+    body. No RFC 9457 problem+json envelope.
   artifact: errors/unstoppable-finance-problem-types.yml
 rate_limits:
   signaling: HTTP 429
   docs: https://docs.iron.xyz/overview
-  notes: Per-API-key rate limits with infrastructure-level protections; exceeding limits returns HTTP 429. Iron
-    recommends exponential backoff. Contact support for high-volume needs.
+  notes: Per-API-key rate limits with infrastructure-level protections; exceeding
+    limits returns HTTP 429. Iron recommends exponential backoff. Contact support
+    for high-volume needs.
 webhooks:
   spec: Standard Webhooks
   signature: HMAC-SHA256 (webhook-signature header, v1= prefix)

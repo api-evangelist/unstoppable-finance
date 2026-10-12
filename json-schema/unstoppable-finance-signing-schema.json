@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-signing-schema.json",
+  "title": "Signing",
+  "description": "Signing\n\nA signing of a document by a customer\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-customer-api-openapi.yml#/components/schemas/Signing",
+  "properties": {
+    "content_id": {
+      "description": "unique UUID of the content signed by Customer",
+      "format": "uuid",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "created_at timestamp of Signing",
+      "format": "date-time",
+      "type": "string"
+    },
+    "customer_id": {
+      "description": "unique UUID of the Customer who signed",
+      "format": "uuid",
+      "type": "string"
+    },
+    "document_id": {
+      "description": "unique UUID of the Document signed by Customer (Soon to be deprecated, use content_id & content_type instead)",
+      "format": "uuid",
+      "type": "string"
+    },
+    "id": {
+      "description": "unique UUID of Signing",
+      "format": "uuid",
+      "type": "string"
+    },
+    "updated_at": {
+      "description": "updated_at timestamp of Signing",
+      "format": "date-time",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "customer_id",
+    "created_at",
+    "updated_at"
+  ],
+  "type": "object"
+}

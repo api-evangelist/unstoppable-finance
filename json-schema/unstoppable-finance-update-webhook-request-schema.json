@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-update-webhook-request-schema.json",
+  "title": "UpdateWebhookRequest",
+  "description": "Update Webhook Request\n\nRequest to update an existing webhook\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-webhooks-api-openapi.yml#/components/schemas/UpdateWebhookRequest",
+  "properties": {
+    "enabled": {
+      "description": "Optional enabled status",
+      "type": "boolean"
+    },
+    "label": {
+      "description": "Optional new label for the webhook",
+      "type": "string"
+    },
+    "topics": {
+      "description": "Optional new topics for the webhook",
+      "items": {
+        "$ref": "#/$defs/WebhookEventType"
+      },
+      "type": "array"
+    },
+    "url": {
+      "description": "Optional new URL for the webhook",
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$defs": {
+    "WebhookEventType": {
+      "description": "Webhook Event Types\n\nRepresents the different types of webhook events that can be sent\n",
+      "enum": [
+        "Transaction",
+        "NewBankAccount",
+        "NewAutoramp",
+        "DepositAddressCreated",
+        "RegisterFiatAddressStatus",
+        "RegisterAutorampStatus",
+        "TransactionStatus",
+        "CustomerCreated",
+        "CustomerStatus",
+        "IdentificationStatus",
+        "Ping"
+      ],
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,740 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-fee-profile-schema.json",
+  "title": "FeeProfile",
+  "description": "Fee Profile\n\nA fee profile\n\nA Fee Profile",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-fee-profiles-api-openapi.yml#/components/schemas/FeeProfile",
+  "properties": {
+    "banking_fee_configs": {
+      "description": "The banking fee configs for the fee profile",
+      "items": {
+        "$ref": "#/$defs/BankingFeeConfig"
+      },
+      "type": "array"
+    },
+    "id": {
+      "description": "The id of the fee profile",
+      "format": "uuid",
+      "type": "string"
+    },
+    "iron_fee": {
+      "$ref": "#/$defs/FeeSchedule"
+    },
+    "iron_fee_billing_type": {
+      "$ref": "#/$defs/BillingType"
+    },
+    "iron_fee_settlement": {
+      "$ref": "#/$defs/FeeSettlement"
+    },
+    "is_default": {
+      "description": "Is default",
+      "type": "boolean"
+    },
+    "min_fee": {
+      "$ref": "#/$defs/Amount"
+    },
+    "name": {
+      "description": "The name of the fee profile",
+      "type": "string"
+    },
+    "network_fee_enabled": {
+      "description": "The network fee enabled flag",
+      "type": "boolean"
+    },
+    "network_fee_settlement": {
+      "$ref": "#/$defs/FeeSettlement"
+    },
+    "non_transactional_partner_fee_configs": {
+      "description": "The non-transactional partner fees for the fee profile",
+      "items": {
+        "$ref": "#/$defs/NonTransactionalPartnerFeeConfig"
+      },
+      "type": "array"
+    },
+    "partner_fee_configs": {
+      "description": "The additional partner fees for the fee profile",
+      "items": {
+        "$ref": "#/$defs/PartnerFeeConfig"
+      },
+      "type": "array"
+    },
+    "partner_id": {
+      "description": "The Id of the partner",
+      "format": "uuid",
+      "type": "string"
+    },
+    "profile_type": {
+      "$ref": "#/$defs/FeeProfileType"
+    },
+    "rule": {
+      "$ref": "#/$defs/FeeProfileRule"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "partner_id",
+    "iron_fee",
+    "iron_fee_settlement",
+    "iron_fee_billing_type",
+    "min_fee",
+    "network_fee_enabled",
+    "network_fee_settlement",
+    "profile_type",
+    "is_default",
+    "partner_fee_configs",
+    "banking_fee_configs",
+    "non_transactional_partner_fee_configs"
+  ],
+  "type": "object",
+  "$defs": {
+    "Amount": {
+      "description": "An amount of money\n",
+      "properties": {
+        "amount": {
+          "description": "The amount, a decimal number",
+          "format": "decimal",
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "title": "Amount",
+      "type": "object"
+    },
+    "AutorampSource": {
+      "description": "Autoramp Source\n\nThe source of the autoramp",
+      "enum": [
+        "Standalone",
+        "Quote"
+      ],
+      "type": "string"
+    },
+    "AutorampType": {
+      "description": "Autoramp type\n\nThe type (onramp, offramp, swap) of an autoramp",
+      "enum": [
+        "Onramp",
+        "Offramp",
+        "Swap",
+        "Mint",
+        "Redeem"
+      ],
+      "type": "string"
+    },
+    "BankingFeeConfig": {
+      "description": "Banking Fee Config Response\n\nA banking fee config response which can be deducted immediately from the transaction amount or invoiced monthly/separately\n",
+      "properties": {
+        "billing_type": {
+          "$ref": "#/$defs/BillingType"
+        },
+        "fee_amount": {
+          "$ref": "#/$defs/Amount"
+        },
+        "fiat_transfer_type": {
+          "$ref": "#/$defs/FiatTransfer"
+        },
+        "rail": {
+          "$ref": "#/$defs/PaymentNetwork"
+        },
+        "settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        }
+      },
+      "required": [
+        "rail",
+        "fee_amount",
+        "fiat_transfer_type",
+        "billing_type",
+        "settlement"
+      ],
+      "title": "BankingFeeConfig",
+      "type": "object"
+    },
+    "BillingType": {
+      "description": "Billing Type\n\nThe type of billing for the partner fee\n",
+      "enum": [
+        "One Time",
+        "Monthly",
+        "Quarterly",
+        "Annual",
+        "Semi Annual",
+        "Per Transaction"
+      ],
+      "type": "string"
+    },
+    "BipsFeeRequest": {
+      "description": "Bips Fee Request\n\nThe request for a bips fee\n",
+      "properties": {
+        "bips": {
+          "description": "The bips fee value",
+          "format": "uint32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bips"
+      ],
+      "title": "BipsFeeRequest",
+      "type": "object"
+    },
+    "Blockchain": {
+      "description": "Blockchain\n\nA type of blockchain\n",
+      "enum": [
+        "Solana",
+        "Ethereum",
+        "Polygon",
+        "Arbitrum",
+        "Base",
+        "Stellar",
+        "Citrea",
+        "Plasma",
+        "Avalanche",
+        "Moca",
+        "Tempo",
+        "Tron",
+        "Bsc"
+      ],
+      "type": "string"
+    },
+    "Crypto": {
+      "description": "A cryptocurrency",
+      "properties": {
+        "blockchain": {
+          "$ref": "#/$defs/Blockchain"
+        },
+        "token": {
+          "description": "The ticker of the token e.g. 'USDC'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "blockchain"
+      ],
+      "title": "Crypto",
+      "type": "object"
+    },
+    "Currency": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Currency_Crypto"
+        },
+        {
+          "$ref": "#/$defs/Currency_Fiat"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n",
+      "type": "object"
+    },
+    "CurrencyPair": {
+      "description": "Currency Pair\n\nA currency pair for a fee profile rule\n",
+      "properties": {
+        "from_currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "to_currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      },
+      "required": [
+        "from_currency",
+        "to_currency"
+      ],
+      "title": "CurrencyPair",
+      "type": "object"
+    },
+    "Currency_Crypto": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Crypto"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Crypto"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n"
+    },
+    "Currency_Fiat": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Fiat"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Fiat"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n"
+    },
+    "FeeProfileRule": {
+      "description": "Fee Profile Rule\n\nA rule for a fee profile which limits the fee profile to be used for certain customers, ramp kinds, and currency pairs.\n",
+      "properties": {
+        "autoramp_source": {
+          "$ref": "#/$defs/AutorampSource"
+        },
+        "currency_pairs": {
+          "description": "The currency pairs",
+          "items": {
+            "$ref": "#/$defs/CurrencyPair"
+          },
+          "type": "array"
+        },
+        "customer_ids": {
+          "description": "The customer ids",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ramp_kinds": {
+          "description": "Ramp kinds this rule applies to. Omit or pass an empty list to match any ramp kind.",
+          "items": {
+            "$ref": "#/$defs/AutorampType"
+          },
+          "type": "array"
+        }
+      },
+      "title": "FeeProfileRule",
+      "type": "object"
+    },
+    "FeeProfileType": {
+      "description": "Fee Profile Type\n\nThe type of fee profile\n",
+      "enum": [
+        "Invoicing",
+        "Transactional"
+      ],
+      "type": "string"
+    },
+    "FeeSchedule": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FeeSchedule_BipsFeeRequest"
+        },
+        {
+          "$ref": "#/$defs/FeeSchedule_VariableFee"
+        },
+        {
+          "$ref": "#/$defs/FeeSchedule_TimeWindowedFeeSchedule"
+        }
+      ],
+      "description": "Fee Schedule\n\nThe Schedule of Fees associated with a Partner\n",
+      "type": "object"
+    },
+    "FeeSchedule_BipsFeeRequest": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Bips"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BipsFeeRequest"
+        }
+      ],
+      "description": "Fee Schedule\n\nThe Schedule of Fees associated with a Partner\n"
+    },
+    "FeeSchedule_TimeWindowedFeeSchedule": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "TimeWindowed"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/TimeWindowedFeeSchedule"
+        }
+      ],
+      "description": "Fee Schedule\n\nThe Schedule of Fees associated with a Partner\n"
+    },
+    "FeeSchedule_VariableFee": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Tiered"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/VariableFee"
+        }
+      ],
+      "description": "Fee Schedule\n\nThe Schedule of Fees associated with a Partner\n"
+    },
+    "FeeSettlement": {
+      "description": "Fee Settlement\n\nThe settlement type for the fee\n",
+      "enum": [
+        "deductedImmediately",
+        "settledLater"
+      ],
+      "type": "string"
+    },
+    "Fiat": {
+      "description": "A fiat currency",
+      "properties": {
+        "code": {
+          "description": "The code of the currency e.g. 'USD'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Fiat",
+      "type": "object"
+    },
+    "FiatTransfer": {
+      "description": "Fiat Transfer\n\nThe type of fiat transfer\n",
+      "enum": [
+        "PayIn",
+        "PayOut"
+      ],
+      "type": "string"
+    },
+    "NonTransactionalPartnerFeeConfig": {
+      "description": "Non-Transactional Partner Fee Config\n\nA non-transactional partner fee config\n",
+      "properties": {
+        "billing_type": {
+          "$ref": "#/$defs/BillingType"
+        },
+        "fee_type": {
+          "$ref": "#/$defs/PartnerFeeType"
+        },
+        "label": {
+          "$ref": "#/$defs/PartnerFeeLabel"
+        },
+        "settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        }
+      },
+      "required": [
+        "label",
+        "fee_type",
+        "billing_type",
+        "settlement"
+      ],
+      "title": "NonTransactionalPartnerFeeConfig",
+      "type": "object"
+    },
+    "PartnerBipsFee": {
+      "description": "Partner Bips Fee\n\nA bips fee for a partner\n",
+      "properties": {
+        "bips": {
+          "description": "The bips fee value",
+          "format": "uint32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bips"
+      ],
+      "title": "PartnerBipsFee",
+      "type": "object"
+    },
+    "PartnerFeeConfig": {
+      "description": "Partner Fee\n\nA partner fee config which is deducted immediately from the transaction amount\n\nA Partner Fee",
+      "properties": {
+        "billing_type": {
+          "$ref": "#/$defs/BillingType"
+        },
+        "fee_type": {
+          "$ref": "#/$defs/PartnerFeeType"
+        },
+        "label": {
+          "$ref": "#/$defs/PartnerFeeLabel"
+        },
+        "settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        }
+      },
+      "required": [
+        "label",
+        "fee_type",
+        "billing_type",
+        "settlement"
+      ],
+      "title": "PartnerFeeConfig",
+      "type": "object"
+    },
+    "PartnerFeeLabel": {
+      "enum": [
+        "maintenance",
+        "account_setup",
+        "onboarding",
+        "partner",
+        "customer",
+        "banking",
+        "surcharge"
+      ],
+      "type": "string"
+    },
+    "PartnerFeeType": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PartnerFeeType_PartnerFixedFee"
+        },
+        {
+          "$ref": "#/$defs/PartnerFeeType_PartnerBipsFee"
+        }
+      ],
+      "type": "object"
+    },
+    "PartnerFeeType_PartnerBipsFee": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Bips"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PartnerBipsFee"
+        }
+      ]
+    },
+    "PartnerFeeType_PartnerFixedFee": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Fixed"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PartnerFixedFee"
+        }
+      ]
+    },
+    "PartnerFixedFee": {
+      "description": "Partner Fixed Fee\n\nA fixed fee for a partner\n",
+      "properties": {
+        "fixed_fee": {
+          "$ref": "#/$defs/Amount"
+        }
+      },
+      "required": [
+        "fixed_fee"
+      ],
+      "title": "PartnerFixedFee",
+      "type": "object"
+    },
+    "PaymentNetwork": {
+      "description": "PaymentNetwork\n\nA payment network\n",
+      "enum": [
+        "Sepa",
+        "Swift",
+        "Fps",
+        "Chats",
+        "Ach",
+        "Wire",
+        "Rtp",
+        "Fednow",
+        "Pix",
+        "Spei",
+        "AfricanBankTransfer",
+        "MobileMoney",
+        "Chaps"
+      ],
+      "type": "string"
+    },
+    "TieredFee": {
+      "description": "Tiered Fee\n\nA Tiered Fee associated with a Partner based on volume thresholds\n",
+      "properties": {
+        "fee_value_in_bips": {
+          "description": "Fee value for this tier as a percentage in bips",
+          "format": "uint32",
+          "type": "integer"
+        },
+        "volume_threshold": {
+          "description": "Minimum volume required to qualify for this fee tier",
+          "format": "decimal",
+          "type": "string"
+        }
+      },
+      "required": [
+        "volume_threshold",
+        "fee_value_in_bips"
+      ],
+      "title": "TieredFee",
+      "type": "object"
+    },
+    "TimeWindowedFee": {
+      "properties": {
+        "fee": {
+          "$ref": "#/$defs/WindowFee"
+        },
+        "valid_from": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "valid_to": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "valid_from",
+        "fee"
+      ],
+      "title": "TimeWindowedFee",
+      "type": "object"
+    },
+    "TimeWindowedFeeSchedule": {
+      "properties": {
+        "windows": {
+          "description": "Non-overlapping, sorted windows; the last must be open-ended (`valid_to == None`).",
+          "items": {
+            "$ref": "#/$defs/TimeWindowedFee"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "windows"
+      ],
+      "title": "TimeWindowedFeeSchedule",
+      "type": "object"
+    },
+    "VariableFee": {
+      "description": "Variable Fee\n\nA Variable Fee associated with a Partner based on a variable fee schedule\n",
+      "properties": {
+        "volume_tiers": {
+          "description": "The variable fees",
+          "items": {
+            "$ref": "#/$defs/TieredFee"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "volume_tiers"
+      ],
+      "title": "VariableFee",
+      "type": "object"
+    },
+    "WindowFee": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WindowFee_BipsFeeRequest"
+        },
+        {
+          "$ref": "#/$defs/WindowFee_VariableFee"
+        }
+      ],
+      "type": "object"
+    },
+    "WindowFee_BipsFeeRequest": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Bips"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BipsFeeRequest"
+        }
+      ]
+    },
+    "WindowFee_VariableFee": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Tiered"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/VariableFee"
+        }
+      ]
+    }
+  }
+}

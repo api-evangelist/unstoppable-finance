@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-create-partner-fee-profile-request-schema.json",
+  "title": "CreatePartnerFeeProfileRequest",
+  "description": "Create Partner Fee Profile Request\n\nParameters for creating a new transactional fee profile as a partner.\nIron fee settings (including whether the on-chain network fee is enabled)\nare inherited from the partner's invoicing fee profile.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-fee-profiles-api-openapi.yml#/components/schemas/CreatePartnerFeeProfileRequest",
+  "properties": {
+    "banking_fee_configs": {
+      "description": "Banking fee configurations. Each entry's fee currency is constrained\nby its rail to avoid FX exposure:\nSEPA→EUR, FPS/CHAPS→GBP, PIX→BRL, SPEI→MXN, all other rails (ACH,\nWIRE, RTP, SWIFT, CHATS, AFRICAN_BANK_TRANSFER, MOBILE_MONEY)→USD.",
+      "items": {
+        "$ref": "#/$defs/BankingFeeConfiguration"
+      },
+      "type": "array"
+    },
+    "name": {
+      "description": "The name of the fee profile",
+      "type": "string"
+    },
+    "network_fee_settlement": {
+      "$ref": "#/$defs/FeeSettlement"
+    },
+    "transaction_fee_bips": {
+      "description": "Transaction fee in basis points (bps). 100 bps = 1%.",
+      "format": "uint32",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name",
+    "network_fee_settlement",
+    "transaction_fee_bips",
+    "banking_fee_configs"
+  ],
+  "type": "object",
+  "$defs": {
+    "BankingFeeConfiguration": {
+      "description": "Banking Fee Config Request\n\nA banking fee config request which can be deducted immediately from the transaction amount\n",
+      "properties": {
+        "fee_amount": {
+          "description": "The fee amount of the banking fee",
+          "format": "decimal",
+          "type": "string"
+        },
+        "fiat_transfer_type": {
+          "$ref": "#/$defs/FiatTransfer"
+        },
+        "rail": {
+          "$ref": "#/$defs/PaymentNetwork"
+        }
+      },
+      "required": [
+        "rail",
+        "fee_amount",
+        "fiat_transfer_type"
+      ],
+      "title": "BankingFeeConfiguration",
+      "type": "object"
+    },
+    "FeeSettlement": {
+      "description": "Fee Settlement\n\nThe settlement type for the fee\n",
+      "enum": [
+        "deductedImmediately",
+        "settledLater"
+      ],
+      "type": "string"
+    },
+    "FiatTransfer": {
+      "description": "Fiat Transfer\n\nThe type of fiat transfer\n",
+      "enum": [
+        "PayIn",
+        "PayOut"
+      ],
+      "type": "string"
+    },
+    "PaymentNetwork": {
+      "description": "PaymentNetwork\n\nA payment network\n",
+      "enum": [
+        "Sepa",
+        "Swift",
+        "Fps",
+        "Chats",
+        "Ach",
+        "Wire",
+        "Rtp",
+        "Fednow",
+        "Pix",
+        "Spei",
+        "AfricanBankTransfer",
+        "MobileMoney",
+        "Chaps"
+      ],
+      "type": "string"
+    }
+  }
+}

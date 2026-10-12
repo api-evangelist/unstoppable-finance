@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-crypto-currency-schema.json",
+  "title": "CryptoCurrency",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-currencies-api-openapi.yml#/components/schemas/CryptoCurrency",
+  "properties": {
+    "address": {
+      "description": "The address that this currency has on the `chain`",
+      "type": "string"
+    },
+    "chain": {
+      "description": "The chain for this currency",
+      "type": "string"
+    },
+    "code": {
+      "description": "The ticker of the cryptocurrency. E.g. USDC",
+      "type": "string"
+    },
+    "mint_only": {
+      "description": "Whether this currency can only be minted (not autoramped)",
+      "type": "boolean"
+    },
+    "name": {
+      "description": "An optional name of the cryptocurrency. E.g. `USD Coin`",
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "chain",
+    "mint_only"
+  ],
+  "type": "object"
+}

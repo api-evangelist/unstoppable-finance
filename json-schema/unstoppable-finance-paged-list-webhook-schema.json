@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-paged-list-webhook-schema.json",
+  "title": "PagedList_Webhook",
+  "description": "PagedList\n\nA list of items with cursors used to fetch the next or previous page\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-webhooks-api-openapi.yml#/components/schemas/PagedList_Webhook",
+  "properties": {
+    "cursor": {
+      "description": "The cursor used to fetch the next page",
+      "format": "uuid",
+      "type": "string"
+    },
+    "items": {
+      "description": "The list of items",
+      "items": {
+        "$ref": "#/$defs/Webhook"
+      },
+      "type": "array"
+    },
+    "prev_cursor": {
+      "default": null,
+      "description": "The cursor used to fetch the previous page",
+      "format": "uuid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "items"
+  ],
+  "type": "object",
+  "$defs": {
+    "Webhook": {
+      "description": "Webhook\n\nResponse containing webhook details\n",
+      "properties": {
+        "created_at": {
+          "description": "When the webhook was created",
+          "format": "date-time",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Whether the webhook is enabled",
+          "type": "boolean"
+        },
+        "id": {
+          "description": "The ID of the webhook",
+          "format": "uuid",
+          "type": "string"
+        },
+        "label": {
+          "description": "A descriptive label for the webhook",
+          "type": "string"
+        },
+        "last_failure": {
+          "description": "The last time the webhook was executed with an error",
+          "format": "date-time",
+          "type": "string"
+        },
+        "last_failure_reason": {
+          "description": "The reason for the last failure",
+          "type": "string"
+        },
+        "partner_id": {
+          "description": "The partner ID that owns this webhook",
+          "format": "uuid",
+          "type": "string"
+        },
+        "topics": {
+          "description": "The topics this webhook subscribes to",
+          "items": {
+            "$ref": "#/$defs/WebhookEventType"
+          },
+          "type": "array"
+        },
+        "updated_at": {
+          "description": "When the webhook was last updated",
+          "format": "date-time",
+          "type": "string"
+        },
+        "url": {
+          "description": "The URL to send webhook events to",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "url",
+        "partner_id",
+        "topics",
+        "created_at",
+        "updated_at",
+        "enabled"
+      ],
+      "title": "Webhook",
+      "type": "object"
+    },
+    "WebhookEventType": {
+      "description": "Webhook Event Types\n\nRepresents the different types of webhook events that can be sent\n",
+      "enum": [
+        "Transaction",
+        "NewBankAccount",
+        "NewAutoramp",
+        "DepositAddressCreated",
+        "RegisterFiatAddressStatus",
+        "RegisterAutorampStatus",
+        "TransactionStatus",
+        "CustomerCreated",
+        "CustomerStatus",
+        "IdentificationStatus",
+        "Ping"
+      ],
+      "type": "string"
+    }
+  }
+}

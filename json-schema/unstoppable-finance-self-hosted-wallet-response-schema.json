@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-self-hosted-wallet-response-schema.json",
+  "title": "SelfHostedWalletResponse",
+  "description": "Self-Hosted Wallet Response\n\nResponse containing self-hosted wallet details\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-addresses-api-openapi.yml#/components/schemas/SelfHostedWalletResponse",
+  "properties": {
+    "address": {
+      "description": "The address that was proven",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "When the wallet was registered",
+      "format": "date-time",
+      "type": "string"
+    },
+    "customer_id": {
+      "description": "The customer ID",
+      "type": "string"
+    },
+    "disabled": {
+      "description": "Whether the address is disabled",
+      "type": "boolean"
+    },
+    "id": {
+      "description": "The ID of the self-hosted wallet",
+      "type": "string"
+    },
+    "name": {
+      "description": "Optional display name for this wallet address",
+      "type": "string"
+    },
+    "signature": {
+      "description": "The signature that was submitted",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "address",
+    "signature",
+    "created_at",
+    "customer_id",
+    "disabled"
+  ],
+  "type": "object"
+}

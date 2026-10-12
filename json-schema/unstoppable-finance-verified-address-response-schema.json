@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-verified-address-response-schema.json",
+  "title": "VerifiedAddressResponse",
+  "description": "Verified Address Response\n\nResponse containing verified address details\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-addresses-api-openapi.yml#/components/schemas/VerifiedAddressResponse",
+  "properties": {
+    "address_type": {
+      "$ref": "#/$defs/AddressType"
+    },
+    "blockchain": {
+      "$ref": "#/$defs/Blockchain"
+    },
+    "created_at": {
+      "description": "When the address was verified",
+      "format": "date-time",
+      "type": "string"
+    },
+    "disabled": {
+      "description": "Whether the address is disabled",
+      "type": "boolean"
+    },
+    "id": {
+      "description": "The ID of the verified address",
+      "format": "uuid",
+      "type": "string"
+    },
+    "is_self": {
+      "description": "Whether the wallet belongs to the customer themselves (true) or a third party",
+      "type": "boolean"
+    },
+    "name": {
+      "description": "Optional display name for this wallet address",
+      "type": "string"
+    },
+    "proof_message": {
+      "description": "The proof message",
+      "type": "string"
+    },
+    "proof_signature": {
+      "description": "The proof signature",
+      "type": "string"
+    },
+    "vasp_did": {
+      "description": "The VASP DID (decentralized Identifier) for hosted wallets",
+      "type": "string"
+    },
+    "wallet_address": {
+      "description": "The wallet address",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "wallet_address",
+    "address_type",
+    "blockchain",
+    "disabled",
+    "is_self"
+  ],
+  "type": "object",
+  "$defs": {
+    "AddressType": {
+      "enum": [
+        "Hosted",
+        "SelfHosted"
+      ],
+      "type": "string"
+    },
+    "Blockchain": {
+      "description": "Blockchain\n\nA type of blockchain\n",
+      "enum": [
+        "Solana",
+        "Ethereum",
+        "Polygon",
+        "Arbitrum",
+        "Base",
+        "Stellar",
+        "Citrea",
+        "Plasma",
+        "Avalanche",
+        "Moca",
+        "Tempo",
+        "Tron",
+        "Bsc"
+      ],
+      "type": "string"
+    }
+  }
+}

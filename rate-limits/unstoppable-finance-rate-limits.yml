@@ -1,0 +1,12 @@
+name: Unstoppable Finance (Iron) rate limits
+generated: '2026-10-12'
+method: searched
+source: https://docs.iron.xyz/llms.txt
+limits:
+- name: per-API-key rate limit
+  scope: per-key
+  limit_text: MoonPay Enterprise implements per-API-key rate limits and infrastructure-level
+    protections
+  status_on_exhaustion: 429
+  note: No numeric limit or window is published; docs say "Exceeding limits returns
+    HTTP 429. Use exponential backoff for retries."

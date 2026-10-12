@@ -1,0 +1,253 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-create-sandbox-transaction-params-schema.json",
+  "title": "CreateSandboxTransactionParams",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-sandbox-api-openapi.yml#/components/schemas/CreateSandboxTransactionParams",
+  "properties": {
+    "amount": {
+      "description": "The amount to deposit (in the autoramp's input currency)",
+      "format": "decimal",
+      "type": "string"
+    },
+    "amount_out": {
+      "description": "Optional: Specify the output amount directly (if not provided, calculated from amount, fee, and fx_rate)",
+      "format": "decimal",
+      "type": "string"
+    },
+    "autoramp_id": {
+      "description": "The autoramp ID to use for the transaction",
+      "format": "uuid",
+      "type": "string"
+    },
+    "deposit_id": {
+      "description": "Optional: Specify a deterministic deposit ID instead of generating one",
+      "format": "uuid",
+      "type": "string"
+    },
+    "fee": {
+      "description": "Optional: Specify the fee amount (defaults to 0.25% of amount)",
+      "format": "decimal",
+      "type": "string"
+    },
+    "fx_rate": {
+      "description": "Optional: Specify the exchange rate (defaults to 1.0)",
+      "format": "decimal",
+      "type": "string"
+    },
+    "initial_state": {
+      "$ref": "#/$defs/SandboxTransactionState"
+    },
+    "input_currency": {
+      "$ref": "#/$defs/Currency"
+    },
+    "source": {
+      "$ref": "#/$defs/RampTransactionSource"
+    },
+    "transaction_id": {
+      "description": "Optional: Specify a deterministic transaction ID instead of generating one",
+      "format": "uuid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "autoramp_id",
+    "amount"
+  ],
+  "type": "object",
+  "$defs": {
+    "ApiBankAccountSource": {
+      "description": "A bank account source of an autoramp transaction",
+      "properties": {
+        "account_number": {
+          "description": "The account number for US accounts",
+          "type": "string"
+        },
+        "bank_name": {
+          "description": "The bank name",
+          "type": "string"
+        },
+        "bic": {
+          "description": "The bic",
+          "type": "string"
+        },
+        "iban": {
+          "description": "The iban",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the account holder",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "The routing number of the bank, for US accounts",
+          "type": "string"
+        },
+        "sort_code": {
+          "description": "The sort code of the bank, for UK accounts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bank_name",
+        "iban",
+        "bic",
+        "name"
+      ],
+      "title": "ApiBankAccountSource",
+      "type": "object"
+    },
+    "ApiWalletDepositSource": {
+      "description": "A wallet deposit source of an autoramp transaction",
+      "properties": {
+        "blockchain": {
+          "description": "The blockchain",
+          "type": "string"
+        },
+        "deposit_tx_hash": {
+          "description": "The deposit transaction hash",
+          "type": "string"
+        },
+        "wallet_address": {
+          "description": "The wallet address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "wallet_address",
+        "blockchain"
+      ],
+      "title": "ApiWalletDepositSource",
+      "type": "object"
+    },
+    "Blockchain": {
+      "description": "Blockchain\n\nA type of blockchain\n",
+      "enum": [
+        "Solana",
+        "Ethereum",
+        "Polygon",
+        "Arbitrum",
+        "Base",
+        "Stellar",
+        "Citrea",
+        "Plasma",
+        "Avalanche",
+        "Moca",
+        "Tempo",
+        "Tron",
+        "Bsc"
+      ],
+      "type": "string"
+    },
+    "Crypto": {
+      "description": "A cryptocurrency",
+      "properties": {
+        "blockchain": {
+          "$ref": "#/$defs/Blockchain"
+        },
+        "token": {
+          "description": "The ticker of the token e.g. 'USDC'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "blockchain"
+      ],
+      "title": "Crypto",
+      "type": "object"
+    },
+    "Currency": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Currency_Crypto"
+        },
+        {
+          "$ref": "#/$defs/Currency_Fiat"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n",
+      "type": "object"
+    },
+    "Currency_Crypto": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Crypto"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Crypto"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n"
+    },
+    "Currency_Fiat": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Fiat"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Fiat"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n"
+    },
+    "Fiat": {
+      "description": "A fiat currency",
+      "properties": {
+        "code": {
+          "description": "The code of the currency e.g. 'USD'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Fiat",
+      "type": "object"
+    },
+    "RampTransactionSource": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApiWalletDepositSource"
+        },
+        {
+          "$ref": "#/$defs/ApiBankAccountSource"
+        }
+      ],
+      "description": "The source of the autoramp transaction",
+      "type": "object"
+    },
+    "SandboxTransactionState": {
+      "enum": [
+        "Pending",
+        "Completed",
+        "Failed"
+      ],
+      "type": "string"
+    }
+  }
+}

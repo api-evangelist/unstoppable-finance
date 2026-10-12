@@ -1,0 +1,410 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-exchange-rate-schema.json",
+  "title": "ExchangeRate",
+  "description": "Exchange Rate\n\nThe exchange rate for a given currency pair\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-exchange-rate-api-openapi.yml#/components/schemas/ExchangeRate",
+  "properties": {
+    "effective_rate": {
+      "description": "The effective rate",
+      "format": "decimal",
+      "type": "string"
+    },
+    "fee": {
+      "$ref": "#/$defs/Fee"
+    },
+    "from": {
+      "$ref": "#/$defs/Currency"
+    },
+    "out_amount": {
+      "$ref": "#/$defs/Amount"
+    },
+    "to": {
+      "$ref": "#/$defs/Currency"
+    }
+  },
+  "required": [
+    "from",
+    "to",
+    "out_amount",
+    "effective_rate",
+    "fee"
+  ],
+  "type": "object",
+  "$defs": {
+    "Amount": {
+      "description": "An amount of money\n",
+      "properties": {
+        "amount": {
+          "description": "The amount, a decimal number",
+          "format": "decimal",
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "title": "Amount",
+      "type": "object"
+    },
+    "Blockchain": {
+      "description": "Blockchain\n\nA type of blockchain\n",
+      "enum": [
+        "Solana",
+        "Ethereum",
+        "Polygon",
+        "Arbitrum",
+        "Base",
+        "Stellar",
+        "Citrea",
+        "Plasma",
+        "Avalanche",
+        "Moca",
+        "Tempo",
+        "Tron",
+        "Bsc"
+      ],
+      "type": "string"
+    },
+    "Crypto": {
+      "description": "A cryptocurrency",
+      "properties": {
+        "blockchain": {
+          "$ref": "#/$defs/Blockchain"
+        },
+        "token": {
+          "description": "The ticker of the token e.g. 'USDC'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "blockchain"
+      ],
+      "title": "Crypto",
+      "type": "object"
+    },
+    "Currency": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Currency_Crypto"
+        },
+        {
+          "$ref": "#/$defs/Currency_Fiat"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n",
+      "type": "object"
+    },
+    "Currency_Crypto": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Crypto"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Crypto"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n"
+    },
+    "Currency_Fiat": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Fiat"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Fiat"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n"
+    },
+    "Fee": {
+      "description": "Fee\n\nThe fee for a given currency pair\n",
+      "properties": {
+        "banking_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "banking_fee_network": {
+          "$ref": "#/$defs/PaymentNetwork"
+        },
+        "deducted_fee": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Amount"
+            },
+            {
+              "deprecated": true,
+              "description": "The amount of the fee that was deducted immediately and charged to the end customer. This is deprecated and will be removed in the future. Use transaction_fee instead."
+            }
+          ],
+          "deprecated": true,
+          "description": "The amount of the fee that was deducted immediately and charged to the end customer. This is deprecated and will be removed in the future. Use transaction_fee instead."
+        },
+        "iron_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "iron_fee_settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        },
+        "network_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "network_fees": {
+          "deprecated": true,
+          "description": "The network fees in source currency",
+          "items": {
+            "$ref": "#/$defs/NetworkFee"
+          },
+          "type": "array"
+        },
+        "network_fees_with_settlement": {
+          "description": "The network fees with settlement",
+          "items": {
+            "$ref": "#/$defs/NetworkFeeWithSettlement"
+          },
+          "type": "array"
+        },
+        "partner_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "partner_fees": {
+          "description": "The partner fees",
+          "items": {
+            "$ref": "#/$defs/PartnerFee"
+          },
+          "type": "array"
+        },
+        "total_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "transaction_fee": {
+          "$ref": "#/$defs/Amount"
+        }
+      },
+      "required": [
+        "total_fee",
+        "iron_fee",
+        "partner_fee",
+        "network_fees",
+        "network_fees_with_settlement",
+        "partner_fees",
+        "transaction_fee",
+        "banking_fee",
+        "network_fee"
+      ],
+      "title": "Fee",
+      "type": "object"
+    },
+    "FeeSettlement": {
+      "description": "Fee Settlement\n\nThe settlement type for the fee\n",
+      "enum": [
+        "deductedImmediately",
+        "settledLater"
+      ],
+      "type": "string"
+    },
+    "Fiat": {
+      "description": "A fiat currency",
+      "properties": {
+        "code": {
+          "description": "The code of the currency e.g. 'USD'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Fiat",
+      "type": "object"
+    },
+    "NetworkFee": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        }
+      ],
+      "description": "Network Fee\n\nThe network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.\n",
+      "type": "object"
+    },
+    "NetworkFeeType": {
+      "description": "Network Fee Type\n\nThe type of network fee\n",
+      "enum": [
+        "SepaIn",
+        "SepaOut",
+        "EthereumGas",
+        "CitreaGas",
+        "SolanaTransactionFee",
+        "StellarTransactionFee",
+        "PolygonGas",
+        "BaseGas",
+        "AvalancheGas",
+        "TronGas",
+        "BscGas",
+        "RailFee",
+        "AchIn",
+        "AchOut",
+        "WireIn",
+        "WireOut",
+        "SwiftIn",
+        "SwiftOut",
+        "FpsIn",
+        "FpsOut",
+        "ChapsIn",
+        "ChapsOut",
+        "RtpIn",
+        "RtpOut",
+        "FednowIn",
+        "FednowOut"
+      ],
+      "type": "string"
+    },
+    "NetworkFeeWithSettlement": {
+      "description": "Network Fee with Settlement\n\nThe network fee with settlement for a given currency\n",
+      "properties": {
+        "fee_amount": {
+          "$ref": "#/$defs/Amount"
+        },
+        "fee_type": {
+          "$ref": "#/$defs/NetworkFeeType"
+        },
+        "settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        }
+      },
+      "required": [
+        "fee_type",
+        "fee_amount"
+      ],
+      "title": "NetworkFeeWithSettlement",
+      "type": "object"
+    },
+    "NetworkFee_Amount": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "SwiftOut"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Amount"
+        }
+      ],
+      "description": "Network Fee\n\nThe network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.\n"
+    },
+    "PartnerFee": {
+      "description": "Partner Fee\n\nA partner fee\n",
+      "properties": {
+        "fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "label": {
+          "description": "The label of the partner fee",
+          "type": "string"
+        },
+        "settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        }
+      },
+      "required": [
+        "label",
+        "fee",
+        "settlement"
+      ],
+      "title": "PartnerFee",
+      "type": "object"
+    },
+    "PaymentNetwork": {
+      "description": "PaymentNetwork\n\nA payment network\n",
+      "enum": [
+        "Sepa",
+        "Swift",
+        "Fps",
+        "Chats",
+        "Ach",
+        "Wire",
+        "Rtp",
+        "Fednow",
+        "Pix",
+        "Spei",
+        "AfricanBankTransfer",
+        "MobileMoney",
+        "Chaps"
+      ],
+      "type": "string"
+    }
+  }
+}

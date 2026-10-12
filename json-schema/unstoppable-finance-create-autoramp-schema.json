@@ -1,0 +1,1157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-create-autoramp-schema.json",
+  "title": "CreateAutoramp",
+  "description": "Either a set of market parameters or a signed quote. Optionally include a `type` field (`market` | `quote`) to get precise validation errors.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-autoramp-api-openapi.yml#/components/schemas/CreateAutoramp",
+  "oneOf": [
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CreateAutorampParameters"
+        },
+        {
+          "properties": {
+            "type": {
+              "description": "Optional discriminator. When present, the body is parsed as this variant and validation errors point at the offending field instead of the whole payload.",
+              "enum": [
+                "market"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SignedAutorampQuote"
+        },
+        {
+          "properties": {
+            "type": {
+              "description": "Optional discriminator. When present, the body is parsed as this variant and validation errors point at the offending field instead of the whole payload.",
+              "enum": [
+                "quote"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    }
+  ],
+  "$defs": {
+    "Account": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Account_FiatAccount"
+        },
+        {
+          "$ref": "#/$defs/Account_CryptoWallet"
+        },
+        {
+          "$ref": "#/$defs/Account_PixAccount"
+        }
+      ],
+      "description": "Account\n\nThe account for the autoramp\n",
+      "type": "object"
+    },
+    "Account_CryptoWallet": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Crypto"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/CryptoWallet"
+        }
+      ],
+      "description": "Account\n\nThe account for the autoramp\n"
+    },
+    "Account_FiatAccount": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Fiat"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/FiatAccount"
+        }
+      ],
+      "description": "Account\n\nThe account for the autoramp\n"
+    },
+    "Account_PixAccount": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Pix"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/PixAccount"
+        }
+      ],
+      "description": "Account\n\nThe account for the autoramp\n"
+    },
+    "Amount": {
+      "description": "An amount of money\n",
+      "properties": {
+        "amount": {
+          "description": "The amount, a decimal number",
+          "format": "decimal",
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "title": "Amount",
+      "type": "object"
+    },
+    "BankAccountACHIdentifier": {
+      "properties": {
+        "account_number": {
+          "description": "US account number (4-17 alphanumeric characters)",
+          "pattern": "^[0-9A-Z]{4,17}$",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "US routing number (exactly 9 digits)",
+          "pattern": "^[0-9]{9}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing_number",
+        "account_number"
+      ],
+      "title": "BankAccountACHIdentifier",
+      "type": "object"
+    },
+    "BankAccountCHAPSIdentifier": {
+      "properties": {
+        "account_number": {
+          "type": "string"
+        },
+        "sort_code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sort_code",
+        "account_number"
+      ],
+      "title": "BankAccountCHAPSIdentifier",
+      "type": "object"
+    },
+    "BankAccountFPSIdentifier": {
+      "properties": {
+        "account_number": {
+          "type": "string"
+        },
+        "sort_code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sort_code",
+        "account_number"
+      ],
+      "title": "BankAccountFPSIdentifier",
+      "type": "object"
+    },
+    "BankAccountFedNowIdentifier": {
+      "properties": {
+        "account_number": {
+          "description": "US account number (4-17 alphanumeric characters)",
+          "pattern": "^[0-9A-Z]{4,17}$",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "US routing number (exactly 9 digits)",
+          "pattern": "^[0-9]{9}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing_number",
+        "account_number"
+      ],
+      "title": "BankAccountFedNowIdentifier",
+      "type": "object"
+    },
+    "BankAccountIdentifier": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_Iban"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountACHIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountWireIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountRTPIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountFedNowIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountSWIFTIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountCHAPSIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountFPSIdentifier"
+        }
+      ],
+      "type": "object"
+    },
+    "BankAccountIdentifier_BankAccountACHIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "ACH"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountACHIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountCHAPSIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "CHAPS"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountCHAPSIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountFPSIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "FPS"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountFPSIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountFedNowIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "FEDNOW"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountFedNowIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountRTPIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "RTP"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountRTPIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountSWIFTIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "SWIFT"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountSWIFTIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountWireIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Wire"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountWireIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_Iban": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "SEPA"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Iban"
+        }
+      ]
+    },
+    "BankAccountRTPIdentifier": {
+      "properties": {
+        "account_number": {
+          "description": "US account number (4-17 alphanumeric characters)",
+          "pattern": "^[0-9A-Z]{4,17}$",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "US routing number (exactly 9 digits)",
+          "pattern": "^[0-9]{9}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing_number",
+        "account_number"
+      ],
+      "title": "BankAccountRTPIdentifier",
+      "type": "object"
+    },
+    "BankAccountSWIFTIdentifier": {
+      "properties": {
+        "account_number": {
+          "type": "string"
+        },
+        "bic": {
+          "type": "string"
+        },
+        "intermediary_bic": {
+          "description": "BIC of an intermediary correspondent bank in the SWIFT routing chain,\nwhen the sender wants to override the auto-selected intermediary.\nOptional — most senders leave this unset and let their provider pick.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bic",
+        "account_number"
+      ],
+      "title": "BankAccountSWIFTIdentifier",
+      "type": "object"
+    },
+    "BankAccountWireIdentifier": {
+      "properties": {
+        "account_number": {
+          "description": "US account number (4-17 alphanumeric characters)",
+          "pattern": "^[0-9A-Z]{4,17}$",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "US routing number (exactly 9 digits)",
+          "pattern": "^[0-9]{9}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing_number",
+        "account_number"
+      ],
+      "title": "BankAccountWireIdentifier",
+      "type": "object"
+    },
+    "Blockchain": {
+      "description": "Blockchain\n\nA type of blockchain\n",
+      "enum": [
+        "Solana",
+        "Ethereum",
+        "Polygon",
+        "Arbitrum",
+        "Base",
+        "Stellar",
+        "Citrea",
+        "Plasma",
+        "Avalanche",
+        "Moca",
+        "Tempo",
+        "Tron",
+        "Bsc"
+      ],
+      "type": "string"
+    },
+    "CreateAutorampParameters": {
+      "description": "Create Autoramp Parameters\n\nThe parameters required to create a autoramp\n",
+      "properties": {
+        "ach_payment_reference": {
+          "description": "reference message attached to outgoing ACH transfers (max 10 chars)",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9 /\\-?:().+]*$",
+          "type": "string"
+        },
+        "additional_partner_fee_in_bips": {
+          "deprecated": true,
+          "description": "The additional partner fee in bips. This will be added to the fee. This is deprecated, use the partner fee configs instead.",
+          "format": "decimal",
+          "type": "string"
+        },
+        "batch_payout": {
+          "description": "If true, payouts for this autoramp will be batched and sent once per day instead of individually.\nOnly supported for fiat destination currencies.",
+          "type": "boolean"
+        },
+        "customer_id": {
+          "description": "The customer id",
+          "format": "uuid",
+          "type": "string"
+        },
+        "destination_currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "external_id": {
+          "description": "External ID for the autoramp, provided by the partner",
+          "type": "string"
+        },
+        "fee_profile_id": {
+          "description": "The fee profile id to use for the autoramp. If not provided, the default fee profile for the partner will be used.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "fps_payment_reference": {
+          "description": "reference message attached to outgoing FPS transfers (max 18 chars)",
+          "maxLength": 18,
+          "minLength": 6,
+          "pattern": "^[A-Za-z]*$",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the autoramp",
+          "type": "string"
+        },
+        "pay_by_reference": {
+          "default": null,
+          "description": "If true, a payment reference will be generated for the autoramp. Defaults to false if not provided.",
+          "type": "boolean"
+        },
+        "recipient_account": {
+          "$ref": "#/$defs/Account"
+        },
+        "sepa_payment_reference": {
+          "description": "reference message attached to outgoing SEPA transfers (max 140 chars)",
+          "maxLength": 140,
+          "minLength": 6,
+          "pattern": "^[A-Za-z0-9 /\\-?:().+]*$",
+          "type": "string"
+        },
+        "source_currencies": {
+          "description": "The list of source currencies",
+          "items": {
+            "$ref": "#/$defs/Currency"
+          },
+          "type": "array"
+        },
+        "source_is_third_party": {
+          "description": "The source should be third party. E.g. a fiat account that allows\nreceiving 3pp payments.",
+          "type": "boolean"
+        },
+        "swift_payment_reference": {
+          "description": "reference message attached to outgoing SWIFT transfers (max 4 lines, 35 chars per line)",
+          "maxLength": 140,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9 /\\-?:().+]*$",
+          "type": "string"
+        },
+        "wire_message": {
+          "description": "reference message attached to outgoing wire transfers (max 4 lines, 35 chars per line)",
+          "maxLength": 140,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9 /\\-?:().+]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_currencies",
+        "destination_currency",
+        "recipient_account",
+        "customer_id"
+      ],
+      "title": "CreateAutorampParameters",
+      "type": "object"
+    },
+    "Crypto": {
+      "description": "A cryptocurrency",
+      "properties": {
+        "blockchain": {
+          "$ref": "#/$defs/Blockchain"
+        },
+        "token": {
+          "description": "The ticker of the token e.g. 'USDC'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "blockchain"
+      ],
+      "title": "Crypto",
+      "type": "object"
+    },
+    "CryptoWallet": {
+      "description": "Crypto Wallet\n\nThe crypto wallet for the autoramp\n",
+      "properties": {
+        "address": {
+          "description": "The address of the crypto account",
+          "type": "string"
+        },
+        "chain": {
+          "$ref": "#/$defs/Blockchain"
+        }
+      },
+      "required": [
+        "chain",
+        "address"
+      ],
+      "title": "CryptoWallet",
+      "type": "object"
+    },
+    "Currency": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Currency_Crypto"
+        },
+        {
+          "$ref": "#/$defs/Currency_Fiat"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n",
+      "type": "object"
+    },
+    "Currency_Crypto": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Crypto"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Crypto"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n"
+    },
+    "Currency_Fiat": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Fiat"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Fiat"
+        }
+      ],
+      "description": "Currency\n\nCan be either crypto or fiat\n"
+    },
+    "DepositAccountType": {
+      "enum": [
+        "Iban",
+        "Wallet",
+        "AchWire",
+        "Pix",
+        "Spei",
+        "AfricanBankTransfer",
+        "MobileMoney",
+        "ChapsFps"
+      ],
+      "type": "string"
+    },
+    "Fee": {
+      "description": "Fee\n\nThe fee for a given currency pair\n",
+      "properties": {
+        "banking_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "banking_fee_network": {
+          "$ref": "#/$defs/PaymentNetwork"
+        },
+        "deducted_fee": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Amount"
+            },
+            {
+              "deprecated": true,
+              "description": "The amount of the fee that was deducted immediately and charged to the end customer. This is deprecated and will be removed in the future. Use transaction_fee instead."
+            }
+          ],
+          "deprecated": true,
+          "description": "The amount of the fee that was deducted immediately and charged to the end customer. This is deprecated and will be removed in the future. Use transaction_fee instead."
+        },
+        "iron_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "iron_fee_settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        },
+        "network_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "network_fees": {
+          "deprecated": true,
+          "description": "The network fees in source currency",
+          "items": {
+            "$ref": "#/$defs/NetworkFee"
+          },
+          "type": "array"
+        },
+        "network_fees_with_settlement": {
+          "description": "The network fees with settlement",
+          "items": {
+            "$ref": "#/$defs/NetworkFeeWithSettlement"
+          },
+          "type": "array"
+        },
+        "partner_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "partner_fees": {
+          "description": "The partner fees",
+          "items": {
+            "$ref": "#/$defs/PartnerFee"
+          },
+          "type": "array"
+        },
+        "total_fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "transaction_fee": {
+          "$ref": "#/$defs/Amount"
+        }
+      },
+      "required": [
+        "total_fee",
+        "iron_fee",
+        "partner_fee",
+        "network_fees",
+        "network_fees_with_settlement",
+        "partner_fees",
+        "transaction_fee",
+        "banking_fee",
+        "network_fee"
+      ],
+      "title": "Fee",
+      "type": "object"
+    },
+    "FeeSettlement": {
+      "description": "Fee Settlement\n\nThe settlement type for the fee\n",
+      "enum": [
+        "deductedImmediately",
+        "settledLater"
+      ],
+      "type": "string"
+    },
+    "Fiat": {
+      "description": "A fiat currency",
+      "properties": {
+        "code": {
+          "description": "The code of the currency e.g. 'USD'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Fiat",
+      "type": "object"
+    },
+    "FiatAccount": {
+      "description": "Fiat Account\n\nThe fiat account for the autoramp\n",
+      "properties": {
+        "account_identifier": {
+          "$ref": "#/$defs/BankAccountIdentifier"
+        }
+      },
+      "required": [
+        "account_identifier"
+      ],
+      "title": "FiatAccount",
+      "type": "object"
+    },
+    "Iban": {
+      "properties": {
+        "iban": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "iban"
+      ],
+      "title": "Iban",
+      "type": "object"
+    },
+    "NetworkFee": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        },
+        {
+          "$ref": "#/$defs/NetworkFee_Amount"
+        }
+      ],
+      "description": "Network Fee\n\nThe network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.\n",
+      "type": "object"
+    },
+    "NetworkFeeType": {
+      "description": "Network Fee Type\n\nThe type of network fee\n",
+      "enum": [
+        "SepaIn",
+        "SepaOut",
+        "EthereumGas",
+        "CitreaGas",
+        "SolanaTransactionFee",
+        "StellarTransactionFee",
+        "PolygonGas",
+        "BaseGas",
+        "AvalancheGas",
+        "TronGas",
+        "BscGas",
+        "RailFee",
+        "AchIn",
+        "AchOut",
+        "WireIn",
+        "WireOut",
+        "SwiftIn",
+        "SwiftOut",
+        "FpsIn",
+        "FpsOut",
+        "ChapsIn",
+        "ChapsOut",
+        "RtpIn",
+        "RtpOut",
+        "FednowIn",
+        "FednowOut"
+      ],
+      "type": "string"
+    },
+    "NetworkFeeWithSettlement": {
+      "description": "Network Fee with Settlement\n\nThe network fee with settlement for a given currency\n",
+      "properties": {
+        "fee_amount": {
+          "$ref": "#/$defs/Amount"
+        },
+        "fee_type": {
+          "$ref": "#/$defs/NetworkFeeType"
+        },
+        "settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        }
+      },
+      "required": [
+        "fee_type",
+        "fee_amount"
+      ],
+      "title": "NetworkFeeWithSettlement",
+      "type": "object"
+    },
+    "NetworkFee_Amount": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "SwiftOut"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Amount"
+        }
+      ],
+      "description": "Network Fee\n\nThe network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.\n"
+    },
+    "PartnerFee": {
+      "description": "Partner Fee\n\nA partner fee\n",
+      "properties": {
+        "fee": {
+          "$ref": "#/$defs/Amount"
+        },
+        "label": {
+          "description": "The label of the partner fee",
+          "type": "string"
+        },
+        "settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        }
+      },
+      "required": [
+        "label",
+        "fee",
+        "settlement"
+      ],
+      "title": "PartnerFee",
+      "type": "object"
+    },
+    "PaymentNetwork": {
+      "description": "PaymentNetwork\n\nA payment network\n",
+      "enum": [
+        "Sepa",
+        "Swift",
+        "Fps",
+        "Chats",
+        "Ach",
+        "Wire",
+        "Rtp",
+        "Fednow",
+        "Pix",
+        "Spei",
+        "AfricanBankTransfer",
+        "MobileMoney",
+        "Chaps"
+      ],
+      "type": "string"
+    },
+    "PixAccount": {
+      "description": "PIX Account\n\nReferences a previously-registered PIX destination by its id.",
+      "properties": {
+        "id": {
+          "description": "The id of a previously-registered PIX destination",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PixAccount",
+      "type": "object"
+    },
+    "RateExpiryPolicy": {
+      "description": "Rate Expiry Policy\n\nThe policy for the rate expiry\n",
+      "enum": [
+        "Return",
+        "Slippage"
+      ],
+      "type": "string"
+    },
+    "SignedAutorampQuote": {
+      "description": "Signed Autoramp Quote\n\nThe signed autoramp quote\n",
+      "properties": {
+        "ach_payment_reference": {
+          "description": "a message to include in outgoing ACH transfers (max 10 characters)",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9 /\\-?:().+]*$",
+          "type": "string"
+        },
+        "additional_in_currencies": {
+          "description": "Additional input currencies to allow on the autoramp beyond `source_currency`.\n\nEach entry must share the same chain as `source_currency` and the list must\nnot include `source_currency` itself. After autoramp creation, further quotes\ncan be obtained for these currencies via `POST /autoramps/:id/quotes`.",
+          "items": {
+            "$ref": "#/$defs/Currency"
+          },
+          "type": "array"
+        },
+        "amount_in": {
+          "$ref": "#/$defs/Amount"
+        },
+        "amount_out": {
+          "$ref": "#/$defs/Amount"
+        },
+        "batch_payout": {
+          "description": "If true, payouts for this autoramp will be batched and sent once per day instead of individually.\nOnly supported for fiat destination currencies.",
+          "type": "boolean"
+        },
+        "customer_id": {
+          "description": "The customer id",
+          "format": "uuid",
+          "type": "string"
+        },
+        "deposit_account_type": {
+          "$ref": "#/$defs/DepositAccountType"
+        },
+        "destination_currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "external_id": {
+          "description": "The external id",
+          "type": "string"
+        },
+        "fee": {
+          "$ref": "#/$defs/Fee"
+        },
+        "fee_profile_id": {
+          "description": "The fee profile id to use for the autoramp. If not provided, the default fee profile for the partner will be used.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "fee_settlement": {
+          "$ref": "#/$defs/FeeSettlement"
+        },
+        "fps_payment_reference": {
+          "description": "a message to include in outgoing FPS transfers (max 18 characters)",
+          "maxLength": 18,
+          "minLength": 6,
+          "pattern": "^[A-Za-z]*$",
+          "type": "string"
+        },
+        "is_third_party": {
+          "description": "Is this a third party autoramp",
+          "type": "boolean"
+        },
+        "pay_by_reference": {
+          "description": "If true, a payment reference will be generated for the autoramp on\ninbound matching (pay-by-reference). Defaults to false if not provided.",
+          "type": "boolean"
+        },
+        "quote_id": {
+          "description": "The id of the quote",
+          "format": "uuid",
+          "type": "string"
+        },
+        "rate": {
+          "description": "The rate",
+          "format": "decimal",
+          "type": "string"
+        },
+        "rate_expiry_policy": {
+          "$ref": "#/$defs/RateExpiryPolicy"
+        },
+        "rate_lock_valid_until": {
+          "description": "The rate lock valid until",
+          "format": "date-time",
+          "type": "string"
+        },
+        "recipient_account": {
+          "$ref": "#/$defs/Account"
+        },
+        "sepa_payment_reference": {
+          "description": "a message to include in outgoing SEPA transfers (max 140 characters)",
+          "maxLength": 140,
+          "minLength": 6,
+          "pattern": "^[A-Za-z0-9 /\\-?:().+]*$",
+          "type": "string"
+        },
+        "signature": {
+          "description": "The signature",
+          "type": "string"
+        },
+        "slippage_tolerance_in_bips": {
+          "description": "The slippage tolerance in bips",
+          "format": "decimal",
+          "type": "string"
+        },
+        "source_currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "swift_payment_reference": {
+          "description": "a message to include in outgoing SWIFT transfers (max 4 lines, 35 chars per line)",
+          "maxLength": 140,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9 /\\-?:().+]*$",
+          "type": "string"
+        },
+        "valid_until": {
+          "description": "The valid until",
+          "format": "date-time",
+          "type": "string"
+        },
+        "wire_message": {
+          "description": "a message to include in outgoing wire transfers (max 4 lines, 35 chars per line)",
+          "maxLength": 140,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9 /\\-?:().+]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quote_id",
+        "source_currency",
+        "destination_currency",
+        "recipient_account",
+        "customer_id",
+        "amount_in",
+        "amount_out",
+        "rate",
+        "rate_expiry_policy",
+        "fee",
+        "fee_settlement",
+        "valid_until",
+        "signature",
+        "is_third_party"
+      ],
+      "title": "SignedAutorampQuote",
+      "type": "object"
+    }
+  }
+}

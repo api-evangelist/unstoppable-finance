@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-fiat-currency-schema.json",
+  "title": "FiatCurrency",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-currencies-api-openapi.yml#/components/schemas/FiatCurrency",
+  "properties": {
+    "code": {
+      "description": "The ISO 4217 code of a currency. E.g. `EUR`",
+      "type": "string"
+    },
+    "countries": {
+      "description": "A list of all the countries where this currency is supported",
+      "items": {
+        "$ref": "#/$defs/Country"
+      },
+      "type": "array"
+    },
+    "name": {
+      "description": "The user readable name of a currency. E.g. `Euro`",
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "name",
+    "countries"
+  ],
+  "type": "object",
+  "$defs": {
+    "Country": {
+      "description": "A country",
+      "properties": {
+        "code": {
+          "description": "The ISO_3166-1 Alpha-2 country code, e.g. \"DE\"",
+          "maxLength": 2,
+          "minLength": 2,
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Country",
+      "type": "object"
+    }
+  }
+}

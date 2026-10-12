@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-fiat-address-status-schema.json",
+  "title": "FiatAddressStatus",
+  "description": "Verification Status\n\nThe status of the verification of a fiat address\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-sandbox-api-openapi.yml#/components/schemas/FiatAddressStatus",
+  "enum": [
+    "AuthorizationRequired",
+    "AuthorizationFailed",
+    "RegistrationPending",
+    "RegistrationFailed",
+    "Registered"
+  ],
+  "type": "string"
+}

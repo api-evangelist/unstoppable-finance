@@ -1,5 +1,6 @@
 ---
-name: Create a fiat-to-stablecoin onramp (Autoramp)
+name: unstoppable-finance-create-onramp-autoramp
+title: "Create a fiat-to-stablecoin onramp (Autoramp)"
 description: Register and verify a destination wallet, quote the conversion, then create a standing Autoramp that converts incoming fiat to stablecoins.
 api: openapi/unstoppable-finance-iron-openapi-original.yml
 operations: [registerSelfHostedWalletAddress, registerAttestedWalletAddress, registerHostedWallet, searchHostedVasps, getAutorampQuotePreview, createAutoramp, getAutorampById, getAutorampTransactions, createSandboxTransaction, updateSandboxTransactionState]

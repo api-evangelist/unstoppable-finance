@@ -1,5 +1,6 @@
 ---
-name: Offramp stablecoins to a bank account
+name: unstoppable-finance-offramp-to-bank
+title: "Offramp stablecoins to a bank account"
 description: Register a customer bank account, create an offramp Autoramp, and monitor payout status through webhooks.
 api: openapi/unstoppable-finance-iron-openapi-original.yml
 operations: [registerFiatAddress, getFiatAddresses, getFiatAddressesByStatus, createAutoramp, getAutorampTransactions, listWebhooks, pingWebhook, updateSandboxFiatAddressVerificationStatus]

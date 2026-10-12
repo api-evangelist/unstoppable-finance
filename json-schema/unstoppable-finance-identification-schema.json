@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-identification-schema.json",
+  "title": "Identification",
+  "description": "Identification\n\nThe entity wrapping our KYC/KYB process and underlying providers\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-customer-api-openapi.yml#/components/schemas/Identification",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "customer_id": {
+      "description": "Absent on a referral partner's identification (partner-keyed record)",
+      "format": "uuid",
+      "type": "string"
+    },
+    "id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "partner_id": {
+      "description": "The owning partner for partner-keyed (referral) records",
+      "format": "uuid",
+      "type": "string"
+    },
+    "residence_country": {
+      "description": "ISO 3166-1 alpha-2 (2 letter) country code of the verified residence\naddress; only set on the customer's most recent identification while it\nis approved",
+      "type": "string"
+    },
+    "review_comment": {
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/IdentificationStatus"
+    },
+    "step_status": {
+      "$ref": "#/$defs/IdentificationStepStatus"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "with_edd": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "type": "object",
+  "$defs": {
+    "BusinessIdentificationStepStatus": {
+      "properties": {
+        "company_beneficiaries": {
+          "$ref": "#/$defs/VerificationStepDetail"
+        },
+        "company_data": {
+          "$ref": "#/$defs/VerificationStepDetail"
+        },
+        "company_documents": {
+          "$ref": "#/$defs/VerificationStepDetail"
+        },
+        "questionnaire": {
+          "$ref": "#/$defs/VerificationStepDetail"
+        }
+      },
+      "title": "BusinessIdentificationStepStatus",
+      "type": "object"
+    },
+    "IdentificationStatus": {
+      "description": "The Process status of the identification\n\nThe various state transitions an identification can go through.\n",
+      "enum": [
+        "Pending",
+        "Processed",
+        "PendingReview",
+        "Approved",
+        "Declined",
+        "Expired",
+        "Archived"
+      ],
+      "type": "string"
+    },
+    "IdentificationStepStatus": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BusinessIdentificationStepStatus"
+        },
+        {
+          "$ref": "#/$defs/PersonIdentificationStepStatus"
+        }
+      ],
+      "type": "object"
+    },
+    "PersonIdentificationStepStatus": {
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/VerificationStepDetail"
+        },
+        "proof_of_residence": {
+          "$ref": "#/$defs/VerificationStepDetail"
+        },
+        "questionnaire": {
+          "$ref": "#/$defs/VerificationStepDetail"
+        },
+        "selfie": {
+          "$ref": "#/$defs/VerificationStepDetail"
+        }
+      },
+      "title": "PersonIdentificationStepStatus",
+      "type": "object"
+    },
+    "VerificationStepDetail": {
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "result": {
+          "$ref": "#/$defs/IdentificationStatus"
+        },
+        "retry": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "result",
+        "retry"
+      ],
+      "title": "VerificationStepDetail",
+      "type": "object"
+    }
+  }
+}

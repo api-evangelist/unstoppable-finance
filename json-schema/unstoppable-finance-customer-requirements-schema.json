@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-customer-requirements-schema.json",
+  "title": "CustomerRequirements",
+  "description": "Bridge-style requirements view of a customer. All four buckets are\nalways present (may be empty). `requirements_due` is a quick coarse\nsummary — partners can use it to decide whether any action is needed\nbefore drilling into the detail buckets.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-customer-api-openapi.yml#/components/schemas/CustomerRequirements",
+  "properties": {
+    "complete": {
+      "description": "Requirements the customer has satisfied.",
+      "items": {
+        "$ref": "#/$defs/RequirementItem"
+      },
+      "type": "array"
+    },
+    "issues": {
+      "description": "Terminal blockers the customer cannot self-remediate.",
+      "items": {
+        "$ref": "#/$defs/RequirementItem"
+      },
+      "type": "array"
+    },
+    "missing": {
+      "description": "Requirements the customer can still satisfy (resubmittable).",
+      "items": {
+        "$ref": "#/$defs/RequirementItem"
+      },
+      "type": "array"
+    },
+    "pending": {
+      "description": "Requirements the customer has submitted, awaiting review.",
+      "items": {
+        "$ref": "#/$defs/RequirementItem"
+      },
+      "type": "array"
+    },
+    "requirements_due": {
+      "description": "Sorted, deduplicated set of categories that have at least one\nnon-complete item. Empty for fully-onboarded customers.",
+      "items": {
+        "$ref": "#/$defs/RequirementCategory"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "requirements_due",
+    "complete",
+    "pending",
+    "missing",
+    "issues"
+  ],
+  "type": "object",
+  "$defs": {
+    "MissingQuestion": {
+      "description": "A required questionnaire question the customer has left unanswered, resolved\nagainst the Sumsub questionnaire definition.",
+      "properties": {
+        "id": {
+          "description": "Sumsub questionnaire item id, e.g. `sourceOfFunds`.",
+          "type": "string"
+        },
+        "section_id": {
+          "description": "The questionnaire section the question belongs to, when known.",
+          "type": "string"
+        },
+        "title": {
+          "description": "Human-readable question text the applicant saw.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
+      "title": "MissingQuestion",
+      "type": "object"
+    },
+    "RejectReason": {
+      "description": "A Sumsub rejection reason: the stable code paired with a human-readable\ndescription, so partners can display the reason without maintaining their\nown code→text mapping.",
+      "properties": {
+        "code": {
+          "description": "Stable Sumsub reject-label code, e.g. `UNSATISFACTORY_PHOTOS`.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Human-readable description of the code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "description"
+      ],
+      "title": "RejectReason",
+      "type": "object"
+    },
+    "RequirementCategory": {
+      "description": "Coarse summary of which areas of the customer's Sumsub KYC/KYB process\nstill need attention. Used as a quick filter — full detail lives in the\nfour `complete`/`pending`/`missing`/`issues` buckets.",
+      "enum": [
+        "kyc",
+        "kyb"
+      ],
+      "type": "string"
+    },
+    "RequirementCode": {
+      "description": "Stable, switchable identifier for a single requirement. Partners should\nbranch on this rather than parsing `description`, which holds the\nverbatim text from Sumsub (and is subject to change without notice).",
+      "enum": [
+        "kyc_selfie",
+        "kyc_identity",
+        "kyc_proof_of_residence",
+        "kyc_questionnaire",
+        "kyb_company_data",
+        "kyb_company_beneficiaries",
+        "kyb_company_documents",
+        "kyb_questionnaire",
+        "identification_kyc",
+        "identification_kyb",
+        "kyc_data_missing",
+        "kyc_data_invalid",
+        "kyb_data_missing",
+        "kyb_data_invalid"
+      ],
+      "type": "string"
+    },
+    "RequirementItem": {
+      "description": "A single requirement entry returned in one of the four buckets on\n`ApiCustomerRequirements`.",
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/RequirementCode"
+        },
+        "description": {
+          "description": "Human-readable reason from Sumsub — the moderation comment and the\napplicant-facing client comment combined (moderator note first,\ndeduped), a list of the specific unanswered questionnaire questions, or\na synthesized note for the identification-level codes. May be `null`.\n*IMPORTANT*: This field is subject to change without notice — switch\non `code` (and `reject_labels`), not on this string.",
+          "type": "string"
+        },
+        "identification_id": {
+          "description": "The identification that produced this item, when applicable.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "missing_questions": {
+          "description": "Required questionnaire questions the customer left unanswered, resolved\nagainst the Sumsub questionnaire definition (so `title` is the question\ntext the applicant saw). Only populated for the questionnaire codes\n(`kyc_questionnaire` / `kyb_questionnaire`); empty otherwise.",
+          "items": {
+            "$ref": "#/$defs/MissingQuestion"
+          },
+          "type": "array"
+        },
+        "reject_labels": {
+          "description": "Coded Sumsub rejection reasons for this step (e.g. `SCREENSHOTS`,\n`UNSATISFACTORY_PHOTOS`) — the pills shown in the Sumsub dashboard.\nEmpty when the step carries no labels.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reject_reasons": {
+          "description": "Same reasons as `reject_labels`, each paired with a human-readable\ndescription. Prefer this for display; `reject_labels` stays the stable\nset of codes to switch on. Empty when the step carries no labels.",
+          "items": {
+            "$ref": "#/$defs/RejectReason"
+          },
+          "type": "array"
+        },
+        "retryable": {
+          "description": "`true` if the customer can resubmit to clear this item\n(Sumsub `reject_type == Retry`). `false` for terminal/Final\nrejections. `null` for `complete`/`pending` items, where retry\nsemantics don't apply.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "reject_labels",
+        "reject_reasons",
+        "missing_questions"
+      ],
+      "title": "RequirementItem",
+      "type": "object"
+    }
+  }
+}

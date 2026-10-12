@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-terms-and-conditions-link-schema.json",
+  "title": "TermsAndConditionsLink",
+  "description": "A terms and conditions link",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-terms-and-conditions-api-openapi.yml#/components/schemas/TermsAndConditionsLink",
+  "properties": {
+    "display_name": {
+      "description": "the display name of the terms and conditions",
+      "type": "string"
+    },
+    "id": {
+      "description": "The unique identifier for the terms and conditions url",
+      "format": "uuid",
+      "type": "string"
+    },
+    "url": {
+      "description": "The URL of the terms and conditions",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "url",
+    "display_name"
+  ],
+  "type": "object"
+}

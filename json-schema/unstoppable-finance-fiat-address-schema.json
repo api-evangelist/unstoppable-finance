@@ -1,0 +1,674 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/unstoppable-finance/main/json-schema/unstoppable-finance-fiat-address-schema.json",
+  "title": "FiatAddress",
+  "description": "Fiat Address\n\nResponse containing fiat address details\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/unstoppable-finance-addresses-api-openapi.yml#/components/schemas/FiatAddress",
+  "properties": {
+    "bank_account_identifier": {
+      "$ref": "#/$defs/BankAccountIdentifier"
+    },
+    "bank_details": {
+      "$ref": "#/$defs/RecipientBankAccount"
+    },
+    "bank_name": {
+      "description": "The bank name",
+      "type": "string"
+    },
+    "country": {
+      "description": "The country code",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "When the address was created",
+      "format": "date-time",
+      "type": "string"
+    },
+    "currency": {
+      "description": "The currency of the bank account",
+      "type": "string"
+    },
+    "customer_id": {
+      "description": "The customer ID",
+      "format": "uuid",
+      "type": "string"
+    },
+    "id": {
+      "description": "The ID of the address",
+      "format": "uuid",
+      "type": "string"
+    },
+    "is_third_party": {
+      "description": "Is this a third party fiat address",
+      "type": "boolean"
+    },
+    "label": {
+      "description": "Optional label for the address",
+      "type": "string"
+    },
+    "ownership_verified": {
+      "description": "Has the customer verified their ownership of this account",
+      "type": "boolean"
+    },
+    "status": {
+      "$ref": "#/$defs/FiatAddressStatus"
+    },
+    "updated_at": {
+      "description": "When the address was last updated",
+      "format": "date-time",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "updated_at",
+    "customer_id",
+    "bank_details",
+    "status",
+    "currency",
+    "bank_account_identifier",
+    "country",
+    "bank_name",
+    "ownership_verified",
+    "is_third_party"
+  ],
+  "type": "object",
+  "$defs": {
+    "BankAccountACHIdentifier": {
+      "properties": {
+        "account_number": {
+          "description": "US account number (4-17 alphanumeric characters)",
+          "pattern": "^[0-9A-Z]{4,17}$",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "US routing number (exactly 9 digits)",
+          "pattern": "^[0-9]{9}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing_number",
+        "account_number"
+      ],
+      "title": "BankAccountACHIdentifier",
+      "type": "object"
+    },
+    "BankAccountCHAPSIdentifier": {
+      "properties": {
+        "account_number": {
+          "type": "string"
+        },
+        "sort_code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sort_code",
+        "account_number"
+      ],
+      "title": "BankAccountCHAPSIdentifier",
+      "type": "object"
+    },
+    "BankAccountFPSIdentifier": {
+      "properties": {
+        "account_number": {
+          "type": "string"
+        },
+        "sort_code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sort_code",
+        "account_number"
+      ],
+      "title": "BankAccountFPSIdentifier",
+      "type": "object"
+    },
+    "BankAccountFedNowIdentifier": {
+      "properties": {
+        "account_number": {
+          "description": "US account number (4-17 alphanumeric characters)",
+          "pattern": "^[0-9A-Z]{4,17}$",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "US routing number (exactly 9 digits)",
+          "pattern": "^[0-9]{9}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing_number",
+        "account_number"
+      ],
+      "title": "BankAccountFedNowIdentifier",
+      "type": "object"
+    },
+    "BankAccountIdentifier": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_Iban"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountACHIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountWireIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountRTPIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountFedNowIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountSWIFTIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountCHAPSIdentifier"
+        },
+        {
+          "$ref": "#/$defs/BankAccountIdentifier_BankAccountFPSIdentifier"
+        }
+      ],
+      "type": "object"
+    },
+    "BankAccountIdentifier_BankAccountACHIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "ACH"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountACHIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountCHAPSIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "CHAPS"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountCHAPSIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountFPSIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "FPS"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountFPSIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountFedNowIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "FEDNOW"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountFedNowIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountRTPIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "RTP"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountRTPIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountSWIFTIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "SWIFT"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountSWIFTIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_BankAccountWireIdentifier": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Wire"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BankAccountWireIdentifier"
+        }
+      ]
+    },
+    "BankAccountIdentifier_Iban": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "SEPA"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Iban"
+        }
+      ]
+    },
+    "BankAccountRTPIdentifier": {
+      "properties": {
+        "account_number": {
+          "description": "US account number (4-17 alphanumeric characters)",
+          "pattern": "^[0-9A-Z]{4,17}$",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "US routing number (exactly 9 digits)",
+          "pattern": "^[0-9]{9}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing_number",
+        "account_number"
+      ],
+      "title": "BankAccountRTPIdentifier",
+      "type": "object"
+    },
+    "BankAccountSWIFTIdentifier": {
+      "properties": {
+        "account_number": {
+          "type": "string"
+        },
+        "bic": {
+          "type": "string"
+        },
+        "intermediary_bic": {
+          "description": "BIC of an intermediary correspondent bank in the SWIFT routing chain,\nwhen the sender wants to override the auto-selected intermediary.\nOptional — most senders leave this unset and let their provider pick.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bic",
+        "account_number"
+      ],
+      "title": "BankAccountSWIFTIdentifier",
+      "type": "object"
+    },
+    "BankAccountWireIdentifier": {
+      "properties": {
+        "account_number": {
+          "description": "US account number (4-17 alphanumeric characters)",
+          "pattern": "^[0-9A-Z]{4,17}$",
+          "type": "string"
+        },
+        "routing_number": {
+          "description": "US routing number (exactly 9 digits)",
+          "pattern": "^[0-9]{9}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing_number",
+        "account_number"
+      ],
+      "title": "BankAccountWireIdentifier",
+      "type": "object"
+    },
+    "BankPostalAddress": {
+      "description": "BankPostalAddress\n\nThe bank's address. Only required for SWIFT accounts.",
+      "properties": {
+        "city": {
+          "description": "The city",
+          "maxLength": 100,
+          "minLength": 2,
+          "type": "string"
+        },
+        "country": {
+          "$ref": "#/$defs/Country"
+        },
+        "postal_code": {
+          "description": "The postal code",
+          "maxLength": 20,
+          "minLength": 3,
+          "type": "string"
+        },
+        "state": {
+          "description": "The state",
+          "type": "string"
+        },
+        "street": {
+          "description": "The street address",
+          "maxLength": 256,
+          "minLength": 2,
+          "type": "string"
+        }
+      },
+      "required": [
+        "street",
+        "city",
+        "state",
+        "country",
+        "postal_code"
+      ],
+      "title": "BankPostalAddress",
+      "type": "object"
+    },
+    "BusinessName": {
+      "properties": {
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BusinessName",
+      "type": "object"
+    },
+    "Country": {
+      "description": "A country",
+      "properties": {
+        "code": {
+          "description": "The ISO_3166-1 Alpha-2 country code, e.g. \"DE\"",
+          "maxLength": 2,
+          "minLength": 2,
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Country",
+      "type": "object"
+    },
+    "EmailAddress": {
+      "description": "EmailAddress\n\nAn email address\nAn email address\n",
+      "properties": {
+        "email": {
+          "description": "The email address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "EmailAddress",
+      "type": "object"
+    },
+    "FiatAddressStatus": {
+      "description": "Verification Status\n\nThe status of the verification of a fiat address\n",
+      "enum": [
+        "AuthorizationRequired",
+        "AuthorizationFailed",
+        "RegistrationPending",
+        "RegistrationFailed",
+        "Registered"
+      ],
+      "type": "string"
+    },
+    "Iban": {
+      "properties": {
+        "iban": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "iban"
+      ],
+      "title": "Iban",
+      "type": "object"
+    },
+    "IndividualName": {
+      "properties": {
+        "family_name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "type": "string"
+        },
+        "given_name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "given_name",
+        "family_name"
+      ],
+      "title": "IndividualName",
+      "type": "object"
+    },
+    "RecipientBankAccount": {
+      "description": "RecipientBankAccount\n\nA recipient fiat bank account\n",
+      "properties": {
+        "account_identifier": {
+          "$ref": "#/$defs/BankAccountIdentifier"
+        },
+        "address": {
+          "$ref": "#/$defs/RecipientPostalAddress"
+        },
+        "bank_address": {
+          "$ref": "#/$defs/BankPostalAddress"
+        },
+        "email_address": {
+          "$ref": "#/$defs/EmailAddress"
+        },
+        "is_third_party": {
+          "description": "Is this a users fiat bank account or a third party fiat bank account",
+          "type": "boolean"
+        },
+        "phone_number": {
+          "description": "The recipient's phone number. Required for USD accounts.",
+          "type": "string"
+        },
+        "provider_country": {
+          "$ref": "#/$defs/Country"
+        },
+        "provider_name": {
+          "description": "The name of the provider of the recipient's account",
+          "type": "string"
+        },
+        "recipient": {
+          "$ref": "#/$defs/RecipientName"
+        }
+      },
+      "required": [
+        "recipient",
+        "provider_name",
+        "provider_country",
+        "account_identifier",
+        "address",
+        "is_third_party"
+      ],
+      "title": "RecipientBankAccount",
+      "type": "object"
+    },
+    "RecipientName": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RecipientName_IndividualName"
+        },
+        {
+          "$ref": "#/$defs/RecipientName_BusinessName"
+        }
+      ],
+      "type": "object"
+    },
+    "RecipientName_BusinessName": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Business"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/BusinessName"
+        }
+      ]
+    },
+    "RecipientName_IndividualName": {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "Individual"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/IndividualName"
+        }
+      ]
+    },
+    "RecipientPostalAddress": {
+      "description": "RecipientPostalAddress\n\nThe account holder's address.",
+      "properties": {
+        "city": {
+          "description": "The city",
+          "maxLength": 100,
+          "minLength": 2,
+          "type": "string"
+        },
+        "country": {
+          "$ref": "#/$defs/Country"
+        },
+        "postal_code": {
+          "description": "The postal code",
+          "maxLength": 20,
+          "minLength": 3,
+          "type": "string"
+        },
+        "state": {
+          "description": "The state",
+          "type": "string"
+        },
+        "street": {
+          "description": "The street address",
+          "maxLength": 256,
+          "minLength": 2,
+          "type": "string"
+        }
+      },
+      "required": [
+        "street",
+        "city",
+        "state",
+        "country",
+        "postal_code"
+      ],
+      "title": "RecipientPostalAddress",
+      "type": "object"
+    }
+  }
+}

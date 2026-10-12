@@ -1,5 +1,6 @@
 ---
-name: Onboard a customer and complete KYC
+name: unstoppable-finance-onboard-customer-kyc
+title: "Onboard a customer and complete KYC"
 description: Create an Iron customer, start identification (KYC), and confirm the customer is ready to transact.
 api: openapi/unstoppable-finance-iron-openapi-original.yml
 operations: [createCustomer, createCustomerIdentificationV2, getAllCustomerIdentifications, getCustomerById, getCustomerAbilities, getCustomerRequirements, updateSandboxIdentificationStatus]
