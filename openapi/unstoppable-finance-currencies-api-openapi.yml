@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   description: The Stablecoin Payment Network
   title: Iron API - Sandbox Currencies API
-  version: 1.0-16988
+  version: 1.0-19869
 servers:
 - url: https://api.sandbox.iron.xyz/api
 tags:
@@ -57,25 +57,6 @@ paths:
       - Currencies
 components:
   schemas:
-    FiatCurrency:
-      properties:
-        code:
-          description: The ISO 4217 code of a currency. E.g. `EUR`
-          type: string
-        countries:
-          description: A list of all the countries where this currency is supported
-          items:
-            $ref: '#/components/schemas/Country'
-          type: array
-        name:
-          description: The user readable name of a currency. E.g. `Euro`
-          type: string
-      required:
-      - code
-      - name
-      - countries
-      title: FiatCurrency
-      type: object
     Country:
       description: A country
       example:
@@ -113,9 +94,28 @@ components:
       - mint_only
       title: CryptoCurrency
       type: object
+    FiatCurrency:
+      properties:
+        code:
+          description: The ISO 4217 code of a currency. E.g. `EUR`
+          type: string
+        countries:
+          description: A list of all the countries where this currency is supported
+          items:
+            $ref: '#/components/schemas/Country'
+          type: array
+        name:
+          description: The user readable name of a currency. E.g. `Euro`
+          type: string
+      required:
+      - code
+      - name
+      - countries
+      title: FiatCurrency
+      type: object
   parameters:
     XApiVersion:
-      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01, 2026-08-01, 2026-10-01, 2026-10-15.'
       in: header
       name: X-API-Version
       required: false

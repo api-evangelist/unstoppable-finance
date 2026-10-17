@@ -1,7 +1,7 @@
 {
   "provider": "unstoppable-finance",
   "sources": [
-    "_original/unstoppable-finance-iron-openapi-original.yml"
+    "_original/unstoppable-finance-moonpay-enterprise-openapi-latest.yml"
   ],
   "outputs": [
     "unstoppable-finance-addresses-api-openapi.yml",
@@ -20,12 +20,14 @@
   "errors": [],
   "warnings": [],
   "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "unstoppable-finance-iron-openapi-original.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "unstoppable-finance-moonpay-enterprise-openapi-latest.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "superseded outputs removed: unstoppable-finance-exchange-rate-api-openapi.yml, unstoppable-finance-fee-profiles-api-openapi.yml, unstoppable-finance-terms-and-conditions-api-openapi.yml",
     "apis.yml register: written (+3 apis, 9 total)"
   ],
   "skipped": [
+    "_original/unstoppable-finance-iron-openapi-original.yml: archived document superseded by a larger archived document",
     "unstoppable-finance-addresses-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "unstoppable-finance-autoramp-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "unstoppable-finance-currencies-api-openapi.yml: previously refined output, superseded by openapi/_original/",

@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   description: The Stablecoin Payment Network
   title: Iron API - Sandbox Autoramp API
-  version: 1.0-16988
+  version: 1.0-19869
 servers:
 - url: https://api.sandbox.iron.xyz/api
 tags:
@@ -749,7 +749,7 @@ paths:
         name: sender_bank
         required: false
         schema:
-          $ref: '#/components/schemas/Bank'
+          type: string
       - deprecated: false
         description: The external id
         explode: true
@@ -1206,6 +1206,83 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Patch an autoramp market
+      tags:
+      - Autoramp
+  /autoramps/{autoramp_id}/br-code:
+    post:
+      description: 'Generates a static Pix BR code (copy-and-paste payload) for a BRL
+
+        autoramp, tagged with your `reference` and optionally a fixed amount.
+
+        The reference is returned with the resulting deposit. Calling again with
+
+        the same parameters returns the same code.'
+      operationId: createAutorampBrCode
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring an Autoramp operation is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: The autoramp ID
+        explode: false
+        in: path
+        name: autoramp_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/CreateAutorampBrCodeRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiAutorampBrCode'
+          description: BR code generated
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Bad Request
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Unauthorized
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Not Found
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Internal Error
+        '503':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: Pix provider temporarily unavailable
+      security:
+      - ApiKeyAuth: []
+      summary: Generate a Pix BR code for an autoramp
       tags:
       - Autoramp
   /autoramps/{autoramp_id}/payments/open-banking:
@@ -1676,175 +1753,22 @@ paths:
       - Autoramp
 components:
   schemas:
-    RampTransactionSource:
-      anyOf:
-      - $ref: '#/components/schemas/ApiWalletDepositSource'
-      - $ref: '#/components/schemas/ApiBankAccountSource'
-      description: The source of the autoramp transaction
-      type: object
-    DepositRail:
-      anyOf:
-      - $ref: '#/components/schemas/DepositRail_IbanDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_AfricanBankTransferDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_PixDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_SpeiDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_MobileMoneyDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_CryptoWallet'
-      - $ref: '#/components/schemas/DepositRail_FpsDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_ChapsDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_ACHDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_WireDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_RtpDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_FedNowDepositInfo'
-      - $ref: '#/components/schemas/DepositRail_SwiftDepositInfo'
-      discriminator:
-        mapping:
-          ACH: '#/components/schemas/DepositRail_ACHDepositInfo'
-          AfricanBankTransfer: '#/components/schemas/DepositRail_AfricanBankTransferDepositInfo'
-          CHAPS: '#/components/schemas/DepositRail_ChapsDepositInfo'
-          Crypto: '#/components/schemas/DepositRail_CryptoWallet'
-          FPS: '#/components/schemas/DepositRail_FpsDepositInfo'
-          FedNow: '#/components/schemas/DepositRail_FedNowDepositInfo'
-          MobileMoney: '#/components/schemas/DepositRail_MobileMoneyDepositInfo'
-          Pix: '#/components/schemas/DepositRail_PixDepositInfo'
-          RTP: '#/components/schemas/DepositRail_RtpDepositInfo'
-          SEPA: '#/components/schemas/DepositRail_IbanDepositInfo'
-          SWIFT: '#/components/schemas/DepositRail_SwiftDepositInfo'
-          Spei: '#/components/schemas/DepositRail_SpeiDepositInfo'
-          Wire: '#/components/schemas/DepositRail_WireDepositInfo'
-        propertyName: type
-      type: object
-    PixCpfKey:
-      description: 'PixCpfKey
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
 
-
-        A PIX DICT key that is the recipient''s CPF.'
-      example:
-        key: '12345678909'
+        Includes a trace_id that clients can reference when reporting issues.'
       properties:
-        key:
-          description: 11-digit CPF, with or without the `XXX.XXX.XXX-XX` formatting
-          pattern: ^([0-9]{11}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})$
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
           type: string
       required:
-      - key
-      title: PixCpfKey
+      - message
+      - trace_id
+      title: ApiError
       type: object
-    CreateAutoramp:
-      description: Either a set of market parameters or a signed quote. Optionally include a `type` field (`market` | `quote`) to get precise validation errors.
-      oneOf:
-      - allOf:
-        - $ref: '#/components/schemas/CreateAutorampParameters'
-        - properties:
-            type:
-              description: Optional discriminator. When present, the body is parsed as this variant and validation errors point at the offending field instead of the whole payload.
-              enum:
-              - market
-              type: string
-          type: object
-      - allOf:
-        - $ref: '#/components/schemas/SignedAutorampQuote'
-        - properties:
-            type:
-              description: Optional discriminator. When present, the body is parsed as this variant and validation errors point at the offending field instead of the whole payload.
-              enum:
-              - quote
-              type: string
-          type: object
-    DepositAccount_MobileMoneyDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - MobileMoney
-            example: MobileMoney
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/MobileMoneyDepositInfo'
-      description: 'DepositAccount
-
-
-        DEPRECATED: please use the deposit_rails field instead
-
-        '
-    Account:
-      anyOf:
-      - $ref: '#/components/schemas/Account_FiatAccount'
-      - $ref: '#/components/schemas/Account_CryptoWallet'
-      - $ref: '#/components/schemas/Account_PixAccount'
-      description: 'Account
-
-
-        The account for the autoramp
-
-        '
-      discriminator:
-        mapping:
-          Crypto: '#/components/schemas/Account_CryptoWallet'
-          Fiat: '#/components/schemas/Account_FiatAccount'
-          Pix: '#/components/schemas/Account_PixAccount'
-        propertyName: type
-      type: object
-    BankAccountIdentifier_BankAccountWireIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Wire
-            example: Wire
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountWireIdentifier'
-    Recipient_RecipientPix:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Pix
-            example: Pix
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/RecipientPix'
-      description: 'Recipient
-
-
-        The recipient of the payment
-
-        '
-    Crypto:
-      description: A cryptocurrency
-      example:
-        blockchain: Solana
-        token: USDC
-      properties:
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
-        token:
-          description: The ticker of the token e.g. 'USDC'
-          type: string
-      required:
-      - token
-      - blockchain
-      title: Crypto
-      type: object
-    DepositRail_SwiftDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SWIFT
-            example: SWIFT
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/SwiftDepositInfo'
     Fee:
       description: 'Fee
 
@@ -1904,812 +1828,108 @@ components:
       - network_fee
       title: Fee
       type: object
-    CreateAutorampParameters:
-      description: 'Create Autoramp Parameters
-
-
-        The parameters required to create a autoramp
+    Amount:
+      description: 'An amount of money
 
         '
+      example:
+        amount: '100.5'
+        currency:
+          code: USD
+          type: Fiat
       properties:
-        ach_payment_reference:
-          description: reference message attached to outgoing ACH transfers (max 10 chars)
-          maxLength: 10
-          minLength: 1
-          pattern: ^[A-Za-z0-9 /\-?:().+]*$
-          type: string
-        additional_partner_fee_in_bips:
-          deprecated: true
-          description: The additional partner fee in bips. This will be added to the fee. This is deprecated, use the partner fee configs instead.
+        amount:
+          description: The amount, a decimal number
           format: decimal
           type: string
-        batch_payout:
-          description: 'If true, payouts for this autoramp will be batched and sent once per day instead of individually.
-
-            Only supported for fiat destination currencies.'
-          type: boolean
-        customer_id:
-          description: The customer id
-          format: uuid
-          type: string
-        destination_currency:
+        currency:
           $ref: '#/components/schemas/Currency'
-        external_id:
-          description: External ID for the autoramp, provided by the partner
-          type: string
-        fee_profile_id:
-          description: The fee profile id to use for the autoramp. If not provided, the default fee profile for the partner will be used.
-          format: uuid
-          type: string
-        fps_payment_reference:
-          description: reference message attached to outgoing FPS transfers (max 18 chars)
-          maxLength: 18
-          minLength: 6
-          pattern: ^[A-Za-z]*$
-          type: string
-        name:
-          description: The name of the autoramp
-          type: string
-        pay_by_reference:
-          default: null
-          description: If true, a payment reference will be generated for the autoramp. Defaults to false if not provided.
-          type: boolean
-        recipient_account:
-          $ref: '#/components/schemas/Account'
-        sepa_payment_reference:
-          description: reference message attached to outgoing SEPA transfers (max 140 chars)
-          maxLength: 140
-          minLength: 6
-          pattern: ^[A-Za-z0-9 /\-?:().+]*$
-          type: string
-        source_currencies:
-          description: The list of source currencies
-          items:
-            $ref: '#/components/schemas/Currency'
-          type: array
-        source_is_third_party:
-          description: 'The source should be third party. E.g. a fiat account that allows
-
-            receiving 3pp payments.'
-          type: boolean
-        swift_payment_reference:
-          description: reference message attached to outgoing SWIFT transfers (max 4 lines, 35 chars per line)
-          maxLength: 140
-          minLength: 1
-          pattern: ^[A-Za-z0-9 /\-?:().+]*$
-          type: string
-        wire_message:
-          description: reference message attached to outgoing wire transfers (max 4 lines, 35 chars per line)
-          maxLength: 140
-          minLength: 1
-          pattern: ^[A-Za-z0-9 /\-?:().+]*$
-          type: string
       required:
-      - source_currencies
-      - destination_currency
-      - recipient_account
-      - customer_id
-      title: CreateAutorampParameters
+      - amount
+      - currency
+      title: Amount
       type: object
-    CreateAutorampOpenBankingPayment:
-      description: 'Create Autoramp Payment Link Payload
+    PartnerFee:
+      description: 'Partner Fee
 
 
-        The parameters for creating an autoramp payment link
+        A partner fee
 
         '
       properties:
-        amount_in:
-          $ref: '#/components/schemas/Amount'
-        callback_url:
-          type: string
-      required:
-      - amount_in
-      - callback_url
-      title: CreateAutorampOpenBankingPayment
-      type: object
-    PagedList_AutorampTransaction:
-      description: 'PagedList
-
-
-        A list of items with cursors used to fetch the next or previous page
-
-        '
-      properties:
-        cursor:
-          description: The cursor used to fetch the next page
-          format: uuid
-          type: string
-        items:
-          description: The list of items
-          items:
-            $ref: '#/components/schemas/AutorampTransaction'
-          type: array
-        prev_cursor:
-          default: null
-          description: The cursor used to fetch the previous page
-          format: uuid
-          type: string
-      required:
-      - items
-      title: PagedList_AutorampTransaction
-      type: object
-    BankAccountIdentifier_BankAccountFPSIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - FPS
-            example: FPS
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountFPSIdentifier'
-    CryptoWallet:
-      description: 'Crypto Wallet
-
-
-        The crypto wallet for the autoramp
-
-        '
-      properties:
-        address:
-          description: The address of the crypto account
-          type: string
-        chain:
-          $ref: '#/components/schemas/Blockchain'
-      required:
-      - chain
-      - address
-      title: CryptoWallet
-      type: object
-    DepositAccount:
-      anyOf:
-      - $ref: '#/components/schemas/DepositAccount_IbanDepositInfo'
-      - $ref: '#/components/schemas/DepositAccount_AchWireDepositInfo'
-      - $ref: '#/components/schemas/DepositAccount_AfricanBankTransferDepositInfo'
-      - $ref: '#/components/schemas/DepositAccount_PixDepositInfo'
-      - $ref: '#/components/schemas/DepositAccount_SpeiDepositInfo'
-      - $ref: '#/components/schemas/DepositAccount_MobileMoneyDepositInfo'
-      - $ref: '#/components/schemas/DepositAccount_CryptoWallet'
-      - $ref: '#/components/schemas/DepositAccount_ChapsFpsDepositInfo'
-      description: 'DepositAccount
-
-
-        DEPRECATED: please use the deposit_rails field instead
-
-        '
-      discriminator:
-        mapping:
-          ACHWire: '#/components/schemas/DepositAccount_AchWireDepositInfo'
-          AfricanBankTransfer: '#/components/schemas/DepositAccount_AfricanBankTransferDepositInfo'
-          CHAPSFPS: '#/components/schemas/DepositAccount_ChapsFpsDepositInfo'
-          Crypto: '#/components/schemas/DepositAccount_CryptoWallet'
-          MobileMoney: '#/components/schemas/DepositAccount_MobileMoneyDepositInfo'
-          Pix: '#/components/schemas/DepositAccount_PixDepositInfo'
-          SEPA: '#/components/schemas/DepositAccount_IbanDepositInfo'
-          Spei: '#/components/schemas/DepositAccount_SpeiDepositInfo'
-        propertyName: type
-      type: object
-    AutorampQuote:
-      description: 'Autoramp Quote
-
-
-        The autoramp quote used to create an autoramp
-
-        '
-      properties:
-        amount_in:
-          $ref: '#/components/schemas/Amount'
-        amount_out:
-          $ref: '#/components/schemas/Amount'
         fee:
-          $ref: '#/components/schemas/Fee'
-        fee_settlement:
+          $ref: '#/components/schemas/Amount'
+        label:
+          description: The label of the partner fee
+          type: string
+        settlement:
           $ref: '#/components/schemas/FeeSettlement'
-        partner_fee_settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-        quote_id:
-          description: The id of the quote
-          format: uuid
-          type: string
-        rate:
-          description: The rate
-          format: decimal
-          type: string
-        rate_expiry_policy:
-          $ref: '#/components/schemas/RateExpiryPolicy'
-        rate_lock_valid_until:
-          description: The rate lock valid until
-          format: date-time
-          type: string
-        slippage_tolerance_in_bips:
-          description: The slippage tolerance in bips
-          format: decimal
-          type: string
-        valid_until:
-          description: The valid until
-          format: date-time
-          type: string
       required:
-      - quote_id
-      - amount_in
-      - amount_out
-      - rate
-      - rate_lock_valid_until
-      - rate_expiry_policy
+      - label
       - fee
-      - fee_settlement
-      - partner_fee_settlement
-      - valid_until
-      title: AutorampQuote
+      - settlement
+      title: PartnerFee
       type: object
-    SpeiDepositInfo:
-      properties:
-        clabe:
-          type: string
-        instruction:
-          type: string
-      required:
-      - clabe
-      - instruction
-      title: SpeiDepositInfo
-      type: object
-    FeeSettlement:
-      description: 'Fee Settlement
-
-
-        The settlement type for the fee
-
-        '
-      enum:
-      - deductedImmediately
-      - settledLater
-      type: string
-    BusinessName:
+    BankAccountFPSIdentifier:
       example:
-        name: Aperture Science
-      properties:
-        name:
-          maxLength: 50
-          minLength: 1
-          type: string
-      required:
-      - name
-      title: BusinessName
-      type: object
-    ApiBankAccountSource:
-      description: A bank account source of an autoramp transaction
-      example:
-        account_number: null
-        bank_name: Iron Bank
-        bic: COBADEFFXXX
-        iban: DE89370400440532013000
-        name: Alan Turing
-        routing_number: null
-        sort_code: null
+        account_number: '55779911'
+        sort_code: 20-00-00
       properties:
         account_number:
-          description: The account number for US accounts
-          type: string
-        bank_name:
-          description: The bank name
-          type: string
-        bic:
-          description: The bic
-          type: string
-        iban:
-          description: The iban
-          type: string
-        name:
-          description: The name of the account holder
-          type: string
-        routing_number:
-          description: The routing number of the bank, for US accounts
           type: string
         sort_code:
-          description: The sort code of the bank, for UK accounts
           type: string
       required:
-      - bank_name
-      - iban
-      - bic
-      - name
-      title: ApiBankAccountSource
+      - sort_code
+      - account_number
+      title: BankAccountFPSIdentifier
       type: object
-    BankAccountIdentifier_Iban:
+    ApiAutorampOpenBankingPaymentSettlementStatus:
+      enum:
+      - InProgress
+      - Completed
+      - Incomplete
+      type: string
+    DepositAccount_AfricanBankTransferDepositInfo:
       allOf:
       - properties:
           type:
             enum:
-            - SEPA
-            example: SEPA
+            - AfricanBankTransfer
+            example: AfricanBankTransfer
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/Iban'
-    Country:
-      description: A country
-      example:
-        code: DE
-      properties:
-        code:
-          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
-          maxLength: 2
-          minLength: 2
-          type: string
-      required:
-      - code
-      title: Country
-      type: object
-    DepositRail_RtpDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - RTP
-            example: RTP
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/RtpDepositInfo'
-    PixAccountIdentifier_PixPhoneKey:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - PHONE
-            example: PHONE
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixPhoneKey'
-      description: 'PixAccountIdentifier
+      - $ref: '#/components/schemas/AfricanBankTransferDepositInfo'
+      description: 'DepositAccount
 
 
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    SignedAutorampQuote:
-      description: 'Signed Autoramp Quote
-
-
-        The signed autoramp quote
+        DEPRECATED: please use the deposit_rails field instead
 
         '
+    PaymentTracking:
+      description: Tracking information for this transactions' payout. Only populated for completed transactions
       properties:
         ach_payment_reference:
-          description: a message to include in outgoing ACH transfers (max 10 characters)
-          maxLength: 10
-          minLength: 1
-          pattern: ^[A-Za-z0-9 /\-?:().+]*$
           type: string
-        additional_in_currencies:
-          description: 'Additional input currencies to allow on the autoramp beyond `source_currency`.
-
-
-            Each entry must share the same chain as `source_currency` and the list must
-
-            not include `source_currency` itself. After autoramp creation, further quotes
-
-            can be obtained for these currencies via `POST /autoramps/:id/quotes`.'
-          items:
-            $ref: '#/components/schemas/Currency'
-          type: array
-        amount_in:
-          $ref: '#/components/schemas/Amount'
-        amount_out:
-          $ref: '#/components/schemas/Amount'
-        batch_payout:
-          description: 'If true, payouts for this autoramp will be batched and sent once per day instead of individually.
-
-            Only supported for fiat destination currencies.'
-          type: boolean
-        customer_id:
-          description: The customer id
-          format: uuid
-          type: string
-        deposit_account_type:
-          $ref: '#/components/schemas/DepositAccountType'
-        destination_currency:
-          $ref: '#/components/schemas/Currency'
-        external_id:
-          description: The external id
-          type: string
-        fee:
-          $ref: '#/components/schemas/Fee'
-        fee_profile_id:
-          description: The fee profile id to use for the autoramp. If not provided, the default fee profile for the partner will be used.
-          format: uuid
-          type: string
-        fee_settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-        fps_payment_reference:
-          description: a message to include in outgoing FPS transfers (max 18 characters)
-          maxLength: 18
-          minLength: 6
-          pattern: ^[A-Za-z]*$
-          type: string
-        is_third_party:
-          description: Is this a third party autoramp
-          type: boolean
-        pay_by_reference:
-          description: 'If true, a payment reference will be generated for the autoramp on
-
-            inbound matching (pay-by-reference). Defaults to false if not provided.'
-          type: boolean
-        quote_id:
-          description: The id of the quote
-          format: uuid
-          type: string
-        rate:
-          description: The rate
-          format: decimal
-          type: string
-        rate_expiry_policy:
-          $ref: '#/components/schemas/RateExpiryPolicy'
-        rate_lock_valid_until:
-          description: The rate lock valid until
-          format: date-time
-          type: string
-        recipient_account:
-          $ref: '#/components/schemas/Account'
-        sepa_payment_reference:
-          description: a message to include in outgoing SEPA transfers (max 140 characters)
-          maxLength: 140
-          minLength: 6
-          pattern: ^[A-Za-z0-9 /\-?:().+]*$
-          type: string
-        signature:
-          description: The signature
-          type: string
-        slippage_tolerance_in_bips:
-          description: The slippage tolerance in bips
-          format: decimal
-          type: string
-        source_currency:
-          $ref: '#/components/schemas/Currency'
-        swift_payment_reference:
-          description: a message to include in outgoing SWIFT transfers (max 4 lines, 35 chars per line)
-          maxLength: 140
-          minLength: 1
-          pattern: ^[A-Za-z0-9 /\-?:().+]*$
-          type: string
-        valid_until:
-          description: The valid until
-          format: date-time
-          type: string
-        wire_message:
-          description: a message to include in outgoing wire transfers (max 4 lines, 35 chars per line)
-          maxLength: 140
-          minLength: 1
-          pattern: ^[A-Za-z0-9 /\-?:().+]*$
-          type: string
-      required:
-      - quote_id
-      - source_currency
-      - destination_currency
-      - recipient_account
-      - customer_id
-      - amount_in
-      - amount_out
-      - rate
-      - rate_expiry_policy
-      - fee
-      - fee_settlement
-      - valid_until
-      - signature
-      - is_third_party
-      title: SignedAutorampQuote
-      type: object
-    DepositAccount_SpeiDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Spei
-            example: Spei
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/SpeiDepositInfo'
-      description: 'DepositAccount
-
-
-        DEPRECATED: please use the deposit_rails field instead
-
-        '
-    BankAccountIdentifier_BankAccountFedNowIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - FEDNOW
-            example: FEDNOW
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountFedNowIdentifier'
-    Currency:
-      anyOf:
-      - $ref: '#/components/schemas/Currency_Crypto'
-      - $ref: '#/components/schemas/Currency_Fiat'
-      description: 'Currency
-
-
-        Can be either crypto or fiat
-
-        '
-      discriminator:
-        mapping:
-          Crypto: '#/components/schemas/Currency_Crypto'
-          Fiat: '#/components/schemas/Currency_Fiat'
-        propertyName: type
-      type: object
-    DepositRail_CryptoWallet:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Crypto
-            example: Crypto
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/CryptoWallet'
-    Blockchain:
-      description: 'Blockchain
-
-
-        A type of blockchain
-
-        '
-      enum:
-      - Solana
-      - Ethereum
-      - Polygon
-      - Arbitrum
-      - Base
-      - Stellar
-      - Citrea
-      - Plasma
-      - Avalanche
-      - Moca
-      - Tempo
-      - Tron
-      - Bsc
-      type: string
-    Currency_Fiat:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Fiat
-            example: Fiat
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/Fiat'
-      description: 'Currency
-
-
-        Can be either crypto or fiat
-
-        '
-    DepositAccount_IbanDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SEPA
-            example: SEPA
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/IbanDepositInfo'
-      description: 'DepositAccount
-
-
-        DEPRECATED: please use the deposit_rails field instead
-
-        '
-    Autoramp:
-      description: 'Autoramp
-
-
-        The autoramp response
-
-
-        A Autoramp response'
-      properties:
-        additional_partner_fee_in_bips:
-          description: The additional partner fee in bips
-          format: decimal
-          type: string
-        batch_payout:
-          description: Whether payouts for this autoramp are batched daily
-          type: boolean
-        created_at:
-          description: The created at timestamp
-          format: date-time
-          type: string
-        customer_id:
-          description: The id of the customer that owns the autoramp
-          format: uuid
-          type: string
-        deposit_account:
-          allOf:
-          - $ref: '#/components/schemas/DepositAccount'
-          - deprecated: true
-            description: Deprecated, please use the information in the deposit_rails field instead
-          deprecated: true
-          description: Deprecated, please use the information in the deposit_rails field instead
-        deposit_rails:
-          items:
-            $ref: '#/components/schemas/DepositRail'
-          type: array
-        destination_currency:
-          $ref: '#/components/schemas/Currency'
-        external_id:
-          description: External ID for the autoramp, provided by the partner
-          type: string
-        fee_profile_id:
-          description: The fee profile id used for the autoramp
-          format: uuid
+        ach_trace_number:
           type: string
         fps_payment_reference:
-          description: reference message for outgoing FPS transfers
           type: string
-        id:
-          description: The id of the autoramp
-          format: uuid
+        imad:
           type: string
-        inbound_payment_reference:
-          description: 'System-generated inbound memo that senders must include on transfers
-
-            to the shared VA. `None` for autoramps that don''t use pay-by-reference.'
+        omad:
           type: string
-        is_third_party:
-          description: Is this a third party payment (3pp) autoramp
-          type: boolean
-        kind:
-          $ref: '#/components/schemas/AutorampType'
-        name:
-          description: The name of the autoramp
-          type: string
-        payment_reference:
-          description: The payment reference for the autoramp
-          type: string
-        quote:
-          allOf:
-          - $ref: '#/components/schemas/AutorampQuote'
-          - deprecated: true
-            description: 'Deprecated: use the `quotes` field instead. Returns the newest active (non-expired) quote if any.'
-          deprecated: true
-          description: 'Deprecated: use the `quotes` field instead. Returns the newest active (non-expired) quote if any.'
-        quotes:
-          description: 'Active (non-expired) quotes associated with this autoramp. Deposits are
-
-            matched to the newest active quote with matching `amount_in` value and
-
-            currency.'
-          items:
-            $ref: '#/components/schemas/AutorampQuote'
-          type: array
-        recipient:
-          $ref: '#/components/schemas/Recipient'
         sepa_payment_reference:
-          description: reference message for outgoing SEPA transfers
           type: string
-        source:
-          $ref: '#/components/schemas/AutorampSource'
-        source_currencies:
-          description: The source currencies
-          items:
-            $ref: '#/components/schemas/Currency'
-          type: array
-        status:
-          $ref: '#/components/schemas/AutorampStatus'
         swift_payment_reference:
-          description: reference message for outgoing SWIFT transfers
           type: string
-        travel_address:
-          description: The travel rule address for compliance
+        uetr:
           type: string
         wire_message:
-          description: reference message for outgoing wire transfers
           type: string
-      required:
-      - id
-      - customer_id
-      - status
-      - kind
-      - created_at
-      - source_currencies
-      - destination_currency
-      - source
-      - quotes
-      - is_third_party
-      - recipient
-      - deposit_rails
-      - fee_profile_id
-      - batch_payout
-      title: Autoramp
-      type: object
-    PixAccountIdentifier_PixEvpKey:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - EVP
-            example: EVP
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixEvpKey'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    DepositAccount_AchWireDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - ACHWire
-            example: ACHWire
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/AchWireDepositInfo'
-      description: 'DepositAccount
-
-
-        DEPRECATED: please use the deposit_rails field instead
-
-        '
-    BankAccountIdentifier_BankAccountSWIFTIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SWIFT
-            example: SWIFT
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountSWIFTIdentifier'
-    Recipient:
-      anyOf:
-      - $ref: '#/components/schemas/Recipient_RecipientBankAccount'
-      - $ref: '#/components/schemas/Recipient_RecipientWallet'
-      - $ref: '#/components/schemas/Recipient_RecipientPix'
-      description: 'Recipient
-
-
-        The recipient of the payment
-
-        '
-      discriminator:
-        mapping:
-          BankAccount: '#/components/schemas/Recipient_RecipientBankAccount'
-          Pix: '#/components/schemas/Recipient_RecipientPix'
-          Wallet: '#/components/schemas/Recipient_RecipientWallet'
-        propertyName: type
+      title: PaymentTracking
       type: object
     NetworkFee:
       anyOf:
@@ -2760,6 +1980,62 @@ components:
       - MobileMoney
       - ChapsFps
       type: string
+    ApiAutorampBrCode:
+      description: A Pix BR code for an autoramp
+      properties:
+        br_code:
+          description: The Pix copy-and-paste (EMV) payload to pay
+          type: string
+      required:
+      - br_code
+      title: ApiAutorampBrCode
+      type: object
+    Recipient:
+      anyOf:
+      - $ref: '#/components/schemas/Recipient_RecipientBankAccount'
+      - $ref: '#/components/schemas/Recipient_RecipientWallet'
+      - $ref: '#/components/schemas/Recipient_RecipientPix'
+      description: 'Recipient
+
+
+        The recipient of the payment
+
+        '
+      discriminator:
+        mapping:
+          BankAccount: '#/components/schemas/Recipient_RecipientBankAccount'
+          Pix: '#/components/schemas/Recipient_RecipientPix'
+          Wallet: '#/components/schemas/Recipient_RecipientWallet'
+        propertyName: type
+      type: object
+    Account_FiatAccount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fiat
+            example: Fiat
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/FiatAccount'
+      description: 'Account
+
+
+        The account for the autoramp
+
+        '
+    RecipientName:
+      anyOf:
+      - $ref: '#/components/schemas/RecipientName_IndividualName'
+      - $ref: '#/components/schemas/RecipientName_BusinessName'
+      discriminator:
+        mapping:
+          Business: '#/components/schemas/RecipientName_BusinessName'
+          Individual: '#/components/schemas/RecipientName_IndividualName'
+        propertyName: type
+      type: object
     PixEvpKey:
       description: 'PixEvpKey
 
@@ -2775,269 +2051,6 @@ components:
       required:
       - key
       title: PixEvpKey
-      type: object
-    PixCnpjKey:
-      description: 'PixCnpjKey
-
-
-        A PIX DICT key that is the recipient''s CNPJ.'
-      example:
-        key: '12345678000195'
-      properties:
-        key:
-          description: 14-digit CNPJ, with or without the `XX.XXX.XXX/XXXX-XX` formatting
-          pattern: ^([0-9]{14}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
-          type: string
-      required:
-      - key
-      title: PixCnpjKey
-      type: object
-    EmailAddress:
-      description: 'EmailAddress
-
-
-        An email address
-
-        An email address
-
-        '
-      example:
-        email: john.doe@example.com
-      properties:
-        email:
-          description: The email address
-          type: string
-      required:
-      - email
-      title: EmailAddress
-      type: object
-    PixAccount:
-      description: 'PIX Account
-
-
-        References a previously-registered PIX destination by its id.'
-      properties:
-        id:
-          description: The id of a previously-registered PIX destination
-          format: uuid
-          type: string
-      required:
-      - id
-      title: PixAccount
-      type: object
-    PixEmailKey:
-      description: 'PixEmailKey
-
-
-        A PIX DICT key that is the recipient''s email address.'
-      example:
-        key: joao.silva@example.com
-      properties:
-        key:
-          maxLength: 77
-          pattern: ^[^@\s]+@[^@\s]+$
-          type: string
-      required:
-      - key
-      title: PixEmailKey
-      type: object
-    PixAccountIdentifier_PixBankDetails:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - BANK_DETAILS
-            example: BANK_DETAILS
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixBankDetails'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    PixAccountType:
-      description: 'PixAccountType
-
-
-        The type of a Brazilian bank account.'
-      enum:
-      - CHECKING
-      - SAVINGS
-      - SALARY
-      - TRANSACTION
-      type: string
-    ApiAutorampOpenBankingPayment:
-      description: 'Autoramp Open Banking Payment with link to initiate flow
-
-
-        One payment attempt against a provider for an autoramp''s open-banking flow.'
-      properties:
-        id:
-          description: 'The provider''s payment ID (e.g. tokenio''s payment ID). Use this with
-
-            the GET-by-id endpoint to look up the latest status.'
-          type: string
-        iron_payment_id:
-          description: 'Iron''s internal identifier for this open banking payment. Use this
-
-            as the pagination cursor when listing payments.'
-          format: uuid
-          type: string
-        payment_link:
-          type: string
-        settlement_status:
-          $ref: '#/components/schemas/ApiAutorampOpenBankingPaymentSettlementStatus'
-        status:
-          $ref: '#/components/schemas/ApiAutorampOpenBankingPaymentStatus'
-      required:
-      - id
-      - iron_payment_id
-      - status
-      title: ApiAutorampOpenBankingPayment
-      type: object
-    PixPhoneKey:
-      description: 'PixPhoneKey
-
-
-        A PIX DICT key that is the recipient''s phone number.'
-      example:
-        key: '+5511987654321'
-      properties:
-        key:
-          description: International format with leading `+`, e.g. +5511987654321
-          pattern: ^\+[1-9][0-9]{1,14}$
-          type: string
-      required:
-      - key
-      title: PixPhoneKey
-      type: object
-    AfricanBankTransferDepositInfo:
-      properties:
-        account_name:
-          type: string
-        account_number:
-          type: string
-        amount:
-          format: decimal
-          type: string
-        bank_name:
-          type: string
-        currency:
-          type: string
-        financial_institution:
-          $ref: '#/components/schemas/Bank'
-        instruction:
-          type: string
-        reference_id:
-          type: string
-      title: AfricanBankTransferDepositInfo
-      type: object
-    BankAccountSWIFTIdentifier:
-      example:
-        account_number: '1234567890'
-        bic: CHASUS33XXX
-      properties:
-        account_number:
-          type: string
-        bic:
-          type: string
-        intermediary_bic:
-          description: 'BIC of an intermediary correspondent bank in the SWIFT routing chain,
-
-            when the sender wants to override the auto-selected intermediary.
-
-            Optional — most senders leave this unset and let their provider pick.'
-          type: string
-      required:
-      - bic
-      - account_number
-      title: BankAccountSWIFTIdentifier
-      type: object
-    BankPostalAddress:
-      description: 'BankPostalAddress
-
-
-        The bank''s address. Only required for SWIFT accounts.'
-      properties:
-        city:
-          description: The city
-          maxLength: 100
-          minLength: 2
-          type: string
-        country:
-          $ref: '#/components/schemas/Country'
-        postal_code:
-          description: The postal code
-          maxLength: 20
-          minLength: 3
-          type: string
-        state:
-          description: The state
-          type: string
-        street:
-          description: The street address
-          maxLength: 256
-          minLength: 2
-          type: string
-      required:
-      - street
-      - city
-      - state
-      - country
-      - postal_code
-      title: BankPostalAddress
-      type: object
-    RecipientWallet:
-      description: 'RecipientWallet
-
-
-        An on-chain wallet address
-
-        '
-      properties:
-        address:
-          description: The wallet address
-          type: string
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
-      required:
-      - blockchain
-      - address
-      title: RecipientWallet
-      type: object
-    RtpDepositInfo:
-      example:
-        account_number: '456789123'
-        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
-        bank_name: JPMorgan Chase Bank
-        recipient_address: 123 Main Street, New York, NY 10001, US
-        recipient_name: Alan Turing
-        routing_number: '021000021'
-      properties:
-        account_number:
-          type: string
-        bank_address:
-          type: string
-        bank_name:
-          type: string
-        recipient_address:
-          type: string
-        recipient_name:
-          type: string
-        routing_number:
-          type: string
-      required:
-      - routing_number
-      - account_number
-      - bank_name
-      - bank_address
-      - recipient_name
-      - recipient_address
-      title: RtpDepositInfo
       type: object
     SignedAutorampRateQuote:
       description: 'Signed rate quote for an existing autoramp.
@@ -3119,30 +2132,34 @@ components:
       - signature
       title: SignedAutorampRateQuote
       type: object
-    AutorampTransactionStatus:
-      description: 'Autoramp Transaction Status
+    EmailAddress:
+      description: 'EmailAddress
 
 
-        The status of the autoramp transaction
+        An email address
+
+        An email address
 
         '
-      enum:
-      - FundsReviewInProgress
-      - ConversionInProgress
-      - PayoutInProgress
-      - Completed
-      - Failed
-      - RejectedAml
-      - RejectedFraud
-      - RejectedMinAmount
-      type: string
-    FpsDepositInfo:
       example:
-        account_number: '55779911'
-        bank_address: 2 Thomas More Square, London, E1W 1YN
-        bank_name: Banking Circle UK
-        beneficiary_name: Alan Turing
-        sort_code: 20-00-00
+        email: john.doe@example.com
+      properties:
+        email:
+          description: The email address
+          type: string
+      required:
+      - email
+      title: EmailAddress
+      type: object
+    FedNowDepositInfo:
+      description: Available from API version 2026-07-01.
+      example:
+        account_number: '456789123'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
       properties:
         account_number:
           type: string
@@ -3150,15 +2167,184 @@ components:
           type: string
         bank_name:
           type: string
-        beneficiary_name:
+        recipient_address:
           type: string
-        sort_code:
+        recipient_name:
+          type: string
+        routing_number:
           type: string
       required:
-      - sort_code
+      - routing_number
       - account_number
-      title: FpsDepositInfo
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: FedNowDepositInfo
       type: object
+    DepositRail:
+      anyOf:
+      - $ref: '#/components/schemas/DepositRail_IbanDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_AfricanBankTransferDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_PixDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_SpeiDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_MobileMoneyDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_CryptoWallet'
+      - $ref: '#/components/schemas/DepositRail_FpsDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_ChapsDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_ACHDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_WireDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_RtpDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_FedNowDepositInfo'
+      - $ref: '#/components/schemas/DepositRail_SwiftDepositInfo'
+      discriminator:
+        mapping:
+          ACH: '#/components/schemas/DepositRail_ACHDepositInfo'
+          AfricanBankTransfer: '#/components/schemas/DepositRail_AfricanBankTransferDepositInfo'
+          CHAPS: '#/components/schemas/DepositRail_ChapsDepositInfo'
+          Crypto: '#/components/schemas/DepositRail_CryptoWallet'
+          FPS: '#/components/schemas/DepositRail_FpsDepositInfo'
+          FedNow: '#/components/schemas/DepositRail_FedNowDepositInfo'
+          MobileMoney: '#/components/schemas/DepositRail_MobileMoneyDepositInfo'
+          Pix: '#/components/schemas/DepositRail_PixDepositInfo'
+          RTP: '#/components/schemas/DepositRail_RtpDepositInfo'
+          SEPA: '#/components/schemas/DepositRail_IbanDepositInfo'
+          SWIFT: '#/components/schemas/DepositRail_SwiftDepositInfo'
+          Spei: '#/components/schemas/DepositRail_SpeiDepositInfo'
+          Wire: '#/components/schemas/DepositRail_WireDepositInfo'
+        propertyName: type
+      type: object
+    BankAccountIdentifier_Iban:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SEPA
+            example: SEPA
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Iban'
+    BankAccountWireIdentifier:
+      example:
+        account_number: '987654321'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountWireIdentifier
+      type: object
+    BankAccountIdentifier_BankAccountWireIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Wire
+            example: Wire
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountWireIdentifier'
+    BusinessName:
+      example:
+        name: Aperture Science
+      properties:
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+      required:
+      - name
+      title: BusinessName
+      type: object
+    DepositRail_RtpDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - RTP
+            example: RTP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/RtpDepositInfo'
+    AutorampSource:
+      description: 'Autoramp Source
+
+
+        The source of the autoramp'
+      enum:
+      - Standalone
+      - Quote
+      type: string
+    PagedList_Autoramp:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Autoramp'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_Autoramp
+      type: object
+    DepositRail_SwiftDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SWIFT
+            example: SWIFT
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/SwiftDepositInfo'
+    NetworkFee_Amount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SwiftOut
+            example: SwiftOut
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Amount'
+      description: 'Network Fee
+
+
+        The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
+
+        '
     PatchAutorampMarketParameters:
       description: 'Patch Autoramp Market Parameters
 
@@ -3186,46 +2372,382 @@ components:
       - customer_id
       title: PatchAutorampMarketParameters
       type: object
-    Iban:
+    IndividualName:
       example:
-        iban: DE89370400440532013000
+        family_name: Turing
+        given_name: Alan
       properties:
-        iban:
+        family_name:
+          maxLength: 50
+          minLength: 1
+          type: string
+        given_name:
+          maxLength: 50
+          minLength: 1
           type: string
       required:
-      - iban
-      title: Iban
+      - given_name
+      - family_name
+      title: IndividualName
       type: object
-    DepositRail_WireDepositInfo:
+    PixCnpjKey:
+      description: 'PixCnpjKey
+
+
+        A PIX DICT key that is the recipient''s CNPJ.'
+      example:
+        key: '12345678000195'
+      properties:
+        key:
+          description: 14-digit CNPJ, with or without the `XX.XXX.XXX/XXXX-XX` formatting
+          pattern: ^([0-9]{14}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
+          type: string
+      required:
+      - key
+      title: PixCnpjKey
+      type: object
+    Country:
+      description: A country
+      example:
+        code: DE
+      properties:
+        code:
+          description: The ISO_3166-1 Alpha-2 country code, e.g. "DE"
+          maxLength: 2
+          minLength: 2
+          type: string
+      required:
+      - code
+      title: Country
+      type: object
+    ApiAutorampOpenBankingPayment:
+      description: 'Autoramp Open Banking Payment with link to initiate flow
+
+
+        One payment attempt against a provider for an autoramp''s open-banking flow.'
+      properties:
+        id:
+          description: 'The provider''s payment ID (e.g. tokenio''s payment ID). Use this with
+
+            the GET-by-id endpoint to look up the latest status.'
+          type: string
+        iron_payment_id:
+          description: 'Iron''s internal identifier for this open banking payment. Use this
+
+            as the pagination cursor when listing payments.'
+          format: uuid
+          type: string
+        payment_link:
+          type: string
+        settlement_status:
+          $ref: '#/components/schemas/ApiAutorampOpenBankingPaymentSettlementStatus'
+        status:
+          $ref: '#/components/schemas/ApiAutorampOpenBankingPaymentStatus'
+      required:
+      - id
+      - iron_payment_id
+      - status
+      title: ApiAutorampOpenBankingPayment
+      type: object
+    ApiWalletDepositSource:
+      description: A wallet deposit source of an autoramp transaction
+      example:
+        blockchain: Solana
+        deposit_tx_hash: 45E89p7aRyUzsqbqstCkKqxaaeYXgagbq8ccHCZWMRN1E8KAqoEPACDasVjkMMbDJGwrwFHz5RDT67kUN3p5Rk81
+        wallet_address: 7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
+      properties:
+        blockchain:
+          description: The blockchain
+          type: string
+        deposit_tx_hash:
+          description: The deposit transaction hash
+          type: string
+        wallet_address:
+          description: The wallet address
+          type: string
+      required:
+      - wallet_address
+      - blockchain
+      title: ApiWalletDepositSource
+      type: object
+    DepositRail_FpsDepositInfo:
       allOf:
       - properties:
           type:
             enum:
-            - Wire
-            example: Wire
+            - FPS
+            example: FPS
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/WireDepositInfo'
-    PayoutCryptoTransaction:
-      description: 'Payout Transaction Details
+      - $ref: '#/components/schemas/FpsDepositInfo'
+    BankAccountIdentifier_BankAccountFedNowIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FEDNOW
+            example: FEDNOW
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountFedNowIdentifier'
+    AutorampTransactionState:
+      description: 'Autoramp Transaction State
 
 
-        Details about the blockchain transaction used for crypto payouts
+        The state of the autoramp transaction
 
         '
+      enum:
+      - Pending
+      - PayoutPending
+      - Payout
+      - PayoutCompleted
+      - Completed
+      - Failed
+      - InAmlReview
+      - AmlRejected
+      - AmountRejected
+      - FraudRejected
+      type: string
+    DepositAccount_AchWireDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - ACHWire
+            example: ACHWire
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/AchWireDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    RecipientName_BusinessName:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Business
+            example: Business
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BusinessName'
+    DepositRail_ACHDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - ACH
+            example: ACH
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/ACHDepositInfo'
+    PaymentNetwork:
+      description: 'PaymentNetwork
+
+
+        A payment network
+
+        '
+      enum:
+      - Sepa
+      - Swift
+      - Fps
+      - Chats
+      - Ach
+      - Wire
+      - Rtp
+      - Fednow
+      - Pix
+      - Spei
+      - AfricanBankTransfer
+      - MobileMoney
+      - Chaps
+      type: string
+    CreateAutoramp:
+      description: Either a set of market parameters or a signed quote. Optionally include a `type` field (`market` | `quote`) to get precise validation errors.
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/CreateAutorampParameters'
+        - properties:
+            type:
+              description: Optional discriminator. When present, the body is parsed as this variant and validation errors point at the offending field instead of the whole payload.
+              enum:
+              - market
+              type: string
+          type: object
+      - allOf:
+        - $ref: '#/components/schemas/SignedAutorampQuote'
+        - properties:
+            type:
+              description: Optional discriminator. When present, the body is parsed as this variant and validation errors point at the offending field instead of the whole payload.
+              enum:
+              - quote
+              type: string
+          type: object
+    PixCpfKey:
+      description: 'PixCpfKey
+
+
+        A PIX DICT key that is the recipient''s CPF.'
       example:
-        transaction_hash: 5J9qvKhKqYbpjhCkqDnKXSp7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
+        key: '12345678909'
       properties:
-        transaction_hash:
-          description: The blockchain transaction hash
+        key:
+          description: 11-digit CPF, with or without the `XXX.XXX.XXX-XX` formatting
+          pattern: ^([0-9]{11}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})$
           type: string
       required:
-      - transaction_hash
-      title: PayoutCryptoTransaction
+      - key
+      title: PixCpfKey
       type: object
-    DepositAccount_PixDepositInfo:
+    NetworkFeeType:
+      description: 'Network Fee Type
+
+
+        The type of network fee
+
+        '
+      enum:
+      - SepaIn
+      - SepaOut
+      - EthereumGas
+      - CitreaGas
+      - SolanaTransactionFee
+      - StellarTransactionFee
+      - PolygonGas
+      - BaseGas
+      - AvalancheGas
+      - TronGas
+      - BscGas
+      - SeismicExecutionFee
+      - RailFee
+      - AchIn
+      - AchOut
+      - WireIn
+      - WireOut
+      - SwiftIn
+      - SwiftOut
+      - FpsIn
+      - FpsOut
+      - ChapsIn
+      - ChapsOut
+      - RtpIn
+      - RtpOut
+      - FednowIn
+      - FednowOut
+      type: string
+    DepositAccount_MobileMoneyDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - MobileMoney
+            example: MobileMoney
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/MobileMoneyDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    PixAccountIdentifier_PixCnpjKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CNPJ
+            example: CNPJ
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixCnpjKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    AuthenticationCodeStatus:
+      description: The status of the Authentication Code
+      enum:
+      - Pending
+      - Expired
+      - Confirmed
+      - Rejected
+      type: string
+    PixAccountType:
+      description: 'PixAccountType
+
+
+        The type of a Brazilian bank account.'
+      enum:
+      - CHECKING
+      - SAVINGS
+      - SALARY
+      - TRANSACTION
+      type: string
+    Fiat:
+      description: A fiat currency
+      example:
+        code: USD
+      properties:
+        code:
+          description: The code of the currency e.g. 'USD'
+          type: string
+      required:
+      - code
+      title: Fiat
+      type: object
+    DepositRail_SpeiDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Spei
+            example: Spei
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/SpeiDepositInfo'
+    Account_CryptoWallet:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/CryptoWallet'
+      description: 'Account
+
+
+        The account for the autoramp
+
+        '
+    DepositRail_PixDepositInfo:
       allOf:
       - properties:
           type:
@@ -3237,98 +2759,288 @@ components:
         - type
         type: object
       - $ref: '#/components/schemas/PixDepositInfo'
-      description: 'DepositAccount
+    PixBankDetails:
+      description: 'PixBankDetails
 
 
-        DEPRECATED: please use the deposit_rails field instead
+        Full Brazilian bank account details identifying the recipient''s account,
 
-        '
-    Recipient_RecipientBankAccount:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - BankAccount
-            example: BankAccount
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/RecipientBankAccount'
-      description: 'Recipient
-
-
-        The recipient of the payment
-
-        '
-    ApiError:
-      description: 'Standard error response returned to API clients for server errors.
-
-        Includes a trace_id that clients can reference when reporting issues.'
+        for recipients without a registered PIX key.'
+      example:
+        account_number: '5678901'
+        account_type: CHECKING
+        bank_code: '341'
+        branch_code: '1234'
+        tax_id: '12345678909'
       properties:
-        message:
-          description: Human-readable error message
+        account_number:
+          description: 'Account number including the verification (check) digit, with no
+
+            separator, e.g. `7140025418`.'
+          maxLength: 20
+          minLength: 1
           type: string
-        trace_id:
-          description: Trace ID that can be used to look up request details in logs
+        account_type:
+          $ref: '#/components/schemas/PixAccountType'
+        bank_code:
+          description: 3-digit COMPE bank code or 8-digit ISPB, distinguished by length
+          pattern: ^([0-9]{3}|[0-9]{8})$
+          type: string
+        branch_code:
+          description: Branch number without the verification digit
+          pattern: ^[0-9]{1,4}$
+          type: string
+        tax_id:
+          description: 'The account holder''s CPF (11 digits) or CNPJ (14 digits), with or
+
+            without the usual `.`/`-`/`/` formatting.'
+          pattern: ^([0-9]{11}|[0-9]{14}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
           type: string
       required:
-      - message
-      - trace_id
-      title: ApiError
+      - tax_id
+      - bank_code
+      - branch_code
+      - account_number
+      - account_type
+      title: PixBankDetails
       type: object
-    Amount:
-      description: 'An amount of money
+    ApiCanCreateAutorampResponse:
+      description: 'Can Create Autoramp Response
+
+
+        Indicates whether a customer can create a new autoramp.
+
+        '
+      properties:
+        can_create:
+          description: Whether the customer can create a new autoramp based on the provided parameters.
+          type: boolean
+      required:
+      - can_create
+      title: ApiCanCreateAutorampResponse
+      type: object
+    RecipientBankAccount:
+      description: 'RecipientBankAccount
+
+
+        A recipient fiat bank account
 
         '
       example:
-        amount: '100.5'
-        currency:
-          code: USD
-          type: Fiat
+        account_identifier:
+          iban: DE89370400440532013000
+          type: SEPA
+        address:
+          city: London
+          country:
+            code: GB
+          postal_code: SW1A 2AA
+          state: England
+          street: 10 Downing Street
+        bank_address: null
+        email_address:
+          email: john.doe@example.com
+        is_third_party: false
+        phone_number: +49-30-12345678
+        provider_country:
+          code: DE
+        provider_name: Iron Bank
+        recipient:
+          name: Aperture Science
+          type: Business
       properties:
-        amount:
-          description: The amount, a decimal number
-          format: decimal
+        account_identifier:
+          $ref: '#/components/schemas/BankAccountIdentifier'
+        address:
+          $ref: '#/components/schemas/RecipientPostalAddress'
+        bank_address:
+          $ref: '#/components/schemas/BankPostalAddress'
+        email_address:
+          $ref: '#/components/schemas/EmailAddress'
+        is_third_party:
+          description: Is this a users fiat bank account or a third party fiat bank account
+          type: boolean
+        phone_number:
+          description: The recipient's phone number.
           type: string
-        currency:
-          $ref: '#/components/schemas/Currency'
+        provider_country:
+          $ref: '#/components/schemas/Country'
+        provider_name:
+          description: The name of the provider of the recipient's account
+          type: string
+        recipient:
+          $ref: '#/components/schemas/RecipientName'
       required:
-      - amount
-      - currency
-      title: Amount
+      - recipient
+      - provider_name
+      - provider_country
+      - account_identifier
+      - address
+      - is_third_party
+      title: RecipientBankAccount
       type: object
-    Currency_Crypto:
+    DepositRail_ChapsDepositInfo:
       allOf:
       - properties:
           type:
             enum:
-            - Crypto
-            example: Crypto
+            - CHAPS
+            example: CHAPS
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/Crypto'
-      description: 'Currency
+      - $ref: '#/components/schemas/ChapsDepositInfo'
+    Account_PixAccount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Pix
+            example: Pix
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixAccount'
+      description: 'Account
 
 
-        Can be either crypto or fiat
+        The account for the autoramp
 
         '
-    BankAccountFPSIdentifier:
+    AuthenticationCode:
+      description: 'An authentication code
+
+
+        used to confirm a 2FA action
+
+        '
+      properties:
+        attempts:
+          description: attempts to submit the authentication code
+          format: int32
+          type: integer
+        entity_id:
+          description: the ID of the entity the authentication is related to
+          format: uuid
+          type: string
+        expires_at:
+          description: the time of expiry for the authentication code
+          format: date-time
+          type: string
+        id:
+          description: The ID of the authentication code
+          format: uuid
+          type: string
+        status:
+          $ref: '#/components/schemas/AuthenticationCodeStatus'
+      required:
+      - id
+      - status
+      - expires_at
+      - attempts
+      - entity_id
+      title: AuthenticationCode
+      type: object
+    FpsDepositInfo:
       example:
         account_number: '55779911'
+        bank_address: 2 Thomas More Square, London, E1W 1YN
+        bank_name: Banking Circle UK
+        beneficiary_name: Alan Turing
         sort_code: 20-00-00
       properties:
         account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        beneficiary_name:
           type: string
         sort_code:
           type: string
       required:
       - sort_code
       - account_number
-      title: BankAccountFPSIdentifier
+      title: FpsDepositInfo
+      type: object
+    BankAccountACHIdentifier:
+      example:
+        account_number: '123456789'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountACHIdentifier
+      type: object
+    RecipientPostalAddress:
+      description: 'RecipientPostalAddress
+
+
+        The account holder''s address.'
+      properties:
+        city:
+          description: The city
+          maxLength: 100
+          minLength: 2
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        postal_code:
+          description: The postal code
+          maxLength: 20
+          minLength: 3
+          type: string
+        state:
+          description: The state
+          type: string
+        street:
+          description: The street address
+          maxLength: 256
+          minLength: 2
+          type: string
+      required:
+      - street
+      - city
+      - state
+      - country
+      - postal_code
+      title: RecipientPostalAddress
+      type: object
+    PixAccountIdentifier_PixPhoneKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - PHONE
+            example: PHONE
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixPhoneKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    RampTransactionSource:
+      anyOf:
+      - $ref: '#/components/schemas/ApiWalletDepositSource'
+      - $ref: '#/components/schemas/ApiBankAccountSource'
+      description: The source of the autoramp transaction
       type: object
     AutorampTransaction:
       description: 'Autoramp Transaction
@@ -3377,7 +3089,13 @@ components:
           description: reference of this transaction's pay-in transfer
           type: string
         is_third_party:
-          description: Is this a third party payment (3pp) autoramp
+          description: 'Whether the parent autoramp is configured to accept third-party
+
+            payments, copied from the autoramp. This is a configuration flag, not a
+
+            finding about this transaction. Use `third_party_classification` to see
+
+            whether this specific payment came from the customer.'
           type: boolean
         kind:
           $ref: '#/components/schemas/AutorampType'
@@ -3426,527 +3144,65 @@ components:
       - kind
       title: AutorampTransaction
       type: object
-    AutorampType:
-      description: 'Autoramp type
+    DepositRail_WireDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Wire
+            example: Wire
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/WireDepositInfo'
+    Crypto:
+      description: A cryptocurrency
+      example:
+        blockchain: Solana
+        token: USDC
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        token:
+          description: The ticker of the token e.g. 'USDC'
+          type: string
+      required:
+      - token
+      - blockchain
+      title: Crypto
+      type: object
+    NetworkFeeWithSettlement:
+      description: 'Network Fee with Settlement
 
 
-        The type (onramp, offramp, swap) of an autoramp'
-      enum:
-      - Onramp
-      - Offramp
-      - Swap
-      - Mint
-      - Redeem
-      type: string
-    RecipientBankAccount:
-      description: 'RecipientBankAccount
-
-
-        A recipient fiat bank account
+        The network fee with settlement for a given currency
 
         '
-      example:
-        account_identifier:
-          iban: DE89370400440532013000
-          type: SEPA
-        address:
-          city: London
-          country:
-            code: GB
-          postal_code: SW1A 2AA
-          state: England
-          street: 10 Downing Street
-        bank_address: null
-        email_address:
-          email: john.doe@example.com
-        is_third_party: false
-        phone_number: +49-30-12345678
-        provider_country:
-          code: DE
-        provider_name: Iron Bank
-        recipient:
-          name: Aperture Science
-          type: Business
       properties:
-        account_identifier:
-          $ref: '#/components/schemas/BankAccountIdentifier'
-        address:
-          $ref: '#/components/schemas/RecipientPostalAddress'
-        bank_address:
-          $ref: '#/components/schemas/BankPostalAddress'
-        email_address:
-          $ref: '#/components/schemas/EmailAddress'
-        is_third_party:
-          description: Is this a users fiat bank account or a third party fiat bank account
-          type: boolean
-        phone_number:
-          description: The recipient's phone number. Required for USD accounts.
-          type: string
-        provider_country:
-          $ref: '#/components/schemas/Country'
-        provider_name:
-          description: The name of the provider of the recipient's account
-          type: string
-        recipient:
-          $ref: '#/components/schemas/RecipientName'
+        fee_amount:
+          $ref: '#/components/schemas/Amount'
+        fee_type:
+          $ref: '#/components/schemas/NetworkFeeType'
+        settlement:
+          $ref: '#/components/schemas/FeeSettlement'
       required:
-      - recipient
-      - provider_name
-      - provider_country
-      - account_identifier
-      - address
-      - is_third_party
-      title: RecipientBankAccount
+      - fee_type
+      - fee_amount
+      title: NetworkFeeWithSettlement
       type: object
-    ChapsFpsDepositInfo:
-      example:
-        account_number: '55779911'
-        bank_address: 2 Thomas More Square, London, E1W 1YN
-        bank_name: Banking Circle UK
-        beneficiary_name: Alan Turing
-        sort_code: 20-00-00
-      properties:
-        account_number:
-          type: string
-        bank_address:
-          type: string
-        bank_name:
-          type: string
-        beneficiary_name:
-          type: string
-        sort_code:
-          type: string
-      required:
-      - sort_code
-      - account_number
-      title: ChapsFpsDepositInfo
-      type: object
-    RecipientPix:
-      description: 'RecipientPix
-
-
-        A PIX payout recipient.'
-      example:
-        account:
-          key: '+5511987654321'
-          type: PHONE
-        recipient:
-          family_name: Turing
-          given_name: Alan
-          type: Individual
-        tax_id: '12345678909'
-      properties:
-        account:
-          $ref: '#/components/schemas/PixAccountIdentifier'
-        recipient:
-          $ref: '#/components/schemas/RecipientName'
-        tax_id:
-          description: 'The recipient''s CPF (11 digits) or CNPJ (14 digits), with or without
-
-            the usual `.`/`-`/`/` formatting. The payout is rejected if the
-
-            destination account is not registered to this tax ID.'
-          pattern: ^([0-9]{11}|[0-9]{14}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2})$
-          type: string
-      required:
-      - recipient
-      - tax_id
-      - account
-      title: RecipientPix
-      type: object
-    BankAccountWireIdentifier:
-      example:
-        account_number: '987654321'
-        routing_number: '021000021'
-      properties:
-        account_number:
-          description: US account number (4-17 alphanumeric characters)
-          pattern: ^[0-9A-Z]{4,17}$
-          type: string
-        routing_number:
-          description: US routing number (exactly 9 digits)
-          pattern: ^[0-9]{9}$
-          type: string
-      required:
-      - routing_number
-      - account_number
-      title: BankAccountWireIdentifier
-      type: object
-    BankAccountCHAPSIdentifier:
-      example:
-        account_number: '12345678'
-        sort_code: 20-00-00
-      properties:
-        account_number:
-          type: string
-        sort_code:
-          type: string
-      required:
-      - sort_code
-      - account_number
-      title: BankAccountCHAPSIdentifier
-      type: object
-    DepositRail_ChapsDepositInfo:
+    RecipientName_IndividualName:
       allOf:
       - properties:
           type:
             enum:
-            - CHAPS
-            example: CHAPS
+            - Individual
+            example: Individual
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/ChapsDepositInfo'
-    RecipientName:
-      anyOf:
-      - $ref: '#/components/schemas/RecipientName_IndividualName'
-      - $ref: '#/components/schemas/RecipientName_BusinessName'
-      discriminator:
-        mapping:
-          Business: '#/components/schemas/RecipientName_BusinessName'
-          Individual: '#/components/schemas/RecipientName_IndividualName'
-        propertyName: type
-      type: object
-    FedNowDepositInfo:
-      description: Available from API version 2026-07-01.
-      example:
-        account_number: '456789123'
-        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
-        bank_name: JPMorgan Chase Bank
-        recipient_address: 123 Main Street, New York, NY 10001, US
-        recipient_name: Alan Turing
-        routing_number: '021000021'
-      properties:
-        account_number:
-          type: string
-        bank_address:
-          type: string
-        bank_name:
-          type: string
-        recipient_address:
-          type: string
-        recipient_name:
-          type: string
-        routing_number:
-          type: string
-      required:
-      - routing_number
-      - account_number
-      - bank_name
-      - bank_address
-      - recipient_name
-      - recipient_address
-      title: FedNowDepositInfo
-      type: object
-    RateExpiryPolicy:
-      description: 'Rate Expiry Policy
-
-
-        The policy for the rate expiry
-
-        '
-      enum:
-      - Return
-      - Slippage
-      type: string
-    PixAccountIdentifier_PixCnpjKey:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - CNPJ
-            example: CNPJ
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixCnpjKey'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    BankAccountIdentifier:
-      anyOf:
-      - $ref: '#/components/schemas/BankAccountIdentifier_Iban'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
-      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
-      discriminator:
-        mapping:
-          ACH: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
-          CHAPS: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
-          FEDNOW: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
-          FPS: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
-          RTP: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
-          SEPA: '#/components/schemas/BankAccountIdentifier_Iban'
-          SWIFT: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
-          Wire: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
-        propertyName: type
-      type: object
-    IbanDepositInfo:
-      example:
-        address: 10 Downing Street, London, SW1A 2AA, GB
-        beneficiary_name: Alan Turing
-        bic: COBADEFFXXX
-        iban: DE89370400440532013000
-        name: Iron Bank
-        phone: +44-20-1234-5678
-      properties:
-        address:
-          type: string
-        beneficiary_name:
-          description: The beneficiary name for the IBAN (account holder). For Monerium/Fiat Republic this is always the customer name.
-          type: string
-        bic:
-          type: string
-        iban:
-          type: string
-        name:
-          type: string
-        phone:
-          type: string
-      required:
-      - iban
-      title: IbanDepositInfo
-      type: object
-    Bank:
-      enum:
-      - 9JAPAY MICROFINANCE
-      - ABSA Bank Botswana
-      - ACCESS BANK
-      - AFRICAN BANKING CORPORATION
-      - AIRTELMONEYTZ
-      - AZAMPESA
-      - Absa Bank
-      - Absa Bank Kenya Plc
-      - Absa Bank Tanzania Limited
-      - Access Bank
-      - Access Bank (Diamond)
-      - AccessBank Tanzania
-      - African Bank
-      - Airtel
-      - Akiba Commercial Bank
-      - Albaraka Bank
-      - Amana Bank
-      - Azania Bank
-      - BANK OF AFRICA KENYA LTD
-      - BANK OF BARODA
-      - BANK OF INDIA
-      - BARCLAYS BANK
-      - BancABC Tanzania
-      - Bank Gaborone Limited
-      - Bank Of Baroda Botswana
-      - Bank Of Namibia
-      - Bank of Africa Tanzania Limited
-      - Bank of Athens
-      - Bank of Baroda Tanzania Limited
-      - Bank of Tanzania
-      - Barclays Bank
-      - Bidvest Bank
-      - CENTRAL BANK OF KENYA
-      - CHARTERHOUSE BANK LTD
-      - CITIBANK N.A.
-      - CO-OPERATIVE BANK
-      - COMMERCIAL BANK OF AFRICA LTD
-      - CONSOLIDATED BANK OF KENYA LTD
-      - CRDB Bank
-      - CREDIT BANK LTD
-      - Capitec Bank
-      - Central Bank Of Lesotho
-      - China Commercial Bank Limited
-      - Citi Bank
-      - Citibank Nigeria
-      - Citibank Tanzania Ltd
-      - DCB Commercial Bank
-      - DEVELOPMENT BANK OF KENYA
-      - DIAMOND TRUST BANK
-      - DUBAI BANK OF KENYA LTD
-      - Diamond Trust Bank Tanzania
-      - Discovery Bank Limited
-      - ECOBANK KENYA LTD
-      - EQUITORIAL COMMERCIAL BANK LTD
-      - EQUITY BANK
-      - Ecobank
-      - Ecobank Nigeria
-      - Enterprise Bank
-      - Equity Bank (Tanzania)
-      - Exim Bank (Tanzania)
-      - FAMILY BANK LTD
-      - FIDELITY COMMERCIAL BANK
-      - FIRST COMMUNITY BANK
-      - Fairmoney Microfinance Bank Ltd
-      - Fidelity Bank
-      - Finbond Mutual Bank
-      - First Bank of Nigeria
-      - First Capital Bank Botswana
-      - First City Monument Bank
-      - First National Bank
-      - First National Bank (South Africa)
-      - First National Bank Lesotho
-      - First National Bank Namibia
-      - First National Bank Swaziland
-      - First National Bank of Tanzania
-      - FirstRand Bank Limited
-      - GIRO BANK LTD
-      - GT Bank
-      - GUARANTY TRUST (KENYA) LTD
-      - GUARDIAN BANK
-      - GULF AFRICAN BANK LTD
-      - GoMoney
-      - Grinrod Bank
-      - Guaranty Trust Bank
-      - Guaranty Trust Bank (Tanzania) Limited
-      - HABIB BANK A.G.
-      - HABIB BANK LTD
-      - HALOPESA
-      - HOUSING FINANCE CORPORATION OF KENYA
-      - Habib African Bank
-      - Heritage Bank
-      - Hsbc Bank
-      - I&M Bank (Tanzania)
-      - IMPERIAL BANK LIMITED
-      - INVESTMENTS AND MORTGAGES
-      - International Commercial Bank Tanzania
-      - Investec Bank
-      - JAMII BORA BANK LTD
-      - Jaiz Bank
-      - Jp Morgan Chase Bank
-      - K-REP BANK
-      - KENYA COMMERCIAL BANK LTD
-      - Kcb Bank Tanzania Limited
-      - Keystone Bank
-      - Kuda Microfinance Bank
-      - Letshego Bank Tanzania
-      - Lotus Bank
-      - MIDDLE EAST BANK (K) LIMITED
-      - MTN
-      - Maendeleo Bank Ltd
-      - Mainstreet Bank
-      - Meeg Bank
-      - Mercantile Bank Limited
-      - Mkombozi Commercial Bank
-      - MoMo PSB
-      - Mobile Wallet
-      - Mobile Wallet (M-PESA)
-      - Moniepoint Microfinance Bank
-      - Moov money
-      - Mtn Banking
-      - Mtn Mobile Money
-      - Mwalimu Commercial Bank
-      - NATIONAL BANK OF KENYA
-      - NCBA Bank
-      - NCBA Bank Tanzania
-      - NET MFB
-      - National Bank of Commerce (Tanzania)
-      - National Microfinance Bank
-      - Nedbank (South Africa)
-      - Nownow（Contec Global)
-      - OPay
-      - ORIENTAL COMMERCIAL BANK
-      - Old Mutual
-      - Orange Money
-      - PARAMOUNT UNIVERSAL BANK LTD
-      - PRIME BANK LIMITED
-      - Paga
-      - PalmPay
-      - Peach
-      - People's Bank of Zanzibar
-      - Polaris Bank
-      - Postbank
-      - Premium Trust bank
-      - Providus Bank
-      - RMB Private Bank
-      - Rand Merchant Bank
-      - SA Post Bank (Post Office)
-      - STANBIC BANK
-      - STANBIC BANK KENYA LIMITED
-      - STANDARD CHARTERED
-      - Sasfin Bank Limited
-      - South African Bank of Athens Limited
-      - Stanbic Bank Tanzania Limited
-      - Stanbic Ibtc Bank
-      - Standard Bank (South Africa)
-      - Standard Bank Namibia
-      - Standard Chartered Bank
-      - Standard Chartered Bank Botswana Limited
-      - State Bank Of India
-      - Sterling Bank
-      - TIGO
-      - TNM
-      - TPB Bank Plc
-      - TRANS-NATIONAL BANK
-      - Taj Bank
-      - Titan-Paystack
-      - Tyme Bank
-      - UBA KENYA LTD
-      - Ubank
-      - Unibank
-      - Union Bank of Nigeria
-      - United Bank for Africa
-      - Unity Bank
-      - VFD Microfinance Bank
-      - VICTORIA COMMERCIAL BANK LTD
-      - VISA/MasterCard
-      - VODACOM
-      - Vbs Mutual Bank
-      - Wave
-      - Wema Bank
-      - Zamtel
-      - Zenith Bank
-      type: string
-    RecipientPostalAddress:
-      description: 'RecipientPostalAddress
-
-
-        The account holder''s address.'
-      properties:
-        city:
-          description: The city
-          maxLength: 100
-          minLength: 2
-          type: string
-        country:
-          $ref: '#/components/schemas/Country'
-        postal_code:
-          description: The postal code
-          maxLength: 20
-          minLength: 3
-          type: string
-        state:
-          description: The state
-          type: string
-        street:
-          description: The street address
-          maxLength: 256
-          minLength: 2
-          type: string
-      required:
-      - street
-      - city
-      - state
-      - country
-      - postal_code
-      title: RecipientPostalAddress
-      type: object
-    DepositRail_ACHDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - ACH
-            example: ACH
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/ACHDepositInfo'
+      - $ref: '#/components/schemas/IndividualName'
     ACHDepositInfo:
       example:
         account_number: '123456789'
@@ -3977,6 +3233,86 @@ components:
       - recipient_address
       title: ACHDepositInfo
       type: object
+    Recipient_RecipientBankAccount:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - BankAccount
+            example: BankAccount
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/RecipientBankAccount'
+      description: 'Recipient
+
+
+        The recipient of the payment
+
+        '
+    DepositAccount_IbanDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SEPA
+            example: SEPA
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IbanDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    PagedList_ApiAutorampOpenBankingPayment:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/ApiAutorampOpenBankingPayment'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_ApiAutorampOpenBankingPayment
+      type: object
+    PixAccountIdentifier_PixEmailKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - EMAIL
+            example: EMAIL
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixEmailKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
     DepositRail_AfricanBankTransferDepositInfo:
       allOf:
       - properties:
@@ -3989,60 +3325,168 @@ components:
         - type
         type: object
       - $ref: '#/components/schemas/AfricanBankTransferDepositInfo'
-    ApiCanCreateAutorampResponse:
-      description: 'Can Create Autoramp Response
+    RecipientPix:
+      description: 'RecipientPix
 
 
-        Indicates whether a customer can create a new autoramp.
+        A PIX payout recipient.'
+      example:
+        account:
+          key: '+5511987654321'
+          type: PHONE
+        recipient:
+          family_name: Turing
+          given_name: Alan
+          type: Individual
+      properties:
+        account:
+          $ref: '#/components/schemas/PixAccountIdentifier'
+        recipient:
+          $ref: '#/components/schemas/RecipientName'
+      required:
+      - recipient
+      - account
+      title: RecipientPix
+      type: object
+    SignedAutorampQuote:
+      description: 'Signed Autoramp Quote
+
+
+        The signed autoramp quote
 
         '
       properties:
-        can_create:
-          description: Whether the customer can create a new autoramp based on the provided parameters.
+        ach_payment_reference:
+          description: a message to include in outgoing ACH transfers (max 10 characters)
+          maxLength: 10
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        additional_in_currencies:
+          description: 'Additional input currencies to allow on the autoramp beyond `source_currency`.
+
+
+            Each entry must share the same chain as `source_currency` and the list must
+
+            not include `source_currency` itself. After autoramp creation, further quotes
+
+            can be obtained for these currencies via `POST /autoramps/:id/quotes`.'
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+        amount_in:
+          $ref: '#/components/schemas/Amount'
+        amount_out:
+          $ref: '#/components/schemas/Amount'
+        batch_payout:
+          description: 'If true, payouts for this autoramp will be batched and sent once per day instead of individually.
+
+            Only supported for fiat destination currencies.'
           type: boolean
+        customer_id:
+          description: The customer id
+          format: uuid
+          type: string
+        deposit_account_type:
+          $ref: '#/components/schemas/DepositAccountType'
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        external_id:
+          description: The external id
+          type: string
+        fee:
+          $ref: '#/components/schemas/Fee'
+        fee_profile_id:
+          description: The fee profile id to use for the autoramp. If not provided, the default fee profile for the partner will be used.
+          format: uuid
+          type: string
+        fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        fps_payment_reference:
+          description: a message to include in outgoing FPS transfers (max 18 characters)
+          maxLength: 18
+          minLength: 6
+          pattern: ^[A-Za-z]*$
+          type: string
+        is_third_party:
+          description: 'Whether the autoramp created from this quote accepts third-party
+
+            payments. Echoed from the `is_third_party` query parameter used to
+
+            request the quote, and becomes the autoramp''s `is_third_party`.'
+          type: boolean
+        pay_by_reference:
+          description: 'If true, a payment reference will be generated for the autoramp on
+
+            inbound matching (pay-by-reference). Defaults to false if not provided.'
+          type: boolean
+        quote_id:
+          description: The id of the quote
+          format: uuid
+          type: string
+        rate:
+          description: The rate
+          format: decimal
+          type: string
+        rate_expiry_policy:
+          $ref: '#/components/schemas/RateExpiryPolicy'
+        rate_lock_valid_until:
+          description: The rate lock valid until
+          format: date-time
+          type: string
+        recipient_account:
+          $ref: '#/components/schemas/Account'
+        sepa_payment_reference:
+          description: a message to include in outgoing SEPA transfers (max 140 characters)
+          maxLength: 140
+          minLength: 6
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        signature:
+          description: The signature
+          type: string
+        slippage_tolerance_in_bips:
+          description: The slippage tolerance in bips
+          format: decimal
+          type: string
+        source_currency:
+          $ref: '#/components/schemas/Currency'
+        swift_payment_reference:
+          description: a message to include in outgoing SWIFT transfers (max 4 lines, 35 chars per line)
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        valid_until:
+          description: The valid until
+          format: date-time
+          type: string
+        wire_message:
+          description: a message to include in outgoing wire transfers (max 4 lines, 35 chars per line)
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+\n]*$
+          type: string
       required:
-      - can_create
-      title: ApiCanCreateAutorampResponse
+      - quote_id
+      - source_currency
+      - destination_currency
+      - recipient_account
+      - customer_id
+      - amount_in
+      - amount_out
+      - rate
+      - rate_expiry_policy
+      - fee
+      - fee_settlement
+      - valid_until
+      - signature
+      - is_third_party
+      title: SignedAutorampQuote
       type: object
-    DepositAccount_CryptoWallet:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Crypto
-            example: Crypto
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/CryptoWallet'
-      description: 'DepositAccount
-
-
-        DEPRECATED: please use the deposit_rails field instead
-
-        '
-    DepositAccount_AfricanBankTransferDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - AfricanBankTransfer
-            example: AfricanBankTransfer
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/AfricanBankTransferDepositInfo'
-      description: 'DepositAccount
-
-
-        DEPRECATED: please use the deposit_rails field instead
-
-        '
-    ChapsDepositInfo:
+    ChapsFpsDepositInfo:
       example:
-        account_number: '12345678'
+        account_number: '55779911'
         bank_address: 2 Thomas More Square, London, E1W 1YN
         bank_name: Banking Circle UK
         beneficiary_name: Alan Turing
@@ -4055,14 +3499,13 @@ components:
         bank_name:
           type: string
         beneficiary_name:
-          description: The beneficiary name (account holder) for the GBP account. For Fiat Republic this is the customer name.
           type: string
         sort_code:
           type: string
       required:
       - sort_code
       - account_number
-      title: ChapsDepositInfo
+      title: ChapsFpsDepositInfo
       type: object
     SwiftDepositInfo:
       example:
@@ -4096,25 +3539,1361 @@ components:
       - recipient_address
       title: SwiftDepositInfo
       type: object
-    AutorampTransactionState:
-      description: 'Autoramp Transaction State
+    DepositRail_FedNowDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FedNow
+            example: FedNow
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/FedNowDepositInfo'
+      description: Available from API version 2026-07-01.
+    PagedList_AutorampTransaction:
+      description: 'PagedList
 
 
-        The state of the autoramp transaction
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/AutorampTransaction'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_AutorampTransaction
+      type: object
+    PixAccountIdentifier:
+      anyOf:
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
+      - $ref: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+      discriminator:
+        mapping:
+          BANK_DETAILS: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
+          CNPJ: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
+          CPF: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
+          EMAIL: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
+          EVP: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
+          PHONE: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
+        propertyName: type
+      type: object
+    AchWireDepositInfo:
+      example:
+        account_number: '123456789'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+        routing_number:
+          type: string
+      required:
+      - routing_number
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: AchWireDepositInfo
+      type: object
+    BankPostalAddress:
+      description: 'BankPostalAddress
+
+
+        The bank''s address. Only required for SWIFT accounts.'
+      properties:
+        city:
+          description: The city
+          maxLength: 100
+          minLength: 2
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        postal_code:
+          description: The postal code
+          maxLength: 20
+          minLength: 3
+          type: string
+        state:
+          description: The state
+          type: string
+        street:
+          description: The street address
+          maxLength: 256
+          minLength: 2
+          type: string
+      required:
+      - street
+      - city
+      - state
+      - country
+      - postal_code
+      title: BankPostalAddress
+      type: object
+    AutorampStatus:
+      enum:
+      - Created
+      - EditPending
+      - Authorized
+      - DepositAccountAdded
+      - Approved
+      - Rejected
+      - Cancelled
+      type: string
+    Blockchain:
+      description: 'Blockchain
+
+
+        A type of blockchain
+
+        '
+      enum:
+      - Solana
+      - Ethereum
+      - Polygon
+      - Arbitrum
+      - Base
+      - Stellar
+      - Citrea
+      - Plasma
+      - Avalanche
+      - Moca
+      - Monad
+      - Tempo
+      - Tron
+      - Bsc
+      - Seismic
+      - Arc
+      - Optimism
+      type: string
+    BankAccountSWIFTIdentifier:
+      example:
+        account_number: '1234567890'
+        bic: CHASUS33XXX
+      properties:
+        account_number:
+          maxLength: 34
+          minLength: 1
+          pattern: ^[a-zA-Z0-9 ]*[a-zA-Z0-9]+$
+          type: string
+        bic:
+          type: string
+        intermediary_bic:
+          description: 'BIC of an intermediary correspondent bank in the SWIFT routing chain,
+
+            when the sender wants to override the auto-selected intermediary.
+
+            Optional — most senders leave this unset and let their provider pick.'
+          type: string
+      required:
+      - bic
+      - account_number
+      title: BankAccountSWIFTIdentifier
+      type: object
+    Currency:
+      anyOf:
+      - $ref: '#/components/schemas/Currency_Crypto'
+      - $ref: '#/components/schemas/Currency_Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Currency_Crypto'
+          Fiat: '#/components/schemas/Currency_Fiat'
+        propertyName: type
+      type: object
+    AutorampTransactionStatus:
+      description: 'Autoramp Transaction Status
+
+
+        The status of the autoramp transaction
+
+        '
+      enum:
+      - FundsReviewInProgress
+      - ConversionInProgress
+      - PayoutInProgress
+      - Completed
+      - Failed
+      - RejectedAml
+      - RejectedFraud
+      - RejectedMinAmount
+      type: string
+    FeeSettlement:
+      description: 'Fee Settlement
+
+
+        The settlement type for the fee
+
+        '
+      enum:
+      - deductedImmediately
+      - settledLater
+      type: string
+    IbanDepositInfo:
+      example:
+        address: 10 Downing Street, London, SW1A 2AA, GB
+        beneficiary_name: Alan Turing
+        bic: COBADEFFXXX
+        iban: DE89370400440532013000
+        name: Iron Bank
+        phone: +44-20-1234-5678
+      properties:
+        address:
+          type: string
+        beneficiary_name:
+          description: The beneficiary name for the IBAN (account holder). For Monerium/Fiat Republic this is always the customer name.
+          type: string
+        bic:
+          type: string
+        iban:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+      required:
+      - iban
+      title: IbanDepositInfo
+      type: object
+    Autoramp:
+      description: 'Autoramp
+
+
+        The autoramp response
+
+
+        A Autoramp response'
+      properties:
+        additional_partner_fee_in_bips:
+          description: The additional partner fee in bips
+          format: decimal
+          type: string
+        batch_payout:
+          description: Whether payouts for this autoramp are batched daily
+          type: boolean
+        created_at:
+          description: The created at timestamp
+          format: date-time
+          type: string
+        customer_id:
+          description: The id of the customer that owns the autoramp
+          format: uuid
+          type: string
+        deposit_account:
+          allOf:
+          - $ref: '#/components/schemas/DepositAccount'
+          - deprecated: true
+            description: Deprecated, please use the information in the deposit_rails field instead
+          deprecated: true
+          description: Deprecated, please use the information in the deposit_rails field instead
+        deposit_rails:
+          items:
+            $ref: '#/components/schemas/DepositRail'
+          type: array
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        external_id:
+          description: External ID for the autoramp, provided by the partner
+          type: string
+        fee_profile_id:
+          description: The fee profile id used for the autoramp
+          format: uuid
+          type: string
+        fps_payment_reference:
+          description: reference message for outgoing FPS transfers
+          type: string
+        id:
+          description: The id of the autoramp
+          format: uuid
+          type: string
+        inbound_payment_reference:
+          description: 'System-generated inbound memo that senders must include on transfers
+
+            to the shared VA. `None` for autoramps that don''t use pay-by-reference.'
+          type: string
+        is_third_party:
+          description: 'Whether this autoramp accepts third-party payments (3pp), which
+
+            determines how its deposits are routed and screened. Set from
+
+            `source_is_third_party` at creation and fixed for the life of the
+
+            autoramp. It can also be enabled automatically for some currencies
+
+            depending on which rail the customer is eligible for, so `true` does not
+
+            mean any particular deposit came from a third party. For that, read
+
+            `third_party_classification` on the transaction.'
+          type: boolean
+        kind:
+          $ref: '#/components/schemas/AutorampType'
+        name:
+          description: The name of the autoramp
+          type: string
+        payment_reference:
+          description: The payment reference for the autoramp
+          type: string
+        quote:
+          allOf:
+          - $ref: '#/components/schemas/AutorampQuote'
+          - deprecated: true
+            description: 'Deprecated: use the `quotes` field instead. Returns the newest active (non-expired) quote if any.'
+          deprecated: true
+          description: 'Deprecated: use the `quotes` field instead. Returns the newest active (non-expired) quote if any.'
+        quotes:
+          description: 'Active (non-expired) quotes associated with this autoramp. Deposits are
+
+            matched to the newest active quote with matching `amount_in` value and
+
+            currency.'
+          items:
+            $ref: '#/components/schemas/AutorampQuote'
+          type: array
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        sepa_payment_reference:
+          description: reference message for outgoing SEPA transfers
+          type: string
+        source:
+          $ref: '#/components/schemas/AutorampSource'
+        source_currencies:
+          description: The source currencies
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+        status:
+          $ref: '#/components/schemas/AutorampStatus'
+        swift_payment_reference:
+          description: reference message for outgoing SWIFT transfers
+          type: string
+        travel_address:
+          description: The travel rule address for compliance
+          type: string
+        wire_message:
+          description: reference message for outgoing wire transfers
+          type: string
+      required:
+      - id
+      - customer_id
+      - status
+      - kind
+      - created_at
+      - source_currencies
+      - destination_currency
+      - source
+      - quotes
+      - is_third_party
+      - recipient
+      - deposit_rails
+      - fee_profile_id
+      - batch_payout
+      title: Autoramp
+      type: object
+    RecipientWallet:
+      description: 'RecipientWallet
+
+
+        An on-chain wallet address
+
+        '
+      properties:
+        address:
+          description: The wallet address
+          type: string
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+      required:
+      - blockchain
+      - address
+      title: RecipientWallet
+      type: object
+    PixAccountIdentifier_PixEvpKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - EVP
+            example: EVP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixEvpKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    RtpDepositInfo:
+      example:
+        account_number: '456789123'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+        routing_number:
+          type: string
+      required:
+      - routing_number
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: RtpDepositInfo
+      type: object
+    AutorampType:
+      description: 'Autoramp type
+
+
+        The type (onramp, offramp, swap) of an autoramp'
+      enum:
+      - Onramp
+      - Offramp
+      - Swap
+      - Mint
+      - Redeem
+      type: string
+    BankAccountFedNowIdentifier:
+      example:
+        account_number: '456789123'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountFedNowIdentifier
+      type: object
+    DepositAccount_SpeiDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Spei
+            example: Spei
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/SpeiDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    SortOrder:
+      enum:
+      - asc
+      - desc
+      type: string
+    PixDepositInfo:
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        br_code:
+          description: '"Pix Copia e Cola" — the EMV BR Code string. The payer pastes it into their
+
+            bank app, or renders it as a QR code to scan.'
+          type: string
+        expires_at:
+          description: Expiry of a one-time (dynamic) QR code. Absent for reusable (static) codes.
+          format: date-time
+          type: string
+        instruction:
+          description: Human-readable payer guidance.
+          type: string
+        pix_key:
+          description: Bare PIX key for customers who prefer entering a key directly.
+          type: string
+      required:
+      - br_code
+      - instruction
+      title: PixDepositInfo
+      type: object
+    Currency_Crypto:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Crypto'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    AutorampQuote:
+      description: 'Autoramp Quote
+
+
+        The autoramp quote used to create an autoramp
+
+        '
+      properties:
+        amount_in:
+          $ref: '#/components/schemas/Amount'
+        amount_out:
+          $ref: '#/components/schemas/Amount'
+        fee:
+          $ref: '#/components/schemas/Fee'
+        fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        partner_fee_settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+        quote_id:
+          description: The id of the quote
+          format: uuid
+          type: string
+        rate:
+          description: The rate
+          format: decimal
+          type: string
+        rate_expiry_policy:
+          $ref: '#/components/schemas/RateExpiryPolicy'
+        rate_lock_valid_until:
+          description: The rate lock valid until
+          format: date-time
+          type: string
+        slippage_tolerance_in_bips:
+          description: The slippage tolerance in bips
+          format: decimal
+          type: string
+        valid_until:
+          description: The valid until
+          format: date-time
+          type: string
+      required:
+      - quote_id
+      - amount_in
+      - amount_out
+      - rate
+      - rate_lock_valid_until
+      - rate_expiry_policy
+      - fee
+      - fee_settlement
+      - partner_fee_settlement
+      - valid_until
+      title: AutorampQuote
+      type: object
+    PixPhoneKey:
+      description: 'PixPhoneKey
+
+
+        A PIX DICT key that is the recipient''s phone number.'
+      example:
+        key: '+5511987654321'
+      properties:
+        key:
+          description: International format with leading `+`, e.g. +5511987654321
+          pattern: ^\+[1-9][0-9]{1,14}$
+          type: string
+      required:
+      - key
+      title: PixPhoneKey
+      type: object
+    PixAccountIdentifier_PixCpfKey:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CPF
+            example: CPF
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixCpfKey'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    BankAccountCHAPSIdentifier:
+      example:
+        account_number: '12345678'
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: BankAccountCHAPSIdentifier
+      type: object
+    ChapsDepositInfo:
+      example:
+        account_number: '12345678'
+        bank_address: 2 Thomas More Square, London, E1W 1YN
+        bank_name: Banking Circle UK
+        beneficiary_name: Alan Turing
+        sort_code: 20-00-00
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        beneficiary_name:
+          description: The beneficiary name (account holder) for the GBP account. For Fiat Republic this is the customer name.
+          type: string
+        sort_code:
+          type: string
+      required:
+      - sort_code
+      - account_number
+      title: ChapsDepositInfo
+      type: object
+    MobileMoneyDepositInfo:
+      properties:
+        instruction:
+          type: string
+        mobile_number:
+          type: string
+      required:
+      - mobile_number
+      title: MobileMoneyDepositInfo
+      type: object
+    CreateAutorampParameters:
+      description: 'Create Autoramp Parameters
+
+
+        The parameters required to create a autoramp
+
+        '
+      properties:
+        ach_payment_reference:
+          description: reference message attached to outgoing ACH transfers (max 10 chars)
+          maxLength: 10
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        additional_partner_fee_in_bips:
+          deprecated: true
+          description: The additional partner fee in bips. This will be added to the fee. This is deprecated, use the partner fee configs instead.
+          format: decimal
+          type: string
+        batch_payout:
+          description: 'If true, payouts for this autoramp will be batched and sent once per day instead of individually.
+
+            Only supported for fiat destination currencies.'
+          type: boolean
+        customer_id:
+          description: The customer id
+          format: uuid
+          type: string
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        external_id:
+          description: External ID for the autoramp, provided by the partner
+          type: string
+        fee_profile_id:
+          description: The fee profile id to use for the autoramp. If not provided, the default fee profile for the partner will be used.
+          format: uuid
+          type: string
+        fps_payment_reference:
+          description: reference message attached to outgoing FPS transfers (max 18 chars)
+          maxLength: 18
+          minLength: 6
+          pattern: ^[A-Za-z]*$
+          type: string
+        name:
+          description: The name of the autoramp
+          type: string
+        pay_by_reference:
+          default: null
+          description: If true, a payment reference will be generated for the autoramp. Defaults to false if not provided.
+          type: boolean
+        recipient_account:
+          $ref: '#/components/schemas/Account'
+        sepa_payment_reference:
+          description: reference message attached to outgoing SEPA transfers (max 140 chars)
+          maxLength: 140
+          minLength: 6
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        source_currencies:
+          description: The list of source currencies
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+        source_is_third_party:
+          description: 'Allow this autoramp to be funded by someone other than the customer,
+
+            for example a fiat account that accepts 3pp payments. Only meaningful on
+
+            onramps, where the source is a deposit account. Defaults to `false`.
+
+            Setting it also opts this autoramp''s deposits into third-party
+
+            classification, reported as `third_party_classification` on the
+
+            transaction.'
+          type: boolean
+        swift_payment_reference:
+          description: reference message attached to outgoing SWIFT transfers (max 4 lines, 35 chars per line)
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+]*$
+          type: string
+        wire_message:
+          description: reference message attached to outgoing wire transfers (max 4 lines, 35 chars per line)
+          maxLength: 140
+          minLength: 1
+          pattern: ^[A-Za-z0-9 /\-?:().+\n]*$
+          type: string
+      required:
+      - source_currencies
+      - destination_currency
+      - recipient_account
+      - customer_id
+      title: CreateAutorampParameters
+      type: object
+    DepositAccount_ChapsFpsDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CHAPSFPS
+            example: CHAPSFPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/ChapsFpsDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    DepositAccount_PixDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Pix
+            example: Pix
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    Account:
+      anyOf:
+      - $ref: '#/components/schemas/Account_FiatAccount'
+      - $ref: '#/components/schemas/Account_CryptoWallet'
+      - $ref: '#/components/schemas/Account_PixAccount'
+      description: 'Account
+
+
+        The account for the autoramp
+
+        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Account_CryptoWallet'
+          Fiat: '#/components/schemas/Account_FiatAccount'
+          Pix: '#/components/schemas/Account_PixAccount'
+        propertyName: type
+      type: object
+    BankAccountIdentifier_BankAccountSWIFTIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SWIFT
+            example: SWIFT
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountSWIFTIdentifier'
+    DepositRail_IbanDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - SEPA
+            example: SEPA
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IbanDepositInfo'
+    BankAccountIdentifier:
+      anyOf:
+      - $ref: '#/components/schemas/BankAccountIdentifier_Iban'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
+      - $ref: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
+      discriminator:
+        mapping:
+          ACH: '#/components/schemas/BankAccountIdentifier_BankAccountACHIdentifier'
+          CHAPS: '#/components/schemas/BankAccountIdentifier_BankAccountCHAPSIdentifier'
+          FEDNOW: '#/components/schemas/BankAccountIdentifier_BankAccountFedNowIdentifier'
+          FPS: '#/components/schemas/BankAccountIdentifier_BankAccountFPSIdentifier'
+          RTP: '#/components/schemas/BankAccountIdentifier_BankAccountRTPIdentifier'
+          SEPA: '#/components/schemas/BankAccountIdentifier_Iban'
+          SWIFT: '#/components/schemas/BankAccountIdentifier_BankAccountSWIFTIdentifier'
+          Wire: '#/components/schemas/BankAccountIdentifier_BankAccountWireIdentifier'
+        propertyName: type
+      type: object
+    DepositAccount:
+      anyOf:
+      - $ref: '#/components/schemas/DepositAccount_IbanDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_AchWireDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_AfricanBankTransferDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_PixDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_SpeiDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_MobileMoneyDepositInfo'
+      - $ref: '#/components/schemas/DepositAccount_CryptoWallet'
+      - $ref: '#/components/schemas/DepositAccount_ChapsFpsDepositInfo'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+      discriminator:
+        mapping:
+          ACHWire: '#/components/schemas/DepositAccount_AchWireDepositInfo'
+          AfricanBankTransfer: '#/components/schemas/DepositAccount_AfricanBankTransferDepositInfo'
+          CHAPSFPS: '#/components/schemas/DepositAccount_ChapsFpsDepositInfo'
+          Crypto: '#/components/schemas/DepositAccount_CryptoWallet'
+          MobileMoney: '#/components/schemas/DepositAccount_MobileMoneyDepositInfo'
+          Pix: '#/components/schemas/DepositAccount_PixDepositInfo'
+          SEPA: '#/components/schemas/DepositAccount_IbanDepositInfo'
+          Spei: '#/components/schemas/DepositAccount_SpeiDepositInfo'
+        propertyName: type
+      type: object
+    CreateAutorampBrCodeRequest:
+      description: Parameters for generating a Pix BR code for an autoramp
+      properties:
+        amount:
+          description: 'Fixed amount to request, in BRL, minimum 0.01 and at most 2 decimal
+
+            places. Omit to let the payer choose the amount.'
+          format: decimal
+          type: string
+        reference:
+          description: 'Your reference for the payment, 1 to 19 alphanumeric characters. It is
+
+            returned to us with the payment and shown as the transaction''s
+
+            inbound payment reference.'
+          maxLength: 19
+          minLength: 1
+          pattern: ^[a-zA-Z0-9]+$
+          type: string
+      required:
+      - reference
+      title: CreateAutorampBrCodeRequest
+      type: object
+    Currency_Fiat:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fiat
+            example: Fiat
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    Iban:
+      example:
+        iban: DE89370400440532013000
+      properties:
+        iban:
+          type: string
+      required:
+      - iban
+      title: Iban
+      type: object
+    DepositRail_MobileMoneyDepositInfo:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - MobileMoney
+            example: MobileMoney
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/MobileMoneyDepositInfo'
+    AfricanBankTransferDepositInfo:
+      properties:
+        account_name:
+          type: string
+        account_number:
+          type: string
+        amount:
+          format: decimal
+          type: string
+        bank_name:
+          type: string
+        currency:
+          type: string
+        financial_institution:
+          type: string
+        instruction:
+          type: string
+        reference_id:
+          type: string
+      title: AfricanBankTransferDepositInfo
+      type: object
+    RateExpiryPolicy:
+      description: 'Rate Expiry Policy
+
+
+        The policy for the rate expiry
+
+        '
+      enum:
+      - Return
+      - Slippage
+      type: string
+    PixAccount:
+      description: 'PIX Account
+
+
+        References a previously-registered PIX destination by its id.'
+      properties:
+        id:
+          description: The id of a previously-registered PIX destination
+          format: uuid
+          type: string
+      required:
+      - id
+      title: PixAccount
+      type: object
+    PixEmailKey:
+      description: 'PixEmailKey
+
+
+        A PIX DICT key that is the recipient''s email address.'
+      example:
+        key: joao.silva@example.com
+      properties:
+        key:
+          maxLength: 77
+          pattern: ^[^@\s]+@[^@\s]+$
+          type: string
+      required:
+      - key
+      title: PixEmailKey
+      type: object
+    Recipient_RecipientWallet:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Wallet
+            example: Wallet
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/RecipientWallet'
+      description: 'Recipient
+
+
+        The recipient of the payment
+
+        '
+    FiatAccount:
+      description: 'Fiat Account
+
+
+        The fiat account for the autoramp
+
+        '
+      properties:
+        account_identifier:
+          $ref: '#/components/schemas/BankAccountIdentifier'
+      required:
+      - account_identifier
+      title: FiatAccount
+      type: object
+    PixAccountIdentifier_PixBankDetails:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - BANK_DETAILS
+            example: BANK_DETAILS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/PixBankDetails'
+      description: 'PixAccountIdentifier
+
+
+        How the recipient''s PIX account is identified: a DICT key of one of the
+
+        five key types, or full bank account details.'
+    BankAccountIdentifier_BankAccountACHIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - ACH
+            example: ACH
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountACHIdentifier'
+    CryptoWallet:
+      description: 'Crypto Wallet
+
+
+        The crypto wallet for the autoramp
+
+        '
+      properties:
+        address:
+          description: The address of the crypto account
+          type: string
+        chain:
+          $ref: '#/components/schemas/Blockchain'
+      required:
+      - chain
+      - address
+      title: CryptoWallet
+      type: object
+    WireDepositInfo:
+      example:
+        account_number: '987654321'
+        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
+        bank_name: JPMorgan Chase Bank
+        recipient_address: 123 Main Street, New York, NY 10001, US
+        recipient_name: Alan Turing
+        routing_number: '021000021'
+      properties:
+        account_number:
+          type: string
+        bank_address:
+          type: string
+        bank_name:
+          type: string
+        recipient_address:
+          type: string
+        recipient_name:
+          type: string
+        routing_number:
+          type: string
+      required:
+      - routing_number
+      - account_number
+      - bank_name
+      - bank_address
+      - recipient_name
+      - recipient_address
+      title: WireDepositInfo
+      type: object
+    PayoutCryptoTransaction:
+      description: 'Payout Transaction Details
+
+
+        Details about the blockchain transaction used for crypto payouts
+
+        '
+      example:
+        transaction_hash: 5J9qvKhKqYbpjhCkqDnKXSp7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
+      properties:
+        transaction_hash:
+          description: The blockchain transaction hash
+          type: string
+      required:
+      - transaction_hash
+      title: PayoutCryptoTransaction
+      type: object
+    BankAccountIdentifier_BankAccountFPSIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - FPS
+            example: FPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountFPSIdentifier'
+    ApiAutorampOpenBankingPaymentStatus:
+      description: 'Autoramp Payment Link Status
+
+
+        The status of the autoramp payment link
 
         '
       enum:
       - Pending
-      - PayoutPending
-      - Payout
-      - PayoutCompleted
+      - Ready
+      - Processing
       - Completed
       - Failed
-      - InAmlReview
-      - AmlRejected
-      - AmountRejected
-      - FraudRejected
       type: string
+    BankAccountIdentifier_BankAccountCHAPSIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - CHAPS
+            example: CHAPS
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountCHAPSIdentifier'
+    DepositAccount_CryptoWallet:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/CryptoWallet'
+      description: 'DepositAccount
+
+
+        DEPRECATED: please use the deposit_rails field instead
+
+        '
+    BankAccountIdentifier_BankAccountRTPIdentifier:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - RTP
+            example: RTP
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/BankAccountRTPIdentifier'
+    ApiThirdPartyClassification:
+      description: 'Third Party Classification
+
+
+        Whether the payer who funded a transaction was the customer themselves.
+
+        Determined when the deposit arrives, by comparing the payer name on the
+
+        incoming payment against the customer''s verified name.
+
+
+        - `FirstParty`: the names match. The customer paid from their own account.
+
+        - `ThirdParty`: the names do not match. Someone other than the customer paid.
+
+        - `Inconclusive`: a partial match we will not call either way, for example a
+
+        missing middle name or a joint account.
+
+        - `Unknown`: no payer name was supplied with the payment, so there was
+
+        nothing to compare.
+
+
+        Always set for EUR and GBP bank deposits. On other rails it is only
+
+        evaluated when the parent autoramp was created with
+
+        `source_is_third_party`, and it is never set in sandbox. Treat an absent
+
+        value as "not evaluated", not as `FirstParty`.
+
+        '
+      enum:
+      - FirstParty
+      - ThirdParty
+      - Inconclusive
+      - Unknown
+      type: string
+    BankAccountRTPIdentifier:
+      example:
+        account_number: '456789123'
+        routing_number: '021000021'
+      properties:
+        account_number:
+          description: US account number (4-17 alphanumeric characters)
+          pattern: ^[0-9A-Z]{4,17}$
+          type: string
+        routing_number:
+          description: US routing number (exactly 9 digits)
+          pattern: ^[0-9]{9}$
+          type: string
+      required:
+      - routing_number
+      - account_number
+      title: BankAccountRTPIdentifier
+      type: object
+    SpeiDepositInfo:
+      properties:
+        clabe:
+          type: string
+        instruction:
+          type: string
+      required:
+      - clabe
+      - instruction
+      title: SpeiDepositInfo
+      type: object
+    ApiBankAccountSource:
+      description: A bank account source of an autoramp transaction
+      example:
+        account_number: null
+        bank_name: Iron Bank
+        bic: COBADEFFXXX
+        iban: DE89370400440532013000
+        name: Alan Turing
+        routing_number: null
+        sort_code: null
+      properties:
+        account_number:
+          description: The account number for US accounts
+          type: string
+        bank_name:
+          description: The bank name
+          type: string
+        bic:
+          description: The bic
+          type: string
+        iban:
+          description: The iban
+          type: string
+        name:
+          description: The name of the account holder
+          type: string
+        routing_number:
+          description: The routing number of the bank, for US accounts
+          type: string
+        sort_code:
+          description: The sort code of the bank, for UK accounts
+          type: string
+      required:
+      - bank_name
+      - iban
+      - bic
+      - name
+      title: ApiBankAccountSource
+      type: object
+    CreateAutorampOpenBankingPayment:
+      description: 'Create Autoramp Payment Link Payload
+
+
+        The parameters for creating an autoramp payment link
+
+        '
+      properties:
+        amount_in:
+          $ref: '#/components/schemas/Amount'
+        callback_url:
+          type: string
+      required:
+      - amount_in
+      - callback_url
+      title: CreateAutorampOpenBankingPayment
+      type: object
     ApiAutorampQuotePreview:
       description: 'Autoramp Quote Preview
 
@@ -4163,415 +4942,7 @@ components:
       - fee_profile_id
       title: ApiAutorampQuotePreview
       type: object
-    PixAccountIdentifier_PixCpfKey:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - CPF
-            example: CPF
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixCpfKey'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    BankAccountIdentifier_BankAccountACHIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - ACH
-            example: ACH
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountACHIdentifier'
-    PaymentNetwork:
-      description: 'PaymentNetwork
-
-
-        A payment network
-
-        '
-      enum:
-      - Sepa
-      - Swift
-      - Fps
-      - Chats
-      - Ach
-      - Wire
-      - Rtp
-      - Fednow
-      - Pix
-      - Spei
-      - AfricanBankTransfer
-      - MobileMoney
-      - Chaps
-      type: string
-    FiatAccount:
-      description: 'Fiat Account
-
-
-        The fiat account for the autoramp
-
-        '
-      properties:
-        account_identifier:
-          $ref: '#/components/schemas/BankAccountIdentifier'
-      required:
-      - account_identifier
-      title: FiatAccount
-      type: object
-    SortOrder:
-      enum:
-      - asc
-      - desc
-      type: string
-    DepositAccount_ChapsFpsDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - CHAPSFPS
-            example: CHAPSFPS
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/ChapsFpsDepositInfo'
-      description: 'DepositAccount
-
-
-        DEPRECATED: please use the deposit_rails field instead
-
-        '
-    BankAccountRTPIdentifier:
-      example:
-        account_number: '456789123'
-        routing_number: '021000021'
-      properties:
-        account_number:
-          description: US account number (4-17 alphanumeric characters)
-          pattern: ^[0-9A-Z]{4,17}$
-          type: string
-        routing_number:
-          description: US routing number (exactly 9 digits)
-          pattern: ^[0-9]{9}$
-          type: string
-      required:
-      - routing_number
-      - account_number
-      title: BankAccountRTPIdentifier
-      type: object
-    ApiAutorampOpenBankingPaymentStatus:
-      description: 'Autoramp Payment Link Status
-
-
-        The status of the autoramp payment link
-
-        '
-      enum:
-      - Pending
-      - Ready
-      - Processing
-      - Completed
-      - Failed
-      type: string
-    Recipient_RecipientWallet:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Wallet
-            example: Wallet
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/RecipientWallet'
-      description: 'Recipient
-
-
-        The recipient of the payment
-
-        '
-    DepositRail_IbanDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SEPA
-            example: SEPA
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/IbanDepositInfo'
-    Account_FiatAccount:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Fiat
-            example: Fiat
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/FiatAccount'
-      description: 'Account
-
-
-        The account for the autoramp
-
-        '
-    AchWireDepositInfo:
-      example:
-        account_number: '123456789'
-        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
-        bank_name: JPMorgan Chase Bank
-        recipient_address: 123 Main Street, New York, NY 10001, US
-        recipient_name: Alan Turing
-        routing_number: '021000021'
-      properties:
-        account_number:
-          type: string
-        bank_address:
-          type: string
-        bank_name:
-          type: string
-        recipient_address:
-          type: string
-        recipient_name:
-          type: string
-        routing_number:
-          type: string
-      required:
-      - routing_number
-      - account_number
-      - bank_name
-      - bank_address
-      - recipient_name
-      - recipient_address
-      title: AchWireDepositInfo
-      type: object
-    IndividualName:
-      example:
-        family_name: Turing
-        given_name: Alan
-      properties:
-        family_name:
-          maxLength: 50
-          minLength: 1
-          type: string
-        given_name:
-          maxLength: 50
-          minLength: 1
-          type: string
-      required:
-      - given_name
-      - family_name
-      title: IndividualName
-      type: object
-    PixAccountIdentifier:
-      anyOf:
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
-      - $ref: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-      discriminator:
-        mapping:
-          BANK_DETAILS: '#/components/schemas/PixAccountIdentifier_PixBankDetails'
-          CNPJ: '#/components/schemas/PixAccountIdentifier_PixCnpjKey'
-          CPF: '#/components/schemas/PixAccountIdentifier_PixCpfKey'
-          EMAIL: '#/components/schemas/PixAccountIdentifier_PixEmailKey'
-          EVP: '#/components/schemas/PixAccountIdentifier_PixEvpKey'
-          PHONE: '#/components/schemas/PixAccountIdentifier_PixPhoneKey'
-        propertyName: type
-      type: object
-    RecipientName_BusinessName:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Business
-            example: Business
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BusinessName'
-    DepositRail_SpeiDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Spei
-            example: Spei
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/SpeiDepositInfo'
-    AutorampStatus:
-      enum:
-      - Created
-      - EditPending
-      - Authorized
-      - DepositAccountAdded
-      - Approved
-      - Rejected
-      - Cancelled
-      type: string
-    DepositRail_FpsDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - FPS
-            example: FPS
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/FpsDepositInfo'
-    PagedList_ApiAutorampOpenBankingPayment:
-      description: 'PagedList
-
-
-        A list of items with cursors used to fetch the next or previous page
-
-        '
-      properties:
-        cursor:
-          description: The cursor used to fetch the next page
-          format: uuid
-          type: string
-        items:
-          description: The list of items
-          items:
-            $ref: '#/components/schemas/ApiAutorampOpenBankingPayment'
-          type: array
-        prev_cursor:
-          default: null
-          description: The cursor used to fetch the previous page
-          format: uuid
-          type: string
-      required:
-      - items
-      title: PagedList_ApiAutorampOpenBankingPayment
-      type: object
-    NetworkFeeType:
-      description: 'Network Fee Type
-
-
-        The type of network fee
-
-        '
-      enum:
-      - SepaIn
-      - SepaOut
-      - EthereumGas
-      - CitreaGas
-      - SolanaTransactionFee
-      - StellarTransactionFee
-      - PolygonGas
-      - BaseGas
-      - AvalancheGas
-      - TronGas
-      - BscGas
-      - RailFee
-      - AchIn
-      - AchOut
-      - WireIn
-      - WireOut
-      - SwiftIn
-      - SwiftOut
-      - FpsIn
-      - FpsOut
-      - ChapsIn
-      - ChapsOut
-      - RtpIn
-      - RtpOut
-      - FednowIn
-      - FednowOut
-      type: string
-    AutorampSource:
-      description: 'Autoramp Source
-
-
-        The source of the autoramp'
-      enum:
-      - Standalone
-      - Quote
-      type: string
-    PagedList_Autoramp:
-      description: 'PagedList
-
-
-        A list of items with cursors used to fetch the next or previous page
-
-        '
-      properties:
-        cursor:
-          description: The cursor used to fetch the next page
-          format: uuid
-          type: string
-        items:
-          description: The list of items
-          items:
-            $ref: '#/components/schemas/Autoramp'
-          type: array
-        prev_cursor:
-          default: null
-          description: The cursor used to fetch the previous page
-          format: uuid
-          type: string
-      required:
-      - items
-      title: PagedList_Autoramp
-      type: object
-    BankAccountIdentifier_BankAccountRTPIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - RTP
-            example: RTP
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountRTPIdentifier'
-    DepositRail_FedNowDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - FedNow
-            example: FedNow
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/FedNowDepositInfo'
-      description: Available from API version 2026-07-01.
-    Account_PixAccount:
+    Recipient_RecipientPix:
       allOf:
       - properties:
           type:
@@ -4582,113 +4953,14 @@ components:
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/PixAccount'
-      description: 'Account
+      - $ref: '#/components/schemas/RecipientPix'
+      description: 'Recipient
 
 
-        The account for the autoramp
-
-        '
-    NetworkFee_Amount:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SwiftOut
-            example: SwiftOut
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/Amount'
-      description: 'Network Fee
-
-
-        The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
+        The recipient of the payment
 
         '
-    MobileMoneyDepositInfo:
-      properties:
-        instruction:
-          type: string
-        mobile_number:
-          type: string
-      required:
-      - mobile_number
-      title: MobileMoneyDepositInfo
-      type: object
-    ApiThirdPartyClassification:
-      enum:
-      - FirstParty
-      - ThirdParty
-      - Inconclusive
-      - Unknown
-      type: string
-    AuthenticationCode:
-      description: 'An authentication code
-
-
-        used to confirm a 2FA action
-
-        '
-      properties:
-        attempts:
-          description: attempts to submit the authentication code
-          format: int32
-          type: integer
-        entity_id:
-          description: the ID of the entity the authentication is related to
-          format: uuid
-          type: string
-        expires_at:
-          description: the time of expiry for the authentication code
-          format: date-time
-          type: string
-        id:
-          description: The ID of the authentication code
-          format: uuid
-          type: string
-        status:
-          $ref: '#/components/schemas/AuthenticationCodeStatus'
-      required:
-      - id
-      - status
-      - expires_at
-      - attempts
-      - entity_id
-      title: AuthenticationCode
-      type: object
-    BankAccountFedNowIdentifier:
-      example:
-        account_number: '456789123'
-        routing_number: '021000021'
-      properties:
-        account_number:
-          description: US account number (4-17 alphanumeric characters)
-          pattern: ^[0-9A-Z]{4,17}$
-          type: string
-        routing_number:
-          description: US routing number (exactly 9 digits)
-          pattern: ^[0-9]{9}$
-          type: string
-      required:
-      - routing_number
-      - account_number
-      title: BankAccountFedNowIdentifier
-      type: object
-    Fiat:
-      description: A fiat currency
-      example:
-        code: USD
-      properties:
-        code:
-          description: The code of the currency e.g. 'USD'
-          type: string
-      required:
-      - code
-      title: Fiat
-      type: object
-    Account_CryptoWallet:
+    DepositRail_CryptoWallet:
       allOf:
       - properties:
           type:
@@ -4700,275 +4972,9 @@ components:
         - type
         type: object
       - $ref: '#/components/schemas/CryptoWallet'
-      description: 'Account
-
-
-        The account for the autoramp
-
-        '
-    PixAccountIdentifier_PixEmailKey:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - EMAIL
-            example: EMAIL
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixEmailKey'
-      description: 'PixAccountIdentifier
-
-
-        How the recipient''s PIX account is identified: a DICT key of one of the
-
-        five key types, or full bank account details.'
-    DepositRail_MobileMoneyDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - MobileMoney
-            example: MobileMoney
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/MobileMoneyDepositInfo'
-    BankAccountACHIdentifier:
-      example:
-        account_number: '123456789'
-        routing_number: '021000021'
-      properties:
-        account_number:
-          description: US account number (4-17 alphanumeric characters)
-          pattern: ^[0-9A-Z]{4,17}$
-          type: string
-        routing_number:
-          description: US routing number (exactly 9 digits)
-          pattern: ^[0-9]{9}$
-          type: string
-      required:
-      - routing_number
-      - account_number
-      title: BankAccountACHIdentifier
-      type: object
-    PaymentTracking:
-      description: Tracking information for this transactions' payout. Only populated for completed transactions
-      properties:
-        ach_payment_reference:
-          type: string
-        ach_trace_number:
-          type: string
-        fps_payment_reference:
-          type: string
-        imad:
-          type: string
-        omad:
-          type: string
-        sepa_payment_reference:
-          type: string
-        swift_payment_reference:
-          type: string
-        uetr:
-          type: string
-        wire_message:
-          type: string
-      title: PaymentTracking
-      type: object
-    PixDepositInfo:
-      properties:
-        instruction:
-          type: string
-        pix_key:
-          type: string
-      required:
-      - pix_key
-      - instruction
-      title: PixDepositInfo
-      type: object
-    RecipientName_IndividualName:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Individual
-            example: Individual
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/IndividualName'
-    ApiAutorampOpenBankingPaymentSettlementStatus:
-      enum:
-      - InProgress
-      - Completed
-      - Incomplete
-      type: string
-    BankAccountIdentifier_BankAccountCHAPSIdentifier:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - CHAPS
-            example: CHAPS
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/BankAccountCHAPSIdentifier'
-    DepositRail_PixDepositInfo:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Pix
-            example: Pix
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/PixDepositInfo'
-    AuthenticationCodeStatus:
-      description: The status of the Authentication Code
-      enum:
-      - Pending
-      - Expired
-      - Confirmed
-      - Rejected
-      type: string
-    ApiWalletDepositSource:
-      description: A wallet deposit source of an autoramp transaction
-      example:
-        blockchain: Solana
-        deposit_tx_hash: 45E89p7aRyUzsqbqstCkKqxaaeYXgagbq8ccHCZWMRN1E8KAqoEPACDasVjkMMbDJGwrwFHz5RDT67kUN3p5Rk81
-        wallet_address: 7QqLDBU5iT4VWshsqRdWKHjKdqZqKqYbpjhCkqDnKXSp
-      properties:
-        blockchain:
-          description: The blockchain
-          type: string
-        deposit_tx_hash:
-          description: The deposit transaction hash
-          type: string
-        wallet_address:
-          description: The wallet address
-          type: string
-      required:
-      - wallet_address
-      - blockchain
-      title: ApiWalletDepositSource
-      type: object
-    PixBankDetails:
-      description: 'PixBankDetails
-
-
-        Full Brazilian bank account details identifying the recipient''s account,
-
-        for recipients without a registered PIX key.'
-      example:
-        account_number: '5678901'
-        account_type: CHECKING
-        bank_code: '341'
-        branch_code: '1234'
-      properties:
-        account_number:
-          description: 'Account number including the verification (check) digit, with no
-
-            separator, e.g. `7140025418`.'
-          maxLength: 20
-          minLength: 1
-          type: string
-        account_type:
-          $ref: '#/components/schemas/PixAccountType'
-        bank_code:
-          description: 3-digit COMPE bank code or 8-digit ISPB, distinguished by length
-          pattern: ^([0-9]{3}|[0-9]{8})$
-          type: string
-        branch_code:
-          description: Branch number without the verification digit
-          pattern: ^[0-9]{1,4}$
-          type: string
-      required:
-      - bank_code
-      - branch_code
-      - account_number
-      - account_type
-      title: PixBankDetails
-      type: object
-    WireDepositInfo:
-      example:
-        account_number: '987654321'
-        bank_address: 1 Chase Manhattan Plaza, New York, NY 10005, US
-        bank_name: JPMorgan Chase Bank
-        recipient_address: 123 Main Street, New York, NY 10001, US
-        recipient_name: Alan Turing
-        routing_number: '021000021'
-      properties:
-        account_number:
-          type: string
-        bank_address:
-          type: string
-        bank_name:
-          type: string
-        recipient_address:
-          type: string
-        recipient_name:
-          type: string
-        routing_number:
-          type: string
-      required:
-      - routing_number
-      - account_number
-      - bank_name
-      - bank_address
-      - recipient_name
-      - recipient_address
-      title: WireDepositInfo
-      type: object
-    NetworkFeeWithSettlement:
-      description: 'Network Fee with Settlement
-
-
-        The network fee with settlement for a given currency
-
-        '
-      properties:
-        fee_amount:
-          $ref: '#/components/schemas/Amount'
-        fee_type:
-          $ref: '#/components/schemas/NetworkFeeType'
-        settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-      required:
-      - fee_type
-      - fee_amount
-      title: NetworkFeeWithSettlement
-      type: object
-    PartnerFee:
-      description: 'Partner Fee
-
-
-        A partner fee
-
-        '
-      properties:
-        fee:
-          $ref: '#/components/schemas/Amount'
-        label:
-          description: The label of the partner fee
-          type: string
-        settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-      required:
-      - label
-      - fee
-      - settlement
-      title: PartnerFee
-      type: object
   parameters:
     XApiVersion:
-      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01, 2026-08-01, 2026-10-01, 2026-10-15.'
       in: header
       name: X-API-Version
       required: false

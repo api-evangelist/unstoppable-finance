@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   description: The Stablecoin Payment Network
   title: Iron API - Sandbox Customer API
-  version: 1.0-16988
+  version: 1.0-19869
 servers:
 - url: https://api.sandbox.iron.xyz/api
 tags:
@@ -197,17 +197,6 @@ paths:
             $ref: '#/components/schemas/CustomerStatus'
           type: array
       - deprecated: false
-        description: Filter by the customer's most-recent identification status
-        explode: true
-        in: query
-        name: identification_status
-        required: false
-        schema:
-          default: null
-          items:
-            $ref: '#/components/schemas/IdentificationStatus'
-          type: array
-      - deprecated: false
         description: Filter by customer type (Person or Business)
         explode: true
         in: query
@@ -321,6 +310,41 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Create a new customer
+      tags:
+      - Customer
+  /customers/{customer_id}/rfis:
+    get:
+      operationId: listCustomerRfis
+      parameters:
+      - deprecated: false
+        explode: true
+        in: path
+        name: customer_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Rfi'
+                type: array
+          description: ''
+        '401':
+          description: ''
+        '403':
+          description: ''
+        '404':
+          description: ''
+        '500':
+          description: ''
+      security:
+      - ApiKeyAuth: []
+      summary: List RFIs for a customer
       tags:
       - Customer
   /customers/{external_id}/external:
@@ -589,6 +613,82 @@ paths:
       summary: Archive a customer
       tags:
       - Customer
+  /customers/{id}/identification-data:
+    patch:
+      description: 'Partial update for a person customer''s existing KYC record. Only
+
+        non-null fields are applied. Patches the customer''s existing KYC
+
+        record directly — does not trigger re-verification, so an
+
+        already-approved customer keeps their status. Useful for backfilling a
+
+        tax identification number (DAC8/CARF) on customers who onboarded before
+
+        TIN collection existed.'
+      operationId: updateCustomerIdentificationData
+      parameters:
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the identification data will be updated for the sub-partner's customer
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer whose identification data will be updated
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/UpdateIdentificationDataParams'
+        description: The identification data to update
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Identification'
+          description: PATCH Customer Identification Data Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PATCH Customer Identification Data Failed (Invalid Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PATCH Customer Identification Data Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: PATCH Customer Identification Data Failed (Resource Not Found)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: PATCH Customer Identification Data Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Update Customer Identification Data
+      tags:
+      - Customer
   /customers/{id}/identifications:
     get:
       description: Retrieve all identifications for this customer
@@ -662,6 +762,87 @@ paths:
       summary: Get all customer Identifications
       tags:
       - Customer
+  /customers/{id}/identifications/tin-step-up:
+    post:
+      description: 'For an already-approved customer, moves their existing KYC
+
+        onto a TIN-only step-up level and returns a fresh verification
+
+        link. Hand the returned `url` to the customer to collect their tax
+
+        identification number status. No-ops with a 409 if the customer already
+
+        has a TIN on file.'
+      operationId: triggerCustomerTinStepUp
+      parameters:
+      - deprecated: false
+        description: a UUID ensuring a TIN step-up trigger is only processed once
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: true
+        schema:
+          type: string
+      - deprecated: false
+        description: Optional sub-partner UUID, if provided, the step-up will be triggered for the sub-partner's customer
+        explode: true
+        in: header
+        name: X-SUB-PARTNER-ID
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        description: the ID of the Customer to trigger a TIN step-up for
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Identification'
+          description: POST Trigger Customer TIN Step-Up Succeeded
+        '400':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Trigger Customer TIN Step-Up Failed (Invalid Request)
+        '401':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Trigger Customer TIN Step-Up Failed (Unauthorized)
+        '404':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Trigger Customer TIN Step-Up Failed (Resource Not Found)
+        '409':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+          description: POST Trigger Customer TIN Step-Up Failed (Customer Already Has a TIN On File)
+        '500':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: POST Trigger Customer TIN Step-Up Failed (Internal Error)
+      security:
+      - ApiKeyAuth: []
+      summary: Trigger Customer TIN Step-Up
+      tags:
+      - Customer
   /customers/{id}/identifications/v2:
     post:
       description: 'This will create a new identification for the customer, dependent on the customer type a KYC or KYB will be created for the customer to complete.
@@ -719,7 +900,7 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                type: string
+                $ref: '#/components/schemas/ApiIdentificationErrorBody'
           description: POST Customer Identification Failed (Invalid Request)
         '401':
           content:
@@ -743,8 +924,8 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                type: string
-          description: POST Customer Idenfication Failed (Has Pending Identification)
+                $ref: '#/components/schemas/IdentificationConflict'
+          description: POST Customer Identification Failed (Duplicate Or Pending Identification)
         '429':
           content:
             application/json; charset=utf-8:
@@ -886,22 +1067,16 @@ paths:
       - Customer
   /customers/{id}/requirements:
     get:
-      description: 'Retrieve a requirements view of a customer:
+      deprecated: false
+      description: 'API 2026-10-01 returns catalog descriptions and separate review feedback,
 
-        four buckets — `complete`, `pending`, `missing`, `issues` — plus a
+        validation occurrences, and rejected document steps. Earlier versions retain
 
-        coarse `requirements_due` summary of categories that still need
+        the legacy shape. The default when X-API-Version is omitted remains unchanged.
 
-        attention. Each requirement carries a stable typed `code` (switch on
+        Customers without stored requirements show the identification-level requirement.
 
-        this) and, when available, a verbatim `description` from the upstream
-
-        KYC provider''s moderation comment. **NOTE**: The `description` field is subject to change without notice.
-
-
-        Computed on demand from the customer''s identifications and
-
-        customer-level state; no separate ingestion step is needed.'
+        Only applicant-facing feedback is included on this route.'
       operationId: getCustomerRequirements
       parameters:
       - deprecated: false
@@ -927,7 +1102,7 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: '#/components/schemas/CustomerRequirements'
+                $ref: '#/components/schemas/StructuredCustomerRequirements'
           description: GET Customer Requirements Succeeded
         '401':
           content:
@@ -1318,17 +1493,1318 @@ paths:
       summary: Fetch identification compliance questionnaire
       tags:
       - Customer
+  /rfis:
+    get:
+      operationId: listRfis
+      parameters:
+      - deprecated: false
+        description: '`open` (default) or `completed`'
+        explode: false
+        in: query
+        name: state
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/RfiListState'
+          - default: null
+          default: null
+      - deprecated: false
+        explode: false
+        in: query
+        name: search_term
+        required: false
+        schema:
+          default: null
+          maxLength: 256
+          type: string
+      - deprecated: false
+        explode: false
+        in: query
+        name: cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        explode: false
+        in: query
+        name: prev_cursor
+        required: false
+        schema:
+          default: null
+          format: uuid
+          type: string
+      - deprecated: false
+        explode: false
+        in: query
+        name: page_size
+        required: false
+        schema:
+          default: 10
+          format: uint32
+          maximum: 100.0
+          type: integer
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PagedList_RfiCustomerGroup'
+          description: ''
+        '401':
+          description: ''
+        '403':
+          description: ''
+        '500':
+          description: ''
+      security:
+      - ApiKeyAuth: []
+      summary: List RFIs
+      tags:
+      - Customer
+  /rfis/{rfi_id}:
+    get:
+      operationId: getRfi
+      parameters:
+      - deprecated: false
+        explode: true
+        in: path
+        name: rfi_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Rfi'
+          description: ''
+        '401':
+          description: ''
+        '403':
+          description: ''
+        '404':
+          description: ''
+        '500':
+          description: ''
+      security:
+      - ApiKeyAuth: []
+      summary: Get an RFI
+      tags:
+      - Customer
+  /rfis/{rfi_id}/rounds/{round_id}/document-link-opened:
+    post:
+      operationId: recordRfiDocumentLinkOpened
+      parameters:
+      - deprecated: false
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        explode: true
+        in: path
+        name: rfi_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        explode: true
+        in: path
+        name: round_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      responses:
+        '200':
+          description: ''
+        '401':
+          description: ''
+        '403':
+          description: ''
+        '404':
+          description: ''
+        '409':
+          description: ''
+        '500':
+          description: ''
+      security:
+      - ApiKeyAuth: []
+      summary: Record that an RFI document link was opened
+      tags:
+      - Customer
+  /rfis/{rfi_id}/rounds/{round_id}/documents:
+    post:
+      operationId: uploadRfiDocument
+      parameters:
+      - deprecated: false
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        explode: true
+        in: path
+        name: rfi_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        explode: true
+        in: path
+        name: round_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  format: binary
+                  type: string
+              required:
+              - file
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/RfiDocument'
+          description: ''
+        '400':
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+          description: ''
+        '403':
+          description: ''
+        '404':
+          description: ''
+        '409':
+          description: ''
+        '500':
+          description: ''
+      security:
+      - ApiKeyAuth: []
+      summary: Upload an RFI document
+      tags:
+      - Customer
+  /rfis/{rfi_id}/rounds/{round_id}/response:
+    post:
+      operationId: submitRfiResponse
+      parameters:
+      - deprecated: false
+        explode: true
+        in: header
+        name: IDEMPOTENCY-KEY
+        required: false
+        schema:
+          type: string
+      - deprecated: false
+        explode: true
+        in: path
+        name: rfi_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - deprecated: false
+        explode: true
+        in: path
+        name: round_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - $ref: '#/components/parameters/XApiVersion'
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/SubmitRfiResponse'
+        required: true
+      responses:
+        '200':
+          description: ''
+        '400':
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+          description: ''
+        '401':
+          description: ''
+        '403':
+          description: ''
+        '404':
+          description: ''
+        '409':
+          description: ''
+        '500':
+          description: ''
+      security:
+      - ApiKeyAuth: []
+      summary: Submit an RFI response
+      tags:
+      - Customer
 components:
   schemas:
-    AbilityStatus:
-      description: The current status of the ability
+    ComplianceQuestionaire:
+      description: 'V1 Compliance Questionnaire
+
+
+        Legacy compliance questionnaire format
+
+        '
+      properties:
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatus'
+        expected_monthly_volume:
+          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionVolume'
+        id:
+          format: uuid
+          type: string
+        intended_use:
+          $ref: '#/components/schemas/IntendedUse'
+        monthly_income:
+          $ref: '#/components/schemas/PersonProfileMonthlyIncome'
+        occupation:
+          $ref: '#/components/schemas/Occupation'
+        source_of_funds:
+          $ref: '#/components/schemas/PersonProfileSourceOfFunds'
+        source_of_funds_proof:
+          type: string
+      required:
+      - id
+      - intended_use
+      title: ComplianceQuestionaire
+      type: object
+    BirthPlace:
+      description: 'Birth place
+
+
+        The place of birth of the person
+
+        '
+      properties:
+        country:
+          description: ISO 3166-1 alpha-2 (2 letter) country code of the place of birth
+          type: string
+        place:
+          description: place of birth
+          type: string
+        state:
+          description: 'state of birth. Required only for countries with ISO 3166-2
+
+            administrative subdivisions (e.g. not required for countries with
+
+            none, like Vatican City).'
+          type: string
+      required:
+      - place
+      - country
+      title: BirthPlace
+      type: object
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
+
+        Includes a trace_id that clients can reference when reporting issues.'
+      properties:
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
+          type: string
+      required:
+      - message
+      - trace_id
+      title: ApiError
+      type: object
+    GenericBusinessQuestionnaire:
+      description: 'KYB compliance questionnaire for standard company types
+
+        '
+      properties:
+        business_details:
+          $ref: '#/components/schemas/BusinessQuestionnaireBusinessDetails'
+        planned_activities:
+          $ref: '#/components/schemas/BusinessQuestionnairePlannedActivities'
+        source_of_funds:
+          $ref: '#/components/schemas/BusinessQuestionnaireSourceOfFunds'
+      required:
+      - planned_activities
+      - source_of_funds
+      - business_details
+      title: GenericBusinessQuestionnaire
+      type: object
+    UpdateIdentificationDataParams:
+      description: 'Update Identification Data Params
+
+
+        Partial update for a person customer''s existing KYC record. Only
+
+        non-null fields are applied; today only the tax identification number
+
+        is supported.'
+      properties:
+        tax_identification_number:
+          description: 'Tax identification number (e.g. SSN for US, national TIN for EEA
+
+            residents). Patched directly onto the customer''s existing KYC
+
+            record — does not trigger re-verification, so an already-approved
+
+            customer''s status is unaffected.'
+          type: string
+        tax_residence_country:
+          description: 'ISO 3166-1 alpha-2 country of tax residence. Required whenever
+
+            `tax_identification_number` is set — TIN format is validated against
+
+            this specific country, and it can genuinely differ from the
+
+            customer''s physical residence or nationality (the reason DAC8/CARF
+
+            asks for it separately).'
+          type: string
+      title: UpdateIdentificationDataParams
+      type: object
+    CompanyBeneficiary:
+      description: 'Company Beneficial Owner
+
+
+        The beneficial owner of the company
+
+        '
+      properties:
+        attested_at:
+          description: 'When the beneficiary certified the information (RFC 3339, in the past).
+
+            Required when attesting_party is true.'
+          type: string
+        attesting_party:
+          description: 'Marks this beneficiary as certifying the beneficial-ownership information
+
+            (31 CFR 1010.230). Root-level person holding a Director role only. Required
+
+            (exactly one beneficiary must set this to true) for every US
+
+            non-sole-proprietorship business — Iron always generates and submits the
+
+            certification on the attesting party''s behalf, satisfying the Ownership
+
+            Structure document requirement. Before setting this flag, present the
+
+            collected beneficial-ownership information to this beneficiary and obtain
+
+            their confirmation that it is complete and correct — Iron renders a
+
+            certification naming them from the submitted data. Limited to simple
+
+            ownership structures (at most three levels of beneficiaries: root, a
+
+            nested business, and that business''s own nested business); deeper
+
+            structures cannot use this endpoint.'
+          type: boolean
+        beneficiary_info:
+          $ref: '#/components/schemas/CompanyBeneficiaryInfo'
+        nature_of_control:
+          description: 'How a Control UBO exercises control, e.g. voting rights or a trust relationship
+
+            (max 255 characters). Available from API version 2026-10-15. Required for
+
+            Control and rejected otherwise.'
+          type: string
+        roles:
+          description: The primary role of the beneficial owner
+          items:
+            $ref: '#/components/schemas/CompanyPrimaryBeneficiaryRole'
+          type: array
+        share_percentage:
+          description: 'Share percentage of the beneficial owner (0-100). The combined shares of
+
+            UltimateBeneficialOwner beneficiaries must not exceed 100 per company.'
+          format: decimal
+          type: string
+        ubo_subtype:
+          $ref: '#/components/schemas/BeneficiaryUboSubtype'
+      required:
+      - roles
+      - beneficiary_info
+      title: CompanyBeneficiary
+      type: object
+    PersonProfileSourceOfFunds:
+      description: 'Source of Funds
+
+
+        The sources of funds for a person
+
+        '
       enum:
-      - Active
-      - Pending
-      - Unavailable
-      - Blocked
-      - Maintenance
+      - SalaryAndWages
+      - PersonalSavings
+      - PensionOrRetirementPayments
+      - ProceedsFromSellingAssets
+      - CryptocurrencyTradingOrInvestment
+      - InvestmentReturns
+      - GamblingOrLotteryWinnings
+      - GiftOrInheritanceReceived
+      - LoanFromBankOrOtherFinancialInstitution
       type: string
+    IdentificationPreflightWorkflowError:
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        missingPaths:
+          items:
+            type: string
+          type: array
+      required:
+      - code
+      - message
+      title: IdentificationPreflightWorkflowError
+      type: object
+    PagedList_RfiCustomerGroup:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/RfiCustomerGroup'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_RfiCustomerGroup
+      type: object
+    BusinessIdentificationStepStatus:
+      properties:
+        company_beneficiaries:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        company_data:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        company_documents:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        questionnaire:
+          $ref: '#/components/schemas/VerificationStepDetail'
+      title: BusinessIdentificationStepStatus
+      type: object
+    RfiAnswerType:
+      enum:
+      - text
+      - yes_no
+      type: string
+    ValidationIssue:
+      properties:
+        code:
+          $ref: '#/components/schemas/ValidationRequirementCode'
+        description:
+          type: string
+        identification_id:
+          format: uuid
+          nullable: true
+          type: string
+        retryable:
+          nullable: true
+          type: boolean
+        validation_errors:
+          items:
+            $ref: '#/components/schemas/RequirementValidationError'
+          type: array
+      required:
+      - code
+      - description
+      - identification_id
+      - retryable
+      - validation_errors
+      title: ValidationIssue
+      type: object
+    CompanyDocType:
+      description: 'Company document type
+
+
+        The type of company document
+
+        '
+      enum:
+      - PowerOfAttorney
+      - TransparencyRegistryExtract
+      - DirectorsRegistry
+      - GoodStandingCert
+      - IncorporationArticles
+      - IncorporationCert
+      - IncumbencyCert
+      - InformationStatement
+      - PartnershipAgreement
+      - ProofOfAddress
+      - ProofOfNatureOfBusiness
+      - RegulatoryLicense
+      - SelfDeclarationForm
+      - ShareholderRegistry
+      - StateRegistry
+      - TradeLicense
+      - TrustAgreement
+      - Other
+      - AmlCftPolicy
+      type: string
+    BeneficiaryIdentity:
+      description: 'Beneficiary Identity Document
+
+
+        Identity document and biometric information for a person beneficiary.
+
+        Mirrors ApiPersonIdentity but excludes ip_address (collected at the business level).
+
+        '
+      properties:
+        identity_country_code:
+          description: ISO 3166-1 alpha-2 country code of the person's identity document
+          type: string
+        identity_document_back:
+          description: Base64 encoded image of identity document back (10MB max)
+          type: string
+        identity_document_front:
+          description: Base64 encoded image of identity document front (10MB max)
+          type: string
+        identity_document_type:
+          $ref: '#/components/schemas/IdentityDocumentType'
+        identity_document_valid_until:
+          description: Expiry date of the identity document (YYYY-MM-DD format). Must not be in the past.
+          type: string
+        identity_number:
+          description: The identity number of the document being submitted
+          type: string
+        nationality:
+          description: ISO 3166-1 alpha-2 nationality country code
+          type: string
+        selfie:
+          description: 'Base64 encoded selfie image (10MB max).
+
+            Required for Director or Representative beneficiaries outside the US. Optional for
+
+            every role in the US, and for other roles anywhere.'
+          type: string
+        selfie_collected_at:
+          description: 'timestamp in ISO 8601 format when the selfie was captured.
+
+            Required when selfie is provided.'
+          type: string
+      required:
+      - identity_country_code
+      - identity_document_type
+      - identity_document_front
+      - nationality
+      title: BeneficiaryIdentity
+      type: object
+    IdentificationCreateParamsV2_IdentificationTokenParams:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Token
+            example: Token
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IdentificationTokenParams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+    PersonProfileSourceOfWealth:
+      description: 'Source of Wealth
+
+
+        The source of wealth of the person
+
+        '
+      enum:
+      - Salary
+      - Savings
+      - Investments
+      - CryptoTrading
+      - Other
+      - SaleOfAssetsOrSettlement
+      - Pension
+      - CompanyProfits
+      - SoleProprietorIncome
+      - RentalIncome
+      - Inheritance
+      type: string
+    Customer:
+      description: 'Customer
+
+
+        The customer object in Iron
+
+        '
+      properties:
+        active_email:
+          description: Active email for receiving transaction emails (if different from primary email)
+          type: string
+        created_at:
+          description: Created at timestamp of Customer
+          format: date-time
+          type: string
+        customer_type:
+          $ref: '#/components/schemas/CustomerType'
+        email:
+          description: Email of Customer, collected during identification process
+          type: string
+        external_id:
+          description: External ID for the customer, provided by the partner
+          type: string
+        id:
+          description: Unique ID of Customer
+          format: uuid
+          type: string
+        identification_ids:
+          description: Identifications associated with Customer
+          items:
+            format: uuid
+            type: string
+          type: array
+        identification_status:
+          allOf:
+          - $ref: '#/components/schemas/IdentificationStatus'
+          - deprecated: true
+            description: 'Deprecated — always null. Mixed the Identification resource into Customer;
+
+              use `identification_ids` with `GET /identifications/{id}` to read status instead.'
+          deprecated: true
+          description: 'Deprecated — always null. Mixed the Identification resource into Customer;
+
+            use `identification_ids` with `GET /identifications/{id}` to read status instead.'
+        name:
+          description: Name of Customer
+          type: string
+        partner_id:
+          description: Partner ID of the customer
+          format: uuid
+          type: string
+        signing_ids:
+          description: Signings associated with Customer
+          items:
+            format: uuid
+            type: string
+          type: array
+        spending_limit_euro:
+          deprecated: true
+          description: 'Deprecated — always null. Spending limits are dynamic per customer and per
+
+            direction; use `GET /customers/{id}/spending-limit` (`threshold_eur`) instead.'
+          type: string
+        status:
+          $ref: '#/components/schemas/CustomerStatus'
+        updated_at:
+          description: Updated at timestamp of Customer
+          format: date-time
+          type: string
+      required:
+      - id
+      - customer_type
+      - identification_ids
+      - signing_ids
+      - created_at
+      - updated_at
+      - status
+      - name
+      - email
+      - partner_id
+      title: Customer
+      type: object
+    SubmitAuthenticationCodeParams:
+      description: 'Authentication Code Params
+
+
+        Parameters for submitting an authentication code
+
+        '
+      properties:
+        code:
+          description: The code to submit
+          format: int32
+          type: integer
+      required:
+      - code
+      title: SubmitAuthenticationCodeParams
+      type: object
+    RequirementRejectReason:
+      properties:
+        description:
+          type: string
+        error_code:
+          type: string
+      required:
+      - error_code
+      - description
+      title: RequirementRejectReason
+      type: object
+    PersonProfileYearlyGrossIncome:
+      description: 'Yearly Gross Income
+
+
+        The yearly gross income of the person.
+
+
+        DEPRECATED VALUE: `MoreThan150000` predates the finer bands above 150,000
+
+        and is no longer accepted as-is — submissions containing it are coerced to
+
+        `From150001To200000` on ingest. Use one of `From150001To200000`,
+
+        `From200001To500000` or `MoreThan500000` instead.
+
+        '
+      enum:
+      - LessThan20000
+      - From20001To30000
+      - From30001To40000
+      - From40001To50000
+      - From50001To60000
+      - From60001To70000
+      - From70001To80000
+      - From80001To90000
+      - From90001To100000
+      - From100001To110000
+      - From110001To120000
+      - From120001To130000
+      - From130001To140000
+      - From140001To150000
+      - MoreThan150000
+      - From150001To200000
+      - From200001To500000
+      - MoreThan500000
+      type: string
+    CompanyBeneficiaryInfo:
+      anyOf:
+      - $ref: '#/components/schemas/PersonBeneficiaryInfo'
+      - $ref: '#/components/schemas/BusinessBeneficiaryInfo'
+      description: 'Company Beneficiary Info
+
+
+        The beneficiary info of the company
+
+        '
+      type: object
+    CurrencyAbility:
+      description: What a customer can do with a single currency.
+      properties:
+        counterparts:
+          description: 'Valid mint/redeem counterpart currencies (the other side of the pair).
+
+            Populated only for mint-only brand tokens (PYUSDx, M0 extensions); empty
+
+            for every other currency. Mint and redeem are symmetric: the same set.'
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+        currency:
+          $ref: '#/components/schemas/Currency'
+        flows:
+          description: The flows available for this currency.
+          items:
+            $ref: '#/components/schemas/AutorampType'
+          type: array
+      required:
+      - currency
+      - flows
+      - counterparts
+      title: CurrencyAbility
+      type: object
+    RfiType:
+      enum:
+      - probing_questions
+      - source_of_funds
+      - liveness
+      type: string
+    BusinessQuestionnaire:
+      anyOf:
+      - $ref: '#/components/schemas/BusinessQuestionnaire_GenericBusinessQuestionnaire'
+      - $ref: '#/components/schemas/BusinessQuestionnaire_SolePropBusinessQuestionnaire'
+      description: 'KYB compliance questionnaire
+
+
+        Use `GenericBusinessQuestionnaire` for all company types except sole proprietorships.
+
+        Use `SolePropBusinessQuestionnaire` for sole proprietorships.
+
+        '
+      discriminator:
+        mapping:
+          Generic: '#/components/schemas/BusinessQuestionnaire_GenericBusinessQuestionnaire'
+          SoleProp: '#/components/schemas/BusinessQuestionnaire_SolePropBusinessQuestionnaire'
+        propertyName: type
+      type: object
+    PersonProfileExpectedMonthlyTransactionCount:
+      description: 'Expected Monthly Transaction Count
+
+
+        The expected monthly transaction volume of the person
+
+        '
+      enum:
+      - LessThan5
+      - Between5And10
+      - MoreThan10
+      type: string
+    BusinessEstimatedAnnualRevenue:
+      description: 'Estimated Annual Revenue
+
+
+        Company''s estimated annual revenue. The numbers are band boundaries, not a currency
+
+        requirement: read them in the currency the business reports in, so a company reporting
+
+        2,000,000 USD sends From1MTo10M. Do not convert at an FX rate. There is no separate
+
+        band set per currency.
+
+        '
+      enum:
+      - Under100K
+      - From100KTo1M
+      - From1MTo10M
+      - From10MTo50M
+      - From50MTo250M
+      - Over250M
+      type: string
+    CompanyType:
+      description: 'Company Type
+
+
+        The type of company
+
+        '
+      enum:
+      - LimitedLiabilityCompany
+      - PubliclyListedCompany
+      - SoleProprietorship
+      - Partnership
+      - Corporation
+      - Trust
+      - PrivateFoundation
+      - Charity
+      - NonprofitCorporation
+      - NonprofitOrganization
+      - PublicAgenciesOrAuthorities
+      - StockCorporationOutOfStock
+      - GeneralCorporation
+      type: string
+    ApiPreflightDecision:
+      enum:
+      - likely_pass
+      - fail
+      - likely_fail
+      - inconclusive
+      type: string
+    BusinessQuestionnaireBusinessDetails:
+      description: 'Business Details Section
+
+
+        Industry classification and operational information about the company
+
+        '
+      properties:
+        business_model_description:
+          description: Description of business model and target clients
+          type: string
+        has_licenses_or_registrations:
+          description: Does the company maintain any licenses or registrations
+          type: boolean
+        industry:
+          $ref: '#/components/schemas/BusinessIndustryV2'
+        industry_type:
+          allOf:
+          - $ref: '#/components/schemas/BusinessIndustryType'
+          - deprecated: true
+            description: 'Deprecated — use `industry` instead. Coarse 36-value classification; `industry`
+
+              exposes Sumsub''s full granular taxonomy.'
+          deprecated: true
+          description: 'Deprecated — use `industry` instead. Coarse 36-value classification; `industry`
+
+            exposes Sumsub''s full granular taxonomy.'
+        license_details:
+          description: 'Additional information about maintained licenses or registrations. Required when
+
+            has_licenses_or_registrations is true.'
+          type: string
+        main_business_countries:
+          description: Main countries of business operation (ISO 3166-1 alpha-2 codes)
+          items:
+            type: string
+          type: array
+      required:
+      - industry_type
+      - business_model_description
+      - main_business_countries
+      - has_licenses_or_registrations
+      title: BusinessQuestionnaireBusinessDetails
+      type: object
+    BusinessIndustryV2:
+      description: 'Industry (V2)
+
+
+        Full granular business industry/sector classification, matching Sumsub''s live industry
+
+        dropdown 1:1. Supersedes `ApiBusinessIndustryType`, which only covers 36 broad categories.
+
+        '
+      enum:
+      - AdultEntertainment
+      - Advertising
+      - Aerospace
+      - AgricultureAndFarming
+      - Alcohol
+      - AntiquesAndCollectibles
+      - ArmoredCourierServices
+      - Art
+      - ArtificialIntelligence
+      - ATMs
+      - AuctioneersAndBrokers
+      - BailBondsmanBailiffServices
+      - BankingAsAService
+      - BinaryOptions
+      - Biotechnology
+      - BlockchainAdTech
+      - BlockchainAssetManagement
+      - BlockchainDeveloperTech
+      - BlockchainUtilities
+      - BuildingMaterialsAndSupplies
+      - BusinessServices
+      - BuyNowPayLaterBNPL
+      - Cannabis
+      - CarDealership
+      - CashFundedRemittances
+      - CentralizedCryptoExchangesAndTrading
+      - Chemical
+      - CleaningProductsAndServices
+      - CloudComputing
+      - CollectibleCards
+      - CommissionAgents
+      - Commodities
+      - ComputerHardware
+      - Consulting
+      - ConsumerElectronics
+      - ConsumerGoods
+      - ConsumerProducts
+      - Crafts
+      - CreditServices
+      - CryptoExchange
+      - CryptoHedgeFund
+      - CryptoMining
+      - CryptoNews
+      - CryptoPayroll
+      - Culture
+      - CustodialWallet
+      - Cybersecurity
+      - DataStorageAndManagement
+      - DatingServices
+      - DecentralizedCryptoExchangeAndTrading
+      - DefenseMilitary
+      - DeFiDecentralizedFinance
+      - Design
+      - DiamondIndustry
+      - DigitalBrokerage
+      - ElectricVehicles
+      - EmbassiesConsulatesMissions
+      - EnvironmentalServices
+      - EscrowServices
+      - Events
+      - ExoticAnimals
+      - FabricsAndTextiles
+      - Fashion
+      - Fintech
+      - FoodAndBeverage
+      - ForeignCorrespondentBanking
+      - FXTrading
+      - GamblingHostingEnvironmentsWebsites
+      - GamblingPaymentProcessors
+      - GamblingSoftware
+      - GemsOrPreciousMetalsDealership
+      - Government
+      - GovernmentIDsDocumentsUniforms
+      - Heavy
+      - HighNetWorthIndividualExclusiveServices
+      - Hospitality
+      - ImmersiveExperience
+      - InformationTechnology
+      - JewelryOrWatches
+      - LeisureAndRecreation
+      - LicensedPharmaceuticals
+      - LogisticsAndSupplyChain
+      - LoyaltyRewardsAndUserEngagementTool
+      - LuxuryGoods
+      - MachineryAndHeavyEquipmentManufacturing
+      - Media
+      - MedicalDevicesAndSupplies
+      - Miscellaneous
+      - MultiLevelMarketing
+      - Music
+      - NeobanksChallengerBanks
+      - NFTMarketplace
+      - NomineeShareholderBearerShareEntities
+      - NonCustodialWallet
+      - Nutraceuticals
+      - OTCTrading
+      - PawnBrokers
+      - PersonalServices
+      - PetCareAndSupplies
+      - Pharmaceutical
+      - Photography
+      - PoliticalOrganizationsPACs
+      - PrePaidCards
+      - PredictionMarkets
+      - Printing
+      - PrivateBankingWealthManagement
+      - PrivateMilitaryOrSecurity
+      - ProfessionalServices
+      - Publishing
+      - RealEstate
+      - RestaurantsAndFoodServices
+      - Retail
+      - Robotics
+      - ScrapyardDealers
+      - Security
+      - SexualServices
+      - SkinsLootBoxTrading
+      - Software
+      - Space
+      - SportsAndFitness
+      - SustainableAndEthical
+      - Technology
+      - Telecom
+      - ThirdPartyPaymentProcessors
+      - TicketBrokersAgencies
+      - Timeshare
+      - TobaccoNicotineVapes
+      - ToolsAndHardware
+      - ToysAndGames
+      - TraditionalProducts
+      - Transportation
+      - TravelAndTourism
+      - TrustAndCompanyServiceProvidersTCSP
+      - Utilities
+      - WasteManagement
+      - WeaponsKnivesGuns
+      type: string
+    Identification:
+      description: 'Identification
+
+
+        The entity wrapping our KYC/KYB process and underlying providers
+
+        '
+      properties:
+        blocking_abilities:
+          additionalProperties:
+            type: string
+          description: 'Rails (e.g. "ach", "sepa_thirdparty") the synchronous rule-engine
+
+            preflight gate definitively ruled out at creation time, keyed to a
+
+            partner-safe reason. Only set on an outsourced Person/Business
+
+            identification (empty otherwise)'
+          type: object
+        created_at:
+          format: date-time
+          type: string
+        customer_id:
+          description: Absent on a referral partner's identification (partner-keyed record)
+          format: uuid
+          type: string
+        id:
+          format: uuid
+          type: string
+        partner_id:
+          description: The owning partner for partner-keyed (referral) records
+          format: uuid
+          type: string
+        preflight_summary:
+          $ref: '#/components/schemas/IdentificationPreflightSummary'
+        residence_country:
+          description: 'ISO 3166-1 alpha-2 (2 letter) country code of the verified residence
+
+            address; only set on the customer''s most recent identification while it
+
+            is approved'
+          type: string
+        review_comment:
+          type: string
+        status:
+          $ref: '#/components/schemas/IdentificationStatus'
+        step_status:
+          allOf:
+          - $ref: '#/components/schemas/IdentificationStepStatus'
+          deprecated: true
+          description: 'Deprecated for customer requirements. Use GET /customers/{id}/requirements with X-API-Version: 2026-10-01. Legacy reads and writes remain supported.'
+        updated_at:
+          format: date-time
+          type: string
+        url:
+          type: string
+        with_edd:
+          type: boolean
+      required:
+      - id
+      - status
+      - created_at
+      - updated_at
+      - blocking_abilities
+      title: Identification
+      type: object
+    ValidationRequirementCode:
+      enum:
+      - kyc_data_missing
+      - kyc_data_invalid
+      - kyb_data_missing
+      - kyb_data_invalid
+      type: string
+    PersonProfileMonthlyIncome:
+      description: 'Monthly Income
+
+
+        The monthly income of the person
+
+        '
+      enum:
+      - Between1000And2000
+      - Between2000And3000
+      - Between3000And5000
+      - Between5000And10000
+      - Over10000
+      type: string
+    PendingQuestionnaireRequirement:
+      properties:
+        code:
+          $ref: '#/components/schemas/QuestionnaireRequirementCode'
+        description:
+          type: string
+        identification_id:
+          format: uuid
+          nullable: true
+          type: string
+        missing_questions:
+          items:
+            $ref: '#/components/schemas/RequirementMissingQuestion'
+          type: array
+      required:
+      - code
+      - description
+      - identification_id
+      - missing_questions
+      title: PendingQuestionnaireRequirement
+      type: object
+    PersonProfileExpectedMonthlyTransactionVolumeV2:
+      enum:
+      - LessThan500
+      - MoreThan500LessThan2000
+      - MoreThan2000
+      type: string
+    RequirementMissingQuestion:
+      properties:
+        id:
+          type: string
+        section_id:
+          nullable: true
+          type: string
+        title:
+          type: string
+      required:
+      - id
+      - title
+      - section_id
+      title: RequirementMissingQuestion
+      type: object
+    RfiQuestion:
+      properties:
+        answer_type:
+          $ref: '#/components/schemas/RfiAnswerType'
+        id:
+          type: string
+        prompt:
+          type: string
+        required:
+          type: boolean
+        transaction_id:
+          description: The transaction this question asks about, for a source of funds RFI.
+          format: uuid
+          type: string
+      required:
+      - id
+      - prompt
+      - answer_type
+      - required
+      title: RfiQuestion
+      type: object
+    QuestionnaireRequirementCode:
+      enum:
+      - kyc_questionnaire
+      - kyb_questionnaire
+      type: string
+    CustomerSpendingLimit:
+      description: 'Customer Spending Limit
+
+
+        Current usage of the rolling 52-week spending limit split by direction.'
+      properties:
+        crypto_offramp:
+          $ref: '#/components/schemas/CustomerSpendingLimitSection'
+        fiat_onramp:
+          $ref: '#/components/schemas/CustomerSpendingLimitSection'
+      required:
+      - fiat_onramp
+      - crypto_offramp
+      title: CustomerSpendingLimit
+      type: object
     BusinessIndustryType:
       description: 'Industry Type
 
@@ -1374,253 +2850,200 @@ components:
       - RegTech
       - Other
       type: string
-    IdentificationLinkparams:
-      description: 'Direct Identification Params
-
-
-        The params required to create an identification
-
-        '
+    RfiDocument:
+      description: A file uploaded for a round. Only the backoffice can download it.
       properties:
-        with_edd:
-          description: whether to initialize the identification with the full EDD process
-          type: boolean
-      title: IdentificationLinkparams
-      type: object
-    Crypto:
-      description: A cryptocurrency
-      example:
-        blockchain: Solana
-        token: USDC
-      properties:
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
-        token:
-          description: The ticker of the token e.g. 'USDC'
+        content_type:
           type: string
-      required:
-      - token
-      - blockchain
-      title: Crypto
-      type: object
-    BusinessQuestionnairePlannedActivities:
-      description: 'Planned Activities Section
-
-
-        Information about the company''s intended account use and transaction patterns
-
-        '
-      properties:
-        estimated_monthly_transactions:
-          $ref: '#/components/schemas/BusinessEstimatedMonthlyTransactions'
-        estimated_monthly_volume:
-          $ref: '#/components/schemas/BusinessEstimatedMonthlyVolume'
-        flow_of_funds_diagram:
-          description: Base64 encoded flow of funds diagram (required when sends_funds_on_customer_behalf is true)
+        file_name:
           type: string
-        purpose_and_intended_use:
-          $ref: '#/components/schemas/BusinessPurposeAndIntendedUse'
-        sends_funds_on_customer_behalf:
-          description: Does the company send funds on behalf of customers/third parties
-          type: boolean
-        sends_funds_on_customer_behalf_description:
-          description: Description of how funds are sent on customer behalf (required if sends_funds_on_customer_behalf is true)
-          type: string
-        source_of_funds_document:
-          description: Base64 encoded source of funds supporting document (required when sends_funds_on_customer_behalf is true)
-          type: string
-      required:
-      - purpose_and_intended_use
-      - estimated_monthly_volume
-      - estimated_monthly_transactions
-      - sends_funds_on_customer_behalf
-      title: BusinessQuestionnairePlannedActivities
-      type: object
-    IdentificationCreateParamsV2_IdentificationBusinessParams:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Business
-            example: Business
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/IdentificationBusinessParams'
-      description: 'Identification Create Params V2
-
-
-        The params required to create an identification v2, we support three types of identification:
-
-        - Link: where a link is provided to the customer for access to the identification process.
-
-        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
-
-        - Person: where the identification details of the person for which the identification process is being created are provided in the request
-
-        '
-    IdentificationCreateParamsV2:
-      anyOf:
-      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationLinkparams'
-      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationTokenParams'
-      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationPersonParams'
-      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationBusinessParams'
-      description: 'Identification Create Params V2
-
-
-        The params required to create an identification v2, we support three types of identification:
-
-        - Link: where a link is provided to the customer for access to the identification process.
-
-        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
-
-        - Person: where the identification details of the person for which the identification process is being created are provided in the request
-
-        '
-      discriminator:
-        mapping:
-          Business: '#/components/schemas/IdentificationCreateParamsV2_IdentificationBusinessParams'
-          Link: '#/components/schemas/IdentificationCreateParamsV2_IdentificationLinkparams'
-          Person: '#/components/schemas/IdentificationCreateParamsV2_IdentificationPersonParams'
-          Token: '#/components/schemas/IdentificationCreateParamsV2_IdentificationTokenParams'
-        propertyName: type
-      type: object
-    Signing:
-      description: 'Signing
-
-
-        A signing of a document by a customer
-
-        '
-      properties:
-        content_id:
-          description: unique UUID of the content signed by Customer
+        id:
           format: uuid
           type: string
+        size_bytes:
+          format: int64
+          type: integer
+        uploaded_at:
+          format: date-time
+          type: string
+      required:
+      - id
+      - file_name
+      - content_type
+      - size_bytes
+      - uploaded_at
+      title: RfiDocument
+      type: object
+    GbpAbilities:
+      properties:
+        chaps:
+          $ref: '#/components/schemas/AbilityStatus'
+        chaps_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        fps:
+          $ref: '#/components/schemas/AbilityStatus'
+        fps_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+      required:
+      - fps
+      - fps_thirdparty
+      - chaps
+      - chaps_thirdparty
+      - swift
+      - swift_thirdparty
+      title: GbpAbilities
+      type: object
+    AuthenticationCodeStatus:
+      description: The status of the Authentication Code
+      enum:
+      - Pending
+      - Expired
+      - Confirmed
+      - Rejected
+      type: string
+    Rfi:
+      description: 'Partner-visible RFI state. Internal analyst and resolution details are
+
+        deliberately excluded, and so is the outcome: a failed FIU or fraud RFI
+
+        can tip off the customer.'
+      properties:
+        closed_at:
+          format: date-time
+          type: string
         created_at:
-          description: created_at timestamp of Signing
           format: date-time
           type: string
         customer_id:
-          description: unique UUID of the Customer who signed
-          format: uuid
-          type: string
-        document_id:
-          description: unique UUID of the Document signed by Customer (Soon to be deprecated, use content_id & content_type instead)
           format: uuid
           type: string
         id:
-          description: unique UUID of Signing
+          format: uuid
+          type: string
+        liveness_url:
+          description: 'Sumsub verification link for a liveness RFI. Read live from the
+
+            customer''s latest identification, so it never goes stale. Absent on
+
+            every other RFI type.'
+          type: string
+        partner_note:
+          description: Note from MoonPay about a completed RFI. Present only on some closed RFIs.
+          type: string
+        response_received_at:
+          format: date-time
+          type: string
+        rfi_type:
+          $ref: '#/components/schemas/RfiType'
+        rounds:
+          items:
+            $ref: '#/components/schemas/RfiRound'
+          type: array
+        sent_at:
+          format: date-time
+          type: string
+        status:
+          $ref: '#/components/schemas/RfiStatus'
+        transaction_id:
           format: uuid
           type: string
         updated_at:
-          description: updated_at timestamp of Signing
           format: date-time
           type: string
       required:
       - id
       - customer_id
+      - rfi_type
+      - status
+      - rounds
+      - sent_at
       - created_at
       - updated_at
-      title: Signing
+      title: Rfi
       type: object
-    SolePropBusinessQuestionnaire:
-      description: 'KYB compliance questionnaire for sole proprietorships
-
-        '
-      properties:
-        business_details:
-          $ref: '#/components/schemas/SolePropBusinessDetails'
-        planned_activities:
-          $ref: '#/components/schemas/SolePropPlannedActivities'
-        source_of_funds:
-          $ref: '#/components/schemas/SolePropSourceOfFunds'
-      required:
-      - planned_activities
-      - source_of_funds
-      - business_details
-      title: SolePropBusinessQuestionnaire
-      type: object
-    SubmitAuthenticationCodeParams:
-      description: 'Authentication Code Params
+    BeneficiaryUboSubtype:
+      description: 'Beneficial Owner Subtype
 
 
-        Parameters for submitting an authentication code
+        The basis on which an UltimateBeneficialOwner qualifies as one. Required for every
 
-        '
-      properties:
-        code:
-          description: The code to submit
-          format: int32
-          type: integer
-      required:
-      - code
-      title: SubmitAuthenticationCodeParams
-      type: object
-    BusinessQuestionnaireBusinessDetails:
-      description: 'Business Details Section
+        UltimateBeneficialOwner and rejected on any other beneficiary. `Control` is only
 
+        accepted on root-level person beneficiaries of a company that isn''t a sole
 
-        Industry classification and operational information about the company
-
-        '
-      properties:
-        business_model_description:
-          description: Description of business model and target clients
-          type: string
-        estimated_annual_revenue:
-          $ref: '#/components/schemas/BusinessEstimatedAnnualRevenue'
-        has_licenses_or_registrations:
-          description: Does the company maintain any licenses or registrations
-          type: boolean
-        industry_type:
-          $ref: '#/components/schemas/BusinessIndustryType'
-        main_business_countries:
-          description: Main countries of business operation (ISO 3166-1 alpha-2 codes)
-          items:
-            type: string
-          type: array
-        requires_aml_program:
-          description: Is the company required to have an AML/CFT compliance program
-          type: boolean
-      required:
-      - industry_type
-      - business_model_description
-      - main_business_countries
-      - has_licenses_or_registrations
-      - requires_aml_program
-      - estimated_annual_revenue
-      title: BusinessQuestionnaireBusinessDetails
-      type: object
-    ApiFiatAbilities:
-      description: 'Fiat rails
-
-        Customer''s ability to use fiat deposit and payout rails'
-      properties:
-        eur:
-          $ref: '#/components/schemas/EurAbilities'
-        gbp:
-          $ref: '#/components/schemas/GbpAbilities'
-        usd:
-          $ref: '#/components/schemas/UsdAbilities'
-      required:
-      - eur
-      - gbp
-      - usd
-      title: ApiFiatAbilities
-      type: object
-    CustomerStatus:
-      description: 'The status of the Customer
+        proprietorship. Available from API version 2026-10-15; earlier versions reject it.
 
         '
       enum:
-      - UserRequired
-      - SigningsRequired
-      - IdentificationRequired
+      - Ownership
+      - Control
+      type: string
+    Fiat:
+      description: A fiat currency
+      example:
+        code: USD
+      properties:
+        code:
+          description: The code of the currency e.g. 'USD'
+          type: string
+      required:
+      - code
+      title: Fiat
+      type: object
+    Microdeposit:
+      description: 'Microdeposit
+
+
+        A microdeposit record for account verification
+
+        '
+      properties:
+        amount:
+          description: Amount of the microdeposit
+          format: decimal
+          type: string
+        counterparty_name:
+          description: Name of the counterparty
+          type: string
+        created_at:
+          description: When the microdeposit was created
+          format: date-time
+          type: string
+        currency_code:
+          description: Currency code of the microdeposit
+          type: string
+      required:
+      - amount
+      - currency_code
+      - created_at
+      title: Microdeposit
+      type: object
+    AbilityStatus:
+      description: The current status of the ability
+      enum:
       - Active
-      - Suspended
-      - Archived
+      - Pending
+      - Unavailable
+      - Blocked
+      - Maintenance
+      type: string
+    BusinessEstimatedMonthlyTransactions:
+      description: 'Estimated Monthly Transaction Count
+
+
+        Expected number of transactions per month
+
+        '
+      enum:
+      - LessThanTen
+      - TenToTwentyFive
+      - TwentyFiveToFifty
+      - FiftyToOneHundred
+      - MoreThanOneHundred
       type: string
     ApproximateNetWorth:
       description: 'Approximate Net Worth
@@ -1637,150 +3060,6 @@ components:
       - Between300001And500000
       - Between500001And1000000
       - Over1000001
-      type: string
-    RevenueSource:
-      description: 'Revenue Source
-
-
-        Primary source of company funds
-
-        '
-      enum:
-      - BusinessRevenue
-      - ShareholderFunds
-      - VcPrivateEquity
-      - AssetSale
-      - IcoProceeds
-      - CryptoActivityProceeds
-      - LoanProceeds
-      - Other
-      type: string
-    PersonProfileSourceOfFunds:
-      description: 'Source of Funds
-
-
-        The sources of funds for a person
-
-        '
-      enum:
-      - SalaryAndWages
-      - PersonalSavings
-      - PensionOrRetirementPayments
-      - ProceedsFromSellingAssets
-      - CryptocurrencyTradingOrInvestment
-      - InvestmentReturns
-      - GamblingOrLotteryWinnings
-      - GiftOrInheritanceReceived
-      - LoanFromBankOrOtherFinancialInstitution
-      type: string
-    CompanyInfo:
-      description: 'Company Info
-
-
-        Identifying details about a company. Shared between the root identification
-
-        request and any nested business beneficiaries so the same fields are
-
-        collected at every level of the corporate structure.
-
-        '
-      properties:
-        address:
-          $ref: '#/components/schemas/Address'
-        alternative_names:
-          description: The list of alternative names for the company
-          items:
-            type: string
-          type: array
-        company_name:
-          description: The legal name of the company
-          type: string
-        company_type:
-          $ref: '#/components/schemas/CompanyType'
-        country:
-          description: The ISO 3166-1 alpha-2 (2 letter) country code where the company is legally registered
-          type: string
-        email:
-          description: The email address of the company
-          type: string
-        incorporation_date:
-          description: The date of legal incorporation in YYYY-MM-DD format
-          type: string
-        legal_address:
-          description: The address used during legal registration
-          type: string
-        postal_address:
-          description: The postal address of the company
-          type: string
-        registration_number:
-          description: The unique number assigned to the company when legally registered
-          type: string
-        tax_identification_number:
-          description: The tax identification number of the company
-          type: string
-        website:
-          description: The website of the company
-          type: string
-      required:
-      - company_name
-      - registration_number
-      - country
-      - incorporation_date
-      - legal_address
-      - postal_address
-      - address
-      - email
-      - tax_identification_number
-      - website
-      - company_type
-      title: CompanyInfo
-      type: object
-    BusinessBeneficiaryInfo:
-      description: 'Business Beneficiary Info
-
-
-        A company that itself owns or controls the parent business. Carries the
-
-        same `ApiCompanyData` as the root identification: company info, its own
-
-        beneficiaries (which may include further nested businesses up to the
-
-        configured depth limit), and supporting documents.
-
-        '
-      properties:
-        company_data:
-          $ref: '#/components/schemas/CompanyData'
-      required:
-      - company_data
-      title: BusinessBeneficiaryInfo
-      type: object
-    IdentificationStepStatus:
-      anyOf:
-      - $ref: '#/components/schemas/BusinessIdentificationStepStatus'
-      - $ref: '#/components/schemas/PersonIdentificationStepStatus'
-      type: object
-    RequirementCode:
-      description: 'Stable, switchable identifier for a single requirement. Partners should
-
-        branch on this rather than parsing `description`, which holds the
-
-        verbatim text from Sumsub (and is subject to change without notice).'
-      enum:
-      - kyc_selfie
-      - kyc_identity
-      - kyc_proof_of_residence
-      - kyc_questionnaire
-      - kyb_company_data
-      - kyb_company_beneficiaries
-      - kyb_company_documents
-      - kyb_questionnaire
-      - identification_kyc
-      - identification_kyb
-      - kyc_data_missing
-      - kyc_data_invalid
-      - kyb_data_missing
-      - kyb_data_invalid
       type: string
     UsdAbilities:
       properties:
@@ -1817,206 +3096,18 @@ components:
       - fednow_thirdparty
       title: UsdAbilities
       type: object
-    Currency:
-      anyOf:
-      - $ref: '#/components/schemas/Currency_Crypto'
-      - $ref: '#/components/schemas/Currency_Fiat'
-      description: 'Currency
-
-
-        Can be either crypto or fiat
-
-        '
-      discriminator:
-        mapping:
-          Crypto: '#/components/schemas/Currency_Crypto'
-          Fiat: '#/components/schemas/Currency_Fiat'
-        propertyName: type
-      type: object
-    Blockchain:
-      description: 'Blockchain
-
-
-        A type of blockchain
-
-        '
-      enum:
-      - Solana
-      - Ethereum
-      - Polygon
-      - Arbitrum
-      - Base
-      - Stellar
-      - Citrea
-      - Plasma
-      - Avalanche
-      - Moca
-      - Tempo
-      - Tron
-      - Bsc
-      type: string
-    Currency_Fiat:
+    BusinessQuestionnaire_SolePropBusinessQuestionnaire:
       allOf:
       - properties:
           type:
             enum:
-            - Fiat
-            example: Fiat
+            - SoleProp
+            example: SoleProp
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/Fiat'
-      description: 'Currency
-
-
-        Can be either crypto or fiat
-
-        '
-    BusinessEstimatedMonthlyTransactions:
-      description: 'Estimated Monthly Transaction Count
-
-
-        Expected number of transactions per month
-
-        '
-      enum:
-      - LessThanTen
-      - TenToTwentyFive
-      - TwentyFiveToFifty
-      - FiftyToOneHundred
-      - MoreThanOneHundred
-      type: string
-    CustomerSpendingLimitSection:
-      description: 'Customer Spending Limit Section
-
-
-        Usage of the rolling 52-week spending limit for a single direction
-
-        (fiat on-ramp or crypto off-ramp).
-
-
-        Amounts are returned in **EUR cents** as strings
-
-
-        `threshold_eur` (and therefore `remaining_eur`) is `null` when the customer
-
-        has no enforced cap — for example Business customers or persons with
-
-        `ThresholdKind::Regulated`. A `null` threshold does **not** mean "unknown";'
-      properties:
-        period_end:
-          description: End of the current rolling window for this direction (now).
-          format: date-time
-          type: string
-        period_start:
-          description: 'Start of the current rolling window for this direction. This is the
-
-            later of "52 weeks ago" and the last `Reset` event for this volume
-
-            kind — fiat and crypto windows are tracked independently and can
-
-            differ if compliance has reset only one bucket.'
-          format: date-time
-          type: string
-        remaining_eur:
-          description: '`threshold_eur - used_eur`, floored at zero, in EUR cents as a string.
-
-            `null` iff `threshold_eur` is `null`.'
-          type: string
-        threshold_eur:
-          description: Enforced limit in EUR cents as a string. `null` when no cap applies.
-          type: string
-        used_eur:
-          description: Volume consumed in the window in EUR cents as a string. Always returned.
-          type: string
-      required:
-      - period_start
-      - period_end
-      - used_eur
-      title: CustomerSpendingLimitSection
-      type: object
-    GbpAbilities:
-      properties:
-        chaps:
-          $ref: '#/components/schemas/AbilityStatus'
-        chaps_thirdparty:
-          $ref: '#/components/schemas/AbilityStatus'
-        fps:
-          $ref: '#/components/schemas/AbilityStatus'
-        fps_thirdparty:
-          $ref: '#/components/schemas/AbilityStatus'
-        swift:
-          $ref: '#/components/schemas/AbilityStatus'
-        swift_thirdparty:
-          $ref: '#/components/schemas/AbilityStatus'
-      required:
-      - fps
-      - fps_thirdparty
-      - chaps
-      - chaps_thirdparty
-      - swift
-      - swift_thirdparty
-      title: GbpAbilities
-      type: object
-    CompanyType:
-      description: 'Company Type
-
-
-        The type of company
-
-        '
-      enum:
-      - LimitedLiabilityCompany
-      - PubliclyListedCompany
-      - SoleProprietorship
-      - Partnership
-      - Corporation
-      - Trust
-      - PrivateFoundation
-      - Charity
-      - NonprofitCorporation
-      - NonprofitOrganization
-      - PublicAgenciesOrAuthorities
-      - StockCorporationOutOfStock
-      - GeneralCorporation
-      type: string
-    IdentificationCreateParamsV2_IdentificationTokenParams:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Token
-            example: Token
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/IdentificationTokenParams'
-      description: 'Identification Create Params V2
-
-
-        The params required to create an identification v2, we support three types of identification:
-
-        - Link: where a link is provided to the customer for access to the identification process.
-
-        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
-
-        - Person: where the identification details of the person for which the identification process is being created are provided in the request
-
-        '
-    BusinessQuestionnaire_GenericBusinessQuestionnaire:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Generic
-            example: Generic
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/GenericBusinessQuestionnaire'
+      - $ref: '#/components/schemas/SolePropBusinessQuestionnaire'
       description: 'KYB compliance questionnaire
 
 
@@ -2025,223 +3116,50 @@ components:
         Use `SolePropBusinessQuestionnaire` for sole proprietorships.
 
         '
-    SigningCreateParams:
-      description: Params for Creating a Signing
-      example:
-        content_id: 019f846a-8d21-7813-8e60-80211898ca9f
-        signed: true
+    AuthenticationCode:
+      description: 'An authentication code
+
+
+        used to confirm a 2FA action
+
+        '
       properties:
-        content_id:
-          description: unique UUID of the content signed by Customer
+        attempts:
+          description: attempts to submit the authentication code
+          format: int32
+          type: integer
+        entity_id:
+          description: the ID of the entity the authentication is related to
           format: uuid
           type: string
-        signed:
-          description: Explicit signing consent
-          type: boolean
-      required:
-      - signed
-      title: SigningCreateParams
-      type: object
-    PagedList_Identification:
-      description: 'PagedList
-
-
-        A list of items with cursors used to fetch the next or previous page
-
-        '
-      properties:
-        cursor:
-          description: The cursor used to fetch the next page
-          format: uuid
-          type: string
-        items:
-          description: The list of items
-          items:
-            $ref: '#/components/schemas/Identification'
-          type: array
-        prev_cursor:
-          default: null
-          description: The cursor used to fetch the previous page
-          format: uuid
-          type: string
-      required:
-      - items
-      title: PagedList_Identification
-      type: object
-    CompanyBeneficiary:
-      description: 'Company Beneficial Owner
-
-
-        The beneficial owner of the company
-
-        '
-      properties:
-        attested_at:
-          description: 'When the beneficiary certified the information (RFC 3339, in the past).
-
-            Required when attesting_party is true.'
-          type: string
-        attesting_party:
-          description: 'Marks this beneficiary as certifying the beneficial-ownership information
-
-            (31 CFR 1010.230). Root-level person holding a Director role only.
-
-            Before setting this flag, present the collected beneficial-ownership
-
-            information to this beneficiary and obtain their confirmation that it is
-
-            complete and correct — Iron renders a certification naming them from the
-
-            submitted data. For US non-sole-props the generated form is always
-
-            submitted to the provider; when no IncorporationArticles document is
-
-            supplied it also satisfies the legal-presence document requirement.
-
-            Limited to simple ownership structures (at most two levels of
-
-            beneficiaries); deeper structures cannot self-attest and must attach
-
-            the legal presence document instead.'
-          type: boolean
-        beneficiary_info:
-          $ref: '#/components/schemas/CompanyBeneficiaryInfo'
-        roles:
-          description: The primary role of the beneficial owner
-          items:
-            $ref: '#/components/schemas/CompanyPrimaryBeneficiaryRole'
-          type: array
-        share_percentage:
-          description: 'Share percentage of the beneficial owner (0-100). The combined shares of
-
-            UltimateBeneficialOwner beneficiaries must not exceed 100 per company.'
-          format: decimal
-          type: string
-      required:
-      - roles
-      - beneficiary_info
-      title: CompanyBeneficiary
-      type: object
-    UpdateCustomerParams:
-      description: 'Update Customer Params
-
-
-        Parameters for updating a customer
-
-        '
-      properties:
-        email:
-          description: The email address of the customer
-          type: string
-        external_id:
-          description: Optional external ID for the customer. Provide to update; omit to leave unchanged.
-          type: string
-      required:
-      - email
-      title: UpdateCustomerParams
-      type: object
-    BusinessEstimatedAnnualRevenue:
-      description: 'Estimated Annual Revenue
-
-
-        Company''s estimated annual revenue in EUR
-
-        '
-      enum:
-      - Under100K
-      - From100KTo1M
-      - From1MTo10M
-      - From10MTo50M
-      - From50MTo250M
-      - Over250M
-      type: string
-    Customer:
-      description: 'Customer
-
-
-        The customer object in Iron
-
-        '
-      properties:
-        active_email:
-          description: Active email for receiving transaction emails (if different from primary email)
-          type: string
-        created_at:
-          description: Created at timestamp of Customer
+        expires_at:
+          description: the time of expiry for the authentication code
           format: date-time
-          type: string
-        customer_type:
-          $ref: '#/components/schemas/CustomerType'
-        email:
-          description: Email of Customer, collected during identification process
-          type: string
-        external_id:
-          description: External ID for the customer, provided by the partner
           type: string
         id:
-          description: Unique ID of Customer
+          description: The ID of the authentication code
           format: uuid
-          type: string
-        identification_ids:
-          description: Identifications associated with Customer
-          items:
-            format: uuid
-            type: string
-          type: array
-        identification_status:
-          $ref: '#/components/schemas/IdentificationStatus'
-        name:
-          description: Name of Customer
-          type: string
-        partner_id:
-          description: Partner ID of the customer
-          format: uuid
-          type: string
-        signing_ids:
-          description: Signings associated with Customer
-          items:
-            format: uuid
-            type: string
-          type: array
-        spending_limit_euro:
-          deprecated: true
-          description: 'Deprecated — always null. Spending limits are dynamic per customer and per
-
-            direction; use `GET /customers/{id}/spending-limit` (`threshold_eur`) instead.'
           type: string
         status:
-          $ref: '#/components/schemas/CustomerStatus'
-        updated_at:
-          description: Updated at timestamp of Customer
-          format: date-time
-          type: string
+          $ref: '#/components/schemas/AuthenticationCodeStatus'
       required:
       - id
-      - customer_type
-      - identification_ids
-      - signing_ids
-      - created_at
-      - updated_at
       - status
-      - name
-      - email
-      - partner_id
-      title: Customer
+      - expires_at
+      - attempts
+      - entity_id
+      title: AuthenticationCode
       type: object
-    BusinessEstimatedMonthlyVolume:
-      description: 'Estimated Monthly Transaction Volume
+    CustomerType:
+      description: 'CustomerType
 
 
-        Expected monthly transaction volume in EUR
+        Customers can either be a commercial business or a natural person
 
         '
       enum:
-      - TenToTwentyFiveThousand
-      - TwentyFiveToFiftyThousand
-      - FiftyToOneHundredThousand
-      - OneHundredToTwoHundredFiftyThousand
-      - TwoHundredFiftyToFiveHundredThousand
-      - MoreThanFiveHundredThousand
+      - Business
+      - Person
       type: string
     IdentificationPersonParams:
       description: 'Person Identification Params
@@ -2293,7 +3211,20 @@ components:
           description: explicitly given consent to share identity information with iron
           type: boolean
         tax_identification_number:
-          description: 'tax identification number (US residents only: SSN or TIN)'
+          description: 'tax identification number. Required for US residents (SSN or TIN).
+
+            Recommended for EEA residents — this is required for EEA residents by the end of 2026.'
+          type: string
+        tax_residence_country:
+          description: 'ISO 3166-1 alpha-2 country of tax residence. Required whenever
+
+            `tax_identification_number` is set — TIN format is validated against
+
+            this specific country, and it can genuinely differ from the
+
+            customer''s physical residence or nationality (the reason DAC8/CARF
+
+            asks for it separately).'
           type: string
       required:
       - sharing_consent
@@ -2310,219 +3241,577 @@ components:
       - kyc_questionnaire
       title: IdentificationPersonParams
       type: object
-    BirthPlace:
-      description: 'Birth place
-
-
-        The place of birth of the person
-
-        '
+    StructuredCustomerRequirements:
+      description: Available from API version 2026-10-01.
       properties:
-        country:
-          description: ISO 3166-1 alpha-2 (2 letter) country code of the place of birth
+        complete:
+          items:
+            $ref: '#/components/schemas/CompleteRequirement'
+          type: array
+        general_review_comment:
+          nullable: true
           type: string
-        place:
-          description: place of birth
-          type: string
-        state:
-          description: state of birth
-          type: string
+        issues:
+          items:
+            $ref: '#/components/schemas/RequirementIssue'
+          type: array
+        pending:
+          items:
+            $ref: '#/components/schemas/PendingRequirementItem'
+          type: array
+        pendingReview:
+          items:
+            $ref: '#/components/schemas/PendingReviewRequirement'
+          type: array
+        preflight_summary:
+          allOf:
+          - $ref: '#/components/schemas/IdentificationPreflightSummary'
+          - nullable: true
+          nullable: true
+        requirements_due:
+          items:
+            $ref: '#/components/schemas/RequirementCategory'
+          type: array
       required:
-      - place
-      - state
-      - country
-      title: BirthPlace
+      - complete
+      - pendingReview
+      - pending
+      - issues
+      - requirements_due
+      - preflight_summary
+      - general_review_comment
+      title: StructuredCustomerRequirements
       type: object
-    PersonProfileExpectedMonthlyTransactionVolume:
-      description: 'Expected Monthly Transaction Volume
+    Occupation:
+      description: 'Occupation
 
 
-        The expected monthly transaction volume of the person
+        The occupation of the person
 
         '
       enum:
-      - LessThan1000
-      - Between1000And5000
-      - Between5000And10000
-      - Between10000And20000
-      - Over20000
+      - Agriculture
+      - ArtsAndEntertainment
+      - Construction
+      - Education
+      - FinancialServices
+      - InformationAndTechnology
+      - Retail
+      - RealEstate
+      - Other
+      - BusinessOwner
+      - Healthcare
+      - Industrial
+      - LegalServices
+      - PublicSector
+      - SeniorManagement
       type: string
-    PersonProfileYearlyGrossIncome:
-      description: 'Yearly Gross Income
+    CustomerAbilities:
+      description: 'Customer Abilities
 
 
-        The yearly gross income of the person
+        Represents the abilities/capabilities that a customer has
+
+        '
+      properties:
+        blocking_abilities:
+          additionalProperties:
+            type: string
+          description: 'Reasons for any rail the synchronous rule-engine preflight gate
+
+            definitively ruled out at the customer''s latest identification''s
+
+            creation time, keyed by rail name (e.g. "ach", "sepa_thirdparty").
+
+            These rails are also reflected as `Unavailable` directly on
+
+            `fiat_deposit`/`fiat_payout` above — this map exists only to explain
+
+            *why*. Empty when the customer has no identification yet, or its
+
+            latest one predates this gate.'
+          type: object
+        currencies:
+          description: 'What the customer can do with each currency (mint / redeem / onramp /
+
+            offramp / swap). Only currencies the customer can currently use are listed.'
+          items:
+            $ref: '#/components/schemas/CurrencyAbility'
+          type: array
+        fiat_deposit:
+          $ref: '#/components/schemas/ApiFiatAbilities'
+        fiat_payout:
+          $ref: '#/components/schemas/ApiFiatAbilities'
+      required:
+      - fiat_deposit
+      - fiat_payout
+      - currencies
+      - blocking_abilities
+      title: CustomerAbilities
+      type: object
+    CreateCustomerParams:
+      description: 'Customer Params
+
+
+        Parameters for creating a customer
+
+        '
+      properties:
+        customer_type:
+          $ref: '#/components/schemas/CustomerType'
+        email:
+          description: 'The primary point of contact email address for the customer
+
+            Note that this email address will be used for all API authorization (e.g. 2FA)'
+          type: string
+        external_id:
+          description: External ID for the customer, provided by the partner
+          type: string
+        name:
+          description: The name of the customer
+          type: string
+      required:
+      - customer_type
+      - email
+      title: CreateCustomerParams
+      type: object
+    BusinessPurposeAndIntendedUse:
+      description: 'Purpose and Intended Use
+
+
+        The intended purpose of the business account
 
         '
       enum:
-      - LessThan20000
-      - From20001To30000
-      - From30001To40000
-      - From40001To50000
-      - From50001To60000
-      - From60001To70000
-      - From70001To80000
-      - From80001To90000
-      - From90001To100000
-      - From100001To110000
-      - From110001To120000
-      - From120001To130000
-      - From130001To140000
-      - From140001To150000
-      - MoreThan150000
-      - From150001To200000
-      - From200001To500000
-      - MoreThan500000
+      - ReceivingBusinessIncome
+      - BusinessPurchasesAndExpenses
+      - EmployeeAndContractorPayouts
+      - EcommerceSales
+      - TreasuryManagement
+      - PaymentIntermediary
+      - Investments
+      - TaxPlanning
+      - AssetProtection
+      - Other
       type: string
-    CustomerSpendingLimit:
-      description: 'Customer Spending Limit
-
-
-        Current usage of the rolling 52-week spending limit split by direction.'
+    PendingReviewRequirement:
       properties:
-        crypto_offramp:
-          $ref: '#/components/schemas/CustomerSpendingLimitSection'
-        fiat_onramp:
-          $ref: '#/components/schemas/CustomerSpendingLimitSection'
-      required:
-      - fiat_onramp
-      - crypto_offramp
-      title: CustomerSpendingLimit
-      type: object
-    ApiError:
-      description: 'Standard error response returned to API clients for server errors.
-
-        Includes a trace_id that clients can reference when reporting issues.'
-      properties:
-        message:
-          description: Human-readable error message
+        code:
+          $ref: '#/components/schemas/VerificationRequirementCode'
+        description:
           type: string
-        trace_id:
-          description: Trace ID that can be used to look up request details in logs
+        identification_id:
+          format: uuid
+          nullable: true
           type: string
       required:
-      - message
-      - trace_id
-      title: ApiError
+      - code
+      - description
+      - identification_id
+      title: PendingReviewRequirement
       type: object
-    EddQuestionnaire:
-      description: 'EDD Questionnaire
+    Crypto:
+      description: A cryptocurrency
+      example:
+        blockchain: Solana
+        token: USDC
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        token:
+          description: The ticker of the token e.g. 'USDC'
+          type: string
+      required:
+      - token
+      - blockchain
+      title: Crypto
+      type: object
+    KycQuestionnaire:
+      description: 'KYC Questionnaire
 
 
-        The questionnaire for a reliance person residing in a country considered high risk
+        The questionnaire for a person
 
         '
       properties:
-        approximate_net_worth:
-          $ref: '#/components/schemas/ApproximateNetWorth'
-        occupation:
-          $ref: '#/components/schemas/Occupation'
-        source_of_funds_proof:
-          description: 'Source of funds proof document, provided as a base64-encoded string.
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatus'
+        expected_monthly_transaction_count:
+          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionCount'
+        expected_monthly_transaction_volume:
+          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionVolumeV2'
+        source_of_wealth:
+          $ref: '#/components/schemas/PersonProfileSourceOfWealth'
+        yearly_gross_income:
+          $ref: '#/components/schemas/PersonProfileYearlyGrossIncome'
+      required:
+      - employment_status
+      - yearly_gross_income
+      - source_of_wealth
+      - expected_monthly_transaction_count
+      - expected_monthly_transaction_volume
+      title: KycQuestionnaire
+      type: object
+    CustomerSpendingLimitSection:
+      description: 'Customer Spending Limit Section
 
-            Supported formats: jpg, png, pdf, doc, docx, xls, xlsx, odt, ods, txt.
 
-            Maximum size: 10MB'
+        Usage of the rolling 52-week spending limit for a single direction
+
+        (fiat on-ramp or crypto off-ramp).
+
+
+        Amounts are returned in **EUR cents** as strings
+
+
+        `threshold_eur` (and therefore `remaining_eur`) is `null` when the customer
+
+        has no enforced cap — for example Business customers or persons with
+
+        `ThresholdKind::Regulated`. A `null` threshold does **not** mean "unknown";'
+      properties:
+        currency:
+          $ref: '#/components/schemas/Fiat'
+        period_end:
+          description: End of the current rolling window for this direction (now).
+          format: date-time
+          type: string
+        period_start:
+          description: 'Start of the current rolling window for this direction. This is the
+
+            later of "52 weeks ago" and the last `Reset` event for this volume
+
+            kind — fiat and crypto windows are tracked independently and can
+
+            differ if compliance has reset only one bucket.'
+          format: date-time
+          type: string
+        remaining:
+          description: '`threshold - used`, floored at zero, in `currency` cents as a string.
+
+            `null` iff `threshold` is `null`.'
+          type: string
+        remaining_eur:
+          description: 'Deprecated: EUR-converted view of `remaining`. Prefer `remaining`.'
+          type: string
+        threshold:
+          description: 'Enforced limit in `currency` cents as a string. `null` when no cap
+
+            applies. This is the authoritative value the limit is enforced against.'
+          type: string
+        threshold_eur:
+          description: 'Deprecated: EUR-converted view of `threshold` (mid-market rate at read
+
+            time). Prefer `threshold` + `currency`.'
+          type: string
+        used:
+          description: Volume consumed in the window in `currency` cents as a string.
+          type: string
+        used_eur:
+          description: 'Deprecated: EUR-converted view of `used`. Prefer `used` + `currency`.'
           type: string
       required:
-      - occupation
-      - approximate_net_worth
-      - source_of_funds_proof
-      title: EddQuestionnaire
+      - period_start
+      - period_end
+      - currency
+      - used
+      - used_eur
+      title: CustomerSpendingLimitSection
       type: object
-    BeneficiaryIdentity:
-      description: 'Beneficiary Identity Document
-
-
-        Identity document and biometric information for a person beneficiary.
-
-        Mirrors ApiPersonIdentity but excludes ip_address (collected at the business level).
-
-        '
+    PersonIdentificationStepStatus:
       properties:
-        identity_country_code:
-          description: ISO 3166-1 alpha-2 country code of the person's identity document
-          type: string
-        identity_document_back:
-          description: Base64 encoded image of identity document back (10MB max)
-          type: string
-        identity_document_front:
-          description: Base64 encoded image of identity document front (10MB max)
-          type: string
-        identity_document_type:
-          $ref: '#/components/schemas/IdentityDocumentType'
-        identity_number:
-          description: The identity number of the document being submitted
-          type: string
-        nationality:
-          description: ISO 3166-1 alpha-2 nationality country code
-          type: string
+        identity:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        proof_of_residence:
+          $ref: '#/components/schemas/VerificationStepDetail'
+        questionnaire:
+          $ref: '#/components/schemas/VerificationStepDetail'
         selfie:
-          description: 'Base64 encoded selfie image (10MB max).
-
-            Required for beneficiaries with Director or Representative roles; omit for UBO-only.'
+          $ref: '#/components/schemas/VerificationStepDetail'
+      title: PersonIdentificationStepStatus
+      type: object
+    RfiCustomerGroup:
+      properties:
+        customer_email:
           type: string
-        selfie_collected_at:
-          description: 'timestamp in ISO 8601 format when the selfie was captured.
-
-            Required when selfie is provided.'
+        customer_id:
+          format: uuid
           type: string
+        customer_name:
+          type: string
+        customer_type:
+          $ref: '#/components/schemas/CustomerType'
+        oldest_sent_at:
+          format: date-time
+          type: string
+        rfis:
+          items:
+            $ref: '#/components/schemas/Rfi'
+          type: array
       required:
-      - identity_country_code
-      - identity_document_type
-      - identity_document_front
-      - nationality
-      title: BeneficiaryIdentity
+      - customer_id
+      - customer_name
+      - customer_type
+      - oldest_sent_at
+      - rfis
+      title: RfiCustomerGroup
       type: object
-    BusinessQuestionnaire:
-      anyOf:
-      - $ref: '#/components/schemas/BusinessQuestionnaire_GenericBusinessQuestionnaire'
-      - $ref: '#/components/schemas/BusinessQuestionnaire_SolePropBusinessQuestionnaire'
-      description: 'KYB compliance questionnaire
-
-
-        Use `GenericBusinessQuestionnaire` for all company types except sole proprietorships.
-
-        Use `SolePropBusinessQuestionnaire` for sole proprietorships.
-
-        '
-      discriminator:
-        mapping:
-          Generic: '#/components/schemas/BusinessQuestionnaire_GenericBusinessQuestionnaire'
-          SoleProp: '#/components/schemas/BusinessQuestionnaire_SolePropBusinessQuestionnaire'
-        propertyName: type
-      type: object
-    Currency_Crypto:
+    IdentificationCreateParamsV2_IdentificationLinkparams:
       allOf:
       - properties:
           type:
             enum:
-            - Crypto
-            example: Crypto
+            - Link
+            example: Link
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/Crypto'
-      description: 'Currency
+      - $ref: '#/components/schemas/IdentificationLinkparams'
+      description: 'Identification Create Params V2
 
 
-        Can be either crypto or fiat
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
 
         '
-    EmploymentStatus:
-      description: 'Employment Status
+    EurAbilities:
+      properties:
+        sepa:
+          $ref: '#/components/schemas/AbilityStatus'
+        sepa_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift:
+          $ref: '#/components/schemas/AbilityStatus'
+        swift_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+      required:
+      - sepa
+      - sepa_thirdparty
+      - swift
+      - swift_thirdparty
+      title: EurAbilities
+      type: object
+    IntendedUse:
+      description: 'Intended Purpose
 
 
-        The employment status of the person
+        The intended purpose the person wants to use the account for
 
         '
       enum:
-      - Employed
-      - SelfEmployed
-      - Unemployed
-      - Retired
-      - Student
+      - Investing
+      - PaymentToFriendsFamilyorOthers
+      - PaymentToFriendsAndFamily
+      - PaymentToThirdParties
+      - PurchaseDigitalAssets
+      - OnlinePurchasesOfGoodsOrServices
+      - Trading
+      type: string
+    IdentificationCreateParamsV2_IdentificationPersonParams:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Person
+            example: Person
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IdentificationPersonParams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+    ApiFiatAbilities:
+      description: 'Fiat rails
+
+        Customer''s ability to use fiat deposit and payout rails'
+      properties:
+        brl:
+          $ref: '#/components/schemas/BrlAbilities'
+        eur:
+          $ref: '#/components/schemas/EurAbilities'
+        gbp:
+          $ref: '#/components/schemas/GbpAbilities'
+        usd:
+          $ref: '#/components/schemas/UsdAbilities'
+      required:
+      - eur
+      - gbp
+      - usd
+      - brl
+      title: ApiFiatAbilities
+      type: object
+    IdentificationCreateParamsV2_IdentificationBusinessParams:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Business
+            example: Business
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/IdentificationBusinessParams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+    CompanyDocParams:
+      description: 'Company document params
+
+
+        The params required to create a company document
+
+        '
+      properties:
+        country:
+          description: ISO 3166-1 alpha-2 (2 letter) country code of the country that issued the document
+          type: string
+        file:
+          description: Base64 encoded document without prefix (10MB max)
+          type: string
+        type:
+          $ref: '#/components/schemas/CompanyDocType'
+      required:
+      - type
+      - country
+      - file
+      title: CompanyDocParams
+      type: object
+    ApiIdentificationErrorBody:
+      anyOf:
+      - items:
+          $ref: '#/components/schemas/IdentificationError'
+        type: array
+      - type: string
+      description: 'The body of a `BadRequest` identification-creation response. Callers on
+
+        `X-API-Version: 2026-08-01` or later get [`Errors`](Self::Errors) — a
+
+        structured, machine-readable array. Earlier/unversioned callers keep
+
+        today''s bare string for backward compatibility.'
+      type: object
+    IdentificationCreateParamsV2:
+      anyOf:
+      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationLinkparams'
+      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationTokenParams'
+      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationPersonParams'
+      - $ref: '#/components/schemas/IdentificationCreateParamsV2_IdentificationBusinessParams'
+      description: 'Identification Create Params V2
+
+
+        The params required to create an identification v2, we support three types of identification:
+
+        - Link: where a link is provided to the customer for access to the identification process.
+
+        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
+
+        - Person: where the identification details of the person for which the identification process is being created are provided in the request
+
+        '
+      discriminator:
+        mapping:
+          Business: '#/components/schemas/IdentificationCreateParamsV2_IdentificationBusinessParams'
+          Link: '#/components/schemas/IdentificationCreateParamsV2_IdentificationLinkparams'
+          Person: '#/components/schemas/IdentificationCreateParamsV2_IdentificationPersonParams'
+          Token: '#/components/schemas/IdentificationCreateParamsV2_IdentificationTokenParams'
+        propertyName: type
+      type: object
+    IdentificationPreflightSummary:
+      description: 'Curated, partner-safe summary of the async preflight pipeline
+
+        (document/selfie analysis + workflow predictor) — backfilled onto an
+
+        identification once that pipeline finishes. Deliberately narrower than
+
+        the full internal result: no internal level names, trace/correlation ids,
+
+        or per-check evaluation names — those stay internal/backoffice-only.'
+      properties:
+        missingInputs:
+          description: 'Inputs the workflow predictor couldn''t evaluate (e.g. a missing POI
+
+            field) — likely_pass/inconclusive results can hinge on these.'
+          items:
+            type: string
+          type: array
+        reasons:
+          description: 'Curated, sanitized reasons the applicant may not pass (document/selfie
+
+            issues, manifest-adjacent errors) — never a raw provider error.'
+          items:
+            type: string
+          type: array
+        status:
+          $ref: '#/components/schemas/ApiPreflightDecision'
+        workflowErrors:
+          items:
+            $ref: '#/components/schemas/IdentificationPreflightWorkflowError'
+          type: array
+      required:
+      - status
+      - missingInputs
+      - reasons
+      - workflowErrors
+      title: IdentificationPreflightSummary
+      type: object
+    RfiStatus:
+      enum:
+      - waiting_on_response
+      - needs_review
+      - closed
+      type: string
+    Blockchain:
+      description: 'Blockchain
+
+
+        A type of blockchain
+
+        '
+      enum:
+      - Solana
+      - Ethereum
+      - Polygon
+      - Arbitrum
+      - Base
+      - Stellar
+      - Citrea
+      - Plasma
+      - Avalanche
+      - Moca
+      - Monad
+      - Tempo
+      - Tron
+      - Bsc
+      - Seismic
+      - Arc
+      - Optimism
       type: string
     IdentificationBusinessParams:
       description: 'Business Identification Params
@@ -2549,6 +3838,83 @@ components:
       - questionnaire
       title: IdentificationBusinessParams
       type: object
+    Currency:
+      anyOf:
+      - $ref: '#/components/schemas/Currency_Crypto'
+      - $ref: '#/components/schemas/Currency_Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Currency_Crypto'
+          Fiat: '#/components/schemas/Currency_Fiat'
+        propertyName: type
+      type: object
+    RfiRound:
+      properties:
+        answers:
+          items:
+            $ref: '#/components/schemas/RfiAnswer'
+          type: array
+        document_instructions:
+          type: string
+        document_link_opened_at:
+          format: date-time
+          type: string
+        document_upload_url:
+          type: string
+        documents:
+          items:
+            $ref: '#/components/schemas/RfiDocument'
+          type: array
+        documents_requested:
+          type: boolean
+        id:
+          format: uuid
+          type: string
+        questions:
+          items:
+            $ref: '#/components/schemas/RfiQuestion'
+          type: array
+        response_received_at:
+          format: date-time
+          type: string
+        round_number:
+          format: int32
+          type: integer
+        sent_at:
+          format: date-time
+          type: string
+      required:
+      - id
+      - round_number
+      - questions
+      - documents_requested
+      - documents
+      - sent_at
+      title: RfiRound
+      type: object
+    SolePropPlannedActivities:
+      description: 'Sole Prop Planned Activities Section
+
+        '
+      properties:
+        estimated_monthly_transactions:
+          $ref: '#/components/schemas/BusinessEstimatedMonthlyTransactions'
+        estimated_monthly_volume:
+          $ref: '#/components/schemas/BusinessEstimatedMonthlyVolume'
+        purpose_and_intended_use:
+          $ref: '#/components/schemas/BusinessPurposeAndIntendedUse'
+      required:
+      - purpose_and_intended_use
+      - estimated_monthly_volume
+      - estimated_monthly_transactions
+      title: SolePropPlannedActivities
+      type: object
     PersonIdentity:
       description: 'Person Identity
 
@@ -2568,6 +3934,15 @@ components:
           type: string
         identity_document_type:
           $ref: '#/components/schemas/IdentityDocumentType'
+        identity_document_valid_until:
+          description: 'Expiry date of the identity document (YYYY-MM-DD format), if known.
+
+            Used by the synchronous deposit-rail eligibility check performed at
+
+            identification creation, before the document''s real expiry has been
+
+            extracted from the uploaded images.'
+          type: string
         identity_number:
           description: The identity number or identity document being submitted.
           type: string
@@ -2593,28 +3968,109 @@ components:
       - nationality
       title: PersonIdentity
       type: object
-    CompanyDocParams:
-      description: 'Company document params
+    SigningCreateParams:
+      description: Params for Creating a Signing
+      example:
+        content_id: 01a12162-9624-74e0-9384-a3804f0d2816
+        signed: true
+      properties:
+        content_id:
+          description: unique UUID of the content signed by Customer
+          format: uuid
+          type: string
+        signed:
+          description: Explicit signing consent
+          type: boolean
+      required:
+      - signed
+      title: SigningCreateParams
+      type: object
+    PersonBeneficiaryInfo:
+      description: 'Company Person Beneficiary Info
 
 
-        The params required to create a company document
+        The beneficiary info of the person
 
         '
       properties:
-        country:
-          description: ISO 3166-1 alpha-2 (2 letter) country code of the country that issued the document
+        address:
+          $ref: '#/components/schemas/Address'
+        birth_place:
+          $ref: '#/components/schemas/BirthPlace'
+        date_of_birth:
+          description: date of birth in YYYY-MM-DD format
           type: string
-        file:
-          description: Base64 encoded document without prefix (10MB max)
+        email_address:
+          description: email address of the person
           type: string
-        type:
-          $ref: '#/components/schemas/CompanyDocType'
+        first_name:
+          description: first name
+          type: string
+        identity:
+          $ref: '#/components/schemas/BeneficiaryIdentity'
+        last_name:
+          description: last name
+          type: string
+        middle_name:
+          description: middle name
+          type: string
+        phone_number:
+          description: phone number of the person (international format with leading +)
+          type: string
+        proof_of_address:
+          description: 'Base64 encoded proof of address document (10MB max).
+
+            Optional for every beneficiary role, in the US and ROW alike. Validated (base64, size)
+
+            when provided, but never required for the identification to be processed.'
+          type: string
+        tax_identification_number:
+          description: 'tax identification number (SSN for US residents, national TIN otherwise).
+
+            Required for Director and UltimateBeneficialOwner beneficiaries regardless of country,
+
+            and for Representative beneficiaries outside the US. Always required for the
+
+            UltimateBeneficialOwner of a sole proprietorship regardless of country.'
+          type: string
+        tax_jurisdiction_country_code:
+          description: ISO 3166-1 alpha-2 country code of the person's tax jurisdiction
+          type: string
       required:
-      - type
-      - country
-      - file
-      title: CompanyDocParams
+      - first_name
+      - last_name
+      - date_of_birth
+      - address
+      - email_address
+      - phone_number
+      - tax_jurisdiction_country_code
+      - identity
+      title: PersonBeneficiaryInfo
       type: object
+    UpdateCustomerParams:
+      description: 'Update Customer Params
+
+
+        Parameters for updating a customer
+
+        '
+      properties:
+        email:
+          description: The email address of the customer
+          type: string
+        external_id:
+          description: Optional external ID for the customer. Provide to update; omit to leave unchanged.
+          type: string
+      required:
+      - email
+      title: UpdateCustomerParams
+      type: object
+    RfiListState:
+      description: Which RFIs a partner list returns.
+      enum:
+      - open
+      - completed
+      type: string
     AutorampType:
       description: 'Autoramp type
 
@@ -2627,48 +4083,189 @@ components:
       - Mint
       - Redeem
       type: string
-    BusinessQuestionnaireSourceOfFunds:
-      description: 'Source of Funds Section
+    RequirementIssue:
+      oneOf:
+      - $ref: '#/components/schemas/VerificationIssue'
+      - $ref: '#/components/schemas/ValidationIssue'
+      type: object
+    PagedList_Identification:
+      description: 'PagedList
 
 
-        Information about where the company''s funds originate
+        A list of items with cursors used to fetch the next or previous page
 
         '
       properties:
-        customer_funds_handling_details:
-          description: Details on how customer funds are handled, including business model and transaction flow (required)
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
           type: string
-        source_of_funds:
-          $ref: '#/components/schemas/RevenueSource'
-        source_of_funds_description:
-          description: Detailed description of source of funds (required)
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Identification'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
           type: string
       required:
-      - source_of_funds
-      - source_of_funds_description
-      - customer_funds_handling_details
-      title: BusinessQuestionnaireSourceOfFunds
+      - items
+      title: PagedList_Identification
       type: object
-    BusinessQuestionnaire_SolePropBusinessQuestionnaire:
+    PagedList_Customer:
+      description: 'PagedList
+
+
+        A list of items with cursors used to fetch the next or previous page
+
+        '
+      properties:
+        cursor:
+          description: The cursor used to fetch the next page
+          format: uuid
+          type: string
+        items:
+          description: The list of items
+          items:
+            $ref: '#/components/schemas/Customer'
+          type: array
+        prev_cursor:
+          default: null
+          description: The cursor used to fetch the previous page
+          format: uuid
+          type: string
+      required:
+      - items
+      title: PagedList_Customer
+      type: object
+    CustomerStatus:
+      description: The status of the Customer.
+      enum:
+      - UserRequired
+      - SigningsRequired
+      - IdentificationRequired
+      - Active
+      - Suspended
+      - Archived
+      type: string
+    SortOrder:
+      enum:
+      - asc
+      - desc
+      type: string
+    RequirementValidationError:
+      properties:
+        description:
+          type: string
+        error_code:
+          type: string
+        field_path:
+          type: string
+        retryable:
+          nullable: true
+          type: boolean
+      required:
+      - error_code
+      - description
+      - retryable
+      title: RequirementValidationError
+      type: object
+    Currency_Crypto:
       allOf:
       - properties:
           type:
             enum:
-            - SoleProp
-            example: SoleProp
+            - Crypto
+            example: Crypto
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/SolePropBusinessQuestionnaire'
-      description: 'KYB compliance questionnaire
+      - $ref: '#/components/schemas/Crypto'
+      description: 'Currency
 
 
-        Use `GenericBusinessQuestionnaire` for all company types except sole proprietorships.
-
-        Use `SolePropBusinessQuestionnaire` for sole proprietorships.
+        Can be either crypto or fiat
 
         '
+    SubmitRfiResponse:
+      properties:
+        answers:
+          items:
+            $ref: '#/components/schemas/RfiAnswer'
+          type: array
+        documents_uploaded:
+          type: boolean
+      required:
+      - answers
+      - documents_uploaded
+      title: SubmitRfiResponse
+      type: object
+    PendingRequirement:
+      properties:
+        code:
+          $ref: '#/components/schemas/OrdinaryPendingRequirementCode'
+        description:
+          type: string
+        identification_id:
+          format: uuid
+          nullable: true
+          type: string
+      required:
+      - code
+      - description
+      - identification_id
+      title: PendingRequirement
+      type: object
+    BusinessBeneficiaryInfo:
+      description: 'Business Beneficiary Info
+
+
+        A company that itself owns or controls the parent business. Carries the
+
+        same `ApiCompanyData` as the root identification: company info, its own
+
+        beneficiaries (which may include further nested businesses up to the
+
+        configured depth limit), and supporting documents.
+
+        '
+      properties:
+        company_data:
+          $ref: '#/components/schemas/CompanyData'
+      required:
+      - company_data
+      title: BusinessBeneficiaryInfo
+      type: object
+    DocumentType:
+      description: 'Document Type
+
+
+        The type of document used in the KYB process
+
+        '
+      enum:
+      - BusinessRegistrationDocument
+      - MemorandumOfAssociation
+      - ShareholdersRegistry
+      - Other
+      - ProofOfAddress
+      type: string
+    VerificationStepDetail:
+      properties:
+        comment:
+          type: string
+        result:
+          $ref: '#/components/schemas/IdentificationStatus'
+        retry:
+          type: boolean
+      required:
+      - result
+      - retry
+      title: VerificationStepDetail
+      type: object
     IdentityDocumentType:
       description: 'Identity Document Type
 
@@ -2681,23 +4278,427 @@ components:
       - NationalId
       - DriverLicense
       - ResidencePermit
+      - DigitalDriversLicense
       type: string
-    IntendedUse:
-      description: 'Intended Purpose
+    Currency_Fiat:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fiat
+            example: Fiat
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Fiat'
+      description: 'Currency
 
 
-        The intended purpose the person wants to use the account for
+        Can be either crypto or fiat
+
+        '
+    IdentificationTokenParams:
+      description: 'Token Identification Params
+
+
+        The params required to create an identification
+
+        '
+      properties:
+        documents:
+          description: 'documents associated with the person. Only a single `ProofOfAddress`
+
+            document is accepted, mirroring `ApiIdentPersonParams.documents`.'
+          items:
+            $ref: '#/components/schemas/IdentityDocument'
+          type: array
+        edd_questionnaire:
+          $ref: '#/components/schemas/EddQuestionnaire'
+        intended_use:
+          $ref: '#/components/schemas/IntendedUse'
+        ip_address:
+          description: 'The IP address of the customer associated with the token
+
+            Not required if IP address is passed by token provided'
+          type: string
+        kyc_questionnaire:
+          $ref: '#/components/schemas/KycQuestionnaire'
+        token:
+          description: The shareable token generated by the third party provider
+          type: string
+      required:
+      - token
+      - intended_use
+      title: IdentificationTokenParams
+      type: object
+    Address:
+      description: Address
+      properties:
+        city:
+          description: city
+          type: string
+        country:
+          description: country (2-character ISO 3166)
+          type: string
+        state:
+          description: state/province/region
+          type: string
+        street_1:
+          description: street address
+          type: string
+        street_2:
+          description: street address (additional)
+          type: string
+        zip_code:
+          description: zip code
+          type: string
+      required:
+      - street_1
+      - city
+      - zip_code
+      - country
+      title: Address
+      type: object
+    RfiAnswer:
+      properties:
+        boolean_value:
+          type: boolean
+        explanation:
+          type: string
+        question_id:
+          type: string
+        text_value:
+          type: string
+      required:
+      - question_id
+      title: RfiAnswer
+      type: object
+    SolePropBusinessQuestionnaire:
+      description: 'KYB compliance questionnaire for sole proprietorships
+
+        '
+      properties:
+        business_details:
+          $ref: '#/components/schemas/SolePropBusinessDetails'
+        planned_activities:
+          $ref: '#/components/schemas/SolePropPlannedActivities'
+        source_of_funds:
+          $ref: '#/components/schemas/SolePropSourceOfFunds'
+      required:
+      - planned_activities
+      - source_of_funds
+      - business_details
+      title: SolePropBusinessQuestionnaire
+      type: object
+    IdentificationStepStatus:
+      anyOf:
+      - $ref: '#/components/schemas/BusinessIdentificationStepStatus'
+      - $ref: '#/components/schemas/PersonIdentificationStepStatus'
+      type: object
+    SolePropBusinessDetails:
+      description: 'Sole Prop Business Details Section
+
+        '
+      properties:
+        business_model_description:
+          description: Description of business model and target clients
+          type: string
+        estimated_annual_revenue:
+          $ref: '#/components/schemas/BusinessEstimatedAnnualRevenue'
+        industry:
+          $ref: '#/components/schemas/BusinessIndustryV2'
+        industry_type:
+          allOf:
+          - $ref: '#/components/schemas/BusinessIndustryType'
+          - deprecated: true
+            description: 'Deprecated — use `industry` instead. Coarse 36-value classification; `industry`
+
+              exposes Sumsub''s full granular taxonomy.'
+          deprecated: true
+          description: 'Deprecated — use `industry` instead. Coarse 36-value classification; `industry`
+
+            exposes Sumsub''s full granular taxonomy.'
+        main_business_countries:
+          description: Main countries of business operation (ISO 3166-1 alpha-2 codes)
+          items:
+            type: string
+          type: array
+      required:
+      - industry_type
+      - business_model_description
+      - main_business_countries
+      - estimated_annual_revenue
+      title: SolePropBusinessDetails
+      type: object
+    BrlAbilities:
+      properties:
+        pix:
+          $ref: '#/components/schemas/AbilityStatus'
+        pix_thirdparty:
+          $ref: '#/components/schemas/AbilityStatus'
+      required:
+      - pix
+      - pix_thirdparty
+      title: BrlAbilities
+      type: object
+    PersonProfileExpectedMonthlyTransactionVolume:
+      description: 'Expected Monthly Transaction Volume
+
+
+        The expected monthly transaction volume of the person
 
         '
       enum:
-      - Investing
-      - PaymentToFriendsFamilyorOthers
-      - PurchaseDigitalAssets
-      - OnlinePurchasesOfGoodsOrServices
-      - Trading
+      - LessThan1000
+      - Between1000And5000
+      - Between5000And10000
+      - Between10000And20000
+      - Over20000
       type: string
-    SolePropPlannedActivities:
-      description: 'Sole Prop Planned Activities Section
+    CompanyData:
+      description: 'Company Data
+
+
+        Full company submission: identifying info, beneficiaries, and supporting
+
+        documents. Reused by the root identification request and by each nested
+
+        business beneficiary.
+
+        '
+      properties:
+        beneficiaries:
+          description: 'The beneficiaries of the company. UBOs, Directors, and Representatives
+
+            are permitted at every level. For a US non-sole-proprietorship, the
+
+            root level must designate exactly one Director as the CDD attesting
+
+            party. Any root company other than a sole proprietorship needs at least
+
+            one root Director and must list every person owning 25% or more (or, if
+
+            nobody does, 10% or more) as an UltimateBeneficialOwner. From API version
+
+            2026-10-15 every UltimateBeneficialOwner sets `ubo_subtype`, and the
+
+            company needs at least one: where nobody owns enough to qualify, submit the
+
+            individual who controls the company as a `Control` beneficiary. Before
+
+            2026-10-15, a single Director with no UltimateBeneficialOwner is accepted
+
+            when nobody owns 10% or more, and outside the US a PrivateFoundation
+
+            owner needs no root-level person owner. A nested business beneficiary''s own
+
+            `beneficiaries` carries no such requirement and is informational only.'
+          items:
+            $ref: '#/components/schemas/CompanyBeneficiary'
+          type: array
+        company_info:
+          $ref: '#/components/schemas/CompanyInfo'
+        documents:
+          description: 'The company documents (max 8). Structurally optional at submission, but an
+
+            incomplete set for the company''s region is rejected with a 400 — see
+
+            `missing_document_categories`.'
+          items:
+            $ref: '#/components/schemas/CompanyDocParams'
+          type: array
+      required:
+      - company_info
+      - beneficiaries
+      - documents
+      title: CompanyData
+      type: object
+    EddQuestionnaire:
+      description: 'EDD Questionnaire
+
+
+        The questionnaire for a person who is going through Enhanced Due Diligence
+
+        '
+      properties:
+        approximate_net_worth:
+          $ref: '#/components/schemas/ApproximateNetWorth'
+        occupation:
+          $ref: '#/components/schemas/Occupation'
+        source_of_funds_proof:
+          description: 'Source of funds proof document, provided as a base64-encoded string.
+
+            Supported formats: jpg, png, pdf, doc, docx, xls, xlsx, odt, ods, txt.
+
+            Maximum size: 10MB'
+          type: string
+      required:
+      - occupation
+      - approximate_net_worth
+      - source_of_funds_proof
+      title: EddQuestionnaire
+      type: object
+    IdentificationLinkparams:
+      description: 'Direct Identification Params
+
+
+        The params required to create an identification
+
+        '
+      properties:
+        with_edd:
+          description: whether to initialize the identification with the full EDD process
+          type: boolean
+      title: IdentificationLinkparams
+      type: object
+    CompanyPrimaryBeneficiaryRole:
+      description: 'Beneficial Owner Role
+
+
+        The role of the beneficial owner in the company
+
+        '
+      enum:
+      - UltimateBeneficialOwner
+      - Representative
+      - Director
+      - Shareholder
+      type: string
+    BusinessQuestionnaireSourceOfFunds:
+      description: 'Source of Funds Section
+
+
+        Information about where the company''s funds originate
+
+        '
+      properties:
+        source_of_funds:
+          $ref: '#/components/schemas/RevenueSource'
+        source_of_funds_description:
+          description: Detailed description of source of funds (required)
+          type: string
+      required:
+      - source_of_funds
+      - source_of_funds_description
+      title: BusinessQuestionnaireSourceOfFunds
+      type: object
+    ApiIdentificationErrorCode:
+      description: 'Identification Error Code
+
+
+        Machine-readable classification of a business/person/token identification
+
+        failure. Categories, not a 1:1 mirror of internal validation variants —
+
+        internal validation changes don''t ripple into the public contract this
+
+        way. See `https://docs.iron.xyz/errors` for a description of every code.
+
+        '
+      enum:
+      - invalid_request
+      - selfie_required
+      - selfie_expired
+      - tin_required
+      - identity_document_rejected
+      - identity_document_images_identical
+      - structure_invalid
+      - attestation_invalid
+      - cdd_certification_invalid
+      - business_description_insufficient
+      - funds_flow_disclosure_required
+      - license_details_required
+      - company_details_required
+      - legal_presence_required
+      - ownership_structure_required
+      - control_structure_required
+      - ubo_country_prohibited
+      - ubo_share_below_threshold
+      - ubo_subtype_invalid
+      - proof_of_address_required_for_edd
+      - outsourcing_agreement_not_signed
+      - uk_customers_not_enabled
+      - country_not_supported
+      - duplicate_upload_blocked
+      - provider_rejected_document
+      - reuse_rejected
+      - prohibited_industry
+      - industry_required
+      - miscellaneous_industry_deprecated
+      - intended_use_deprecated
+      - foundation_intended_use_not_supported
+      - all_deposit_rails_blocked
+      type: string
+    RequirementCategory:
+      description: 'Coarse summary of which areas of the customer''s Sumsub KYC/KYB process
+
+        still need attention. Used as a quick filter — full detail lives in the
+
+        four `complete`/`pending`/`missing`/`issues` buckets.'
+      enum:
+      - kyc
+      - kyb
+      type: string
+    IdentificationConflict:
+      description: 'Identification Conflict
+
+
+        Returned on a 409 conflict. When a partner re-submits a customer whose
+
+        identification payload matches an existing one, the existing record''s ids
+
+        are included so the caller can reconcile the duplicate.
+
+        '
+      properties:
+        existing_customer_id:
+          description: The id of the existing customer the matching identification belongs to
+          format: uuid
+          type: string
+        existing_identification_id:
+          description: The id of the existing identification with the matching payload
+          format: uuid
+          type: string
+        external_id:
+          description: The partner's own external id for the existing customer, when set
+          type: string
+        message:
+          description: Human-readable explanation of the conflict
+          type: string
+      required:
+      - message
+      title: IdentificationConflict
+      type: object
+    RequirementStep:
+      properties:
+        description:
+          type: string
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        reject_reasons:
+          items:
+            $ref: '#/components/schemas/RequirementRejectReason'
+          type: array
+        review_comment:
+          nullable: true
+          type: string
+      required:
+      - id
+      - name
+      - description
+      - review_comment
+      - reject_reasons
+      title: RequirementStep
+      type: object
+    BusinessQuestionnairePlannedActivities:
+      description: 'Planned Activities Section
+
+
+        Information about the company''s intended account use and transaction patterns
 
         '
       properties:
@@ -2705,14 +4706,150 @@ components:
           $ref: '#/components/schemas/BusinessEstimatedMonthlyTransactions'
         estimated_monthly_volume:
           $ref: '#/components/schemas/BusinessEstimatedMonthlyVolume'
+        flow_of_funds_diagram:
+          description: Base64 encoded flow of funds diagram (required when sends_funds_on_customer_behalf is true)
+          type: string
         purpose_and_intended_use:
           $ref: '#/components/schemas/BusinessPurposeAndIntendedUse'
+        sends_funds_on_customer_behalf:
+          description: Does the company send funds on behalf of customers/third parties
+          type: boolean
+        sends_funds_on_customer_behalf_description:
+          description: Description of how funds are sent on customer behalf (required if sends_funds_on_customer_behalf is true)
+          type: string
+        source_of_funds_document:
+          description: Base64 encoded source of funds supporting document (required when sends_funds_on_customer_behalf is true)
+          type: string
       required:
       - purpose_and_intended_use
       - estimated_monthly_volume
       - estimated_monthly_transactions
-      title: SolePropPlannedActivities
+      - sends_funds_on_customer_behalf
+      title: BusinessQuestionnairePlannedActivities
       type: object
+    CompanyInfo:
+      description: 'Company Info
+
+
+        Identifying details about a company. Shared between the root identification
+
+        request and any nested business beneficiaries so the same fields are
+
+        collected at every level of the corporate structure.
+
+        '
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        alternative_names:
+          description: The list of alternative names for the company
+          items:
+            type: string
+          type: array
+        company_name:
+          description: The legal name of the company
+          type: string
+        company_type:
+          $ref: '#/components/schemas/CompanyType'
+        country:
+          description: The ISO 3166-1 alpha-2 (2 letter) country code where the company is legally registered
+          type: string
+        email:
+          description: The email address of the company
+          type: string
+        incorporation_date:
+          description: The date of legal incorporation in YYYY-MM-DD format
+          type: string
+        legal_address:
+          description: The address used during legal registration
+          type: string
+        postal_address:
+          description: The postal address of the company
+          type: string
+        registration_number:
+          description: The unique number assigned to the company when legally registered
+          type: string
+        tax_identification_number:
+          description: The tax identification number of the company
+          type: string
+        website:
+          description: 'The website of the company. Required everywhere except a nested business
+
+            beneficiary holding the Shareholder role, where it''s optional — a
+
+            corporate shareholder (e.g. a holding company) need not operate a website.'
+          type: string
+      required:
+      - company_name
+      - registration_number
+      - country
+      - incorporation_date
+      - legal_address
+      - postal_address
+      - address
+      - email
+      - tax_identification_number
+      - company_type
+      title: CompanyInfo
+      type: object
+    CompleteRequirement:
+      properties:
+        code:
+          $ref: '#/components/schemas/VerificationRequirementCode'
+        description:
+          type: string
+        identification_id:
+          format: uuid
+          nullable: true
+          type: string
+      required:
+      - code
+      - description
+      - identification_id
+      title: CompleteRequirement
+      type: object
+    BusinessQuestionnaire_GenericBusinessQuestionnaire:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Generic
+            example: Generic
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/GenericBusinessQuestionnaire'
+      description: 'KYB compliance questionnaire
+
+
+        Use `GenericBusinessQuestionnaire` for all company types except sole proprietorships.
+
+        Use `SolePropBusinessQuestionnaire` for sole proprietorships.
+
+        '
+    PendingRequirementItem:
+      oneOf:
+      - $ref: '#/components/schemas/PendingRequirement'
+      - $ref: '#/components/schemas/PendingQuestionnaireRequirement'
+      type: object
+    RevenueSource:
+      description: 'Revenue Source
+
+
+        Primary source of company funds
+
+        '
+      enum:
+      - BusinessRevenue
+      - ShareholderFunds
+      - VcPrivateEquity
+      - AssetSale
+      - IcoProceeds
+      - CryptoActivityProceeds
+      - LoanProceeds
+      - Other
+      type: string
     IdentificationStatus:
       description: 'The Process status of the identification
 
@@ -2729,44 +4866,155 @@ components:
       - Expired
       - Archived
       type: string
-    BusinessPurposeAndIntendedUse:
-      description: 'Purpose and Intended Use
+    VerificationIssue:
+      properties:
+        code:
+          $ref: '#/components/schemas/VerificationRequirementCode'
+        description:
+          type: string
+        identification_id:
+          format: uuid
+          nullable: true
+          type: string
+        reject_reasons:
+          items:
+            $ref: '#/components/schemas/RequirementRejectReason'
+          type: array
+        retryable:
+          nullable: true
+          type: boolean
+        review_comment:
+          nullable: true
+          type: string
+        steps:
+          items:
+            $ref: '#/components/schemas/RequirementStep'
+          type: array
+      required:
+      - code
+      - description
+      - identification_id
+      - review_comment
+      - retryable
+      - reject_reasons
+      - steps
+      title: VerificationIssue
+      type: object
+    OrdinaryPendingRequirementCode:
+      enum:
+      - kyc_selfie
+      - kyc_identity
+      - kyc_proof_of_residence
+      - kyb_company_data
+      - kyb_company_beneficiaries
+      - kyb_company_documents
+      - identification_kyc
+      - identification_kyb
+      type: string
+    VerificationRequirementCode:
+      enum:
+      - kyc_selfie
+      - kyc_identity
+      - kyc_proof_of_residence
+      - kyc_questionnaire
+      - kyb_company_data
+      - kyb_company_beneficiaries
+      - kyb_company_documents
+      - kyb_questionnaire
+      - identification_kyc
+      - identification_kyb
+      type: string
+    IdentificationError:
+      description: 'Identification Error
 
 
-        The intended purpose of the business account
+        One machine-readable error entry. Always returned inside an array (see
+
+        [`ApiIdentificationErrorBody`]) even though only one entry is populated
+
+        today — validation is fail-fast — so a future move to reporting every
+
+        problem at once doesn''t require another breaking response-shape change.
 
         '
-      enum:
-      - ReceivingBusinessIncome
-      - BusinessPurchasesAndExpenses
-      - EmployeeAndContractorPayouts
-      - EcommerceSales
-      - TreasuryManagement
-      - PaymentIntermediary
-      - Investments
-      - TaxPlanning
-      - AssetProtection
-      - Other
-      type: string
-    PersonProfileMonthlyIncome:
-      description: 'Monthly Income
+      properties:
+        beneficiary_index:
+          description: 'Zero-based index into `company_data.beneficiaries` when the error
+
+            originated inside a beneficiary. `None` for root-level errors and for
+
+            non-Business identifications.'
+          format: uint64
+          type: integer
+        code:
+          $ref: '#/components/schemas/ApiIdentificationErrorCode'
+        docs_url:
+          description: Link to a detailed description of this error code.
+          type: string
+        message:
+          description: Human-readable description of this specific occurrence.
+          type: string
+      required:
+      - code
+      - message
+      - docs_url
+      title: IdentificationError
+      type: object
+    Signing:
+      description: 'Signing
 
 
-        The monthly income of the person
+        A signing of a document by a customer
 
         '
-      enum:
-      - Between1000And2000
-      - Between2000And3000
-      - Between3000And5000
-      - Between5000And10000
-      - Over10000
-      type: string
+      properties:
+        content_id:
+          description: unique UUID of the content signed by Customer
+          format: uuid
+          type: string
+        created_at:
+          description: created_at timestamp of Signing
+          format: date-time
+          type: string
+        customer_id:
+          description: unique UUID of the Customer who signed
+          format: uuid
+          type: string
+        document_id:
+          description: unique UUID of the Document signed by Customer (Soon to be deprecated, use content_id & content_type instead)
+          format: uuid
+          type: string
+        id:
+          description: unique UUID of Signing
+          format: uuid
+          type: string
+        updated_at:
+          description: updated_at timestamp of Signing
+          format: date-time
+          type: string
+      required:
+      - id
+      - customer_id
+      - created_at
+      - updated_at
+      title: Signing
+      type: object
+    SolePropSourceOfFunds:
+      description: 'Sole Prop Source of Funds Section
+
+        '
+      properties:
+        source_of_funds:
+          $ref: '#/components/schemas/RevenueSource'
+      required:
+      - source_of_funds
+      title: SolePropSourceOfFunds
+      type: object
     TermsAndConditionsLink:
       description: A terms and conditions link
       example:
         display_name: Terms and Conditions
-        id: 019f846a-8d21-7813-8e60-8014904dbceb
+        id: 01a12162-9624-74e0-9384-a37f981611f2
         url: https://www.google.com/terms-and-conditions
       properties:
         display_name:
@@ -2807,90 +5055,40 @@ components:
       - type
       title: IdentityDocument
       type: object
-    CurrencyAbility:
-      description: 'What a customer can do with a single currency.
+    EmploymentStatus:
+      description: 'Employment Status
 
 
-        `currency` reuses the shared `ApiCurrency` type; `flows` reuses `AutorampType`.
+        The employment status of the person
 
-        The flow rules live in `currency_abilities.rs` (assembled there).'
-      properties:
-        counterparts:
-          description: 'Valid mint/redeem counterpart currencies (the other side of the pair).
-
-            Populated only for mint-only brand tokens (PYUSDx, M0 extensions); empty
-
-            for every other currency. Mint and redeem are symmetric — same set.'
-          items:
-            $ref: '#/components/schemas/Currency'
-          type: array
-        currency:
-          $ref: '#/components/schemas/Currency'
-        flows:
-          description: The flows available for this currency.
-          items:
-            $ref: '#/components/schemas/AutorampType'
-          type: array
-      required:
-      - currency
-      - flows
-      - counterparts
-      title: CurrencyAbility
-      type: object
-    SortOrder:
+        '
       enum:
-      - asc
-      - desc
+      - Employed
+      - SelfEmployed
+      - Unemployed
+      - Retired
+      - Student
       type: string
-    KycQuestionnaire:
-      description: 'KYC Questionnaire
+    BusinessEstimatedMonthlyVolume:
+      description: 'Estimated Monthly Transaction Volume
 
 
-        The questionnaire for a person
+        Expected monthly transaction volume. The numbers are band boundaries, not a currency
 
-        '
-      properties:
-        employment_status:
-          $ref: '#/components/schemas/EmploymentStatus'
-        expected_monthly_transaction_count:
-          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionCount'
-        expected_monthly_transaction_volume:
-          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionVolumeV2'
-        source_of_wealth:
-          $ref: '#/components/schemas/PersonProfileSourceOfWealth'
-        yearly_gross_income:
-          $ref: '#/components/schemas/PersonProfileYearlyGrossIncome'
-      required:
-      - employment_status
-      - yearly_gross_income
-      - source_of_wealth
-      - expected_monthly_transaction_count
-      - expected_monthly_transaction_volume
-      title: KycQuestionnaire
-      type: object
-    Occupation:
-      description: 'Occupation
+        requirement: read them in the currency the business reports in, so a company reporting
 
+        60,000 USD sends FiftyToOneHundredThousand. Do not convert at an FX rate. There is no
 
-        The occupation of the person
+        separate band set per currency.
 
         '
       enum:
-      - Agriculture
-      - ArtsAndEntertainment
-      - Construction
-      - Education
-      - FinancialServices
-      - InformationAndTechnology
-      - Retail
-      - RealEstate
-      - Other
-      - BusinessOwner
-      - Healthcare
-      - Industrial
-      - LegalServices
-      - PublicSector
-      - SeniorManagement
+      - TenToTwentyFiveThousand
+      - TwentyFiveToFiftyThousand
+      - FiftyToOneHundredThousand
+      - OneHundredToTwoHundredFiftyThousand
+      - TwoHundredFiftyToFiveHundredThousand
+      - MoreThanFiveHundredThousand
       type: string
     PagedList_Signing:
       description: 'PagedList
@@ -2918,821 +5116,9 @@ components:
       - items
       title: PagedList_Signing
       type: object
-    CreateCustomerParams:
-      description: 'Customer Params
-
-
-        Parameters for creating a customer
-
-        '
-      properties:
-        customer_type:
-          $ref: '#/components/schemas/CustomerType'
-        email:
-          description: 'The primary point of contact email address for the customer
-
-            Note that this email address will be used for all API authorization (e.g. 2FA)'
-          type: string
-        external_id:
-          description: External ID for the customer, provided by the partner
-          type: string
-        name:
-          description: The name of the customer
-          type: string
-      required:
-      - customer_type
-      - email
-      title: CreateCustomerParams
-      type: object
-    CompanyData:
-      description: 'Company Data
-
-
-        Full company submission: identifying info, beneficiaries, and supporting
-
-        documents. Reused by the root identification request and by each nested
-
-        business beneficiary.
-
-        '
-      properties:
-        beneficiaries:
-          description: 'The beneficiaries of the company. Each level (root or nested business)
-
-            requires at least one Director; UBOs and Representatives are also
-
-            permitted at every level.'
-          items:
-            $ref: '#/components/schemas/CompanyBeneficiary'
-          type: array
-        company_info:
-          $ref: '#/components/schemas/CompanyInfo'
-        documents:
-          description: 'The company documents (max 4). Optional at submission: when the set is
-
-            incomplete for the company''s region, the identification is returned as
-
-            Pending with a resume URL to collect the missing documents.'
-          items:
-            $ref: '#/components/schemas/CompanyDocParams'
-          type: array
-      required:
-      - company_info
-      - beneficiaries
-      - documents
-      title: CompanyData
-      type: object
-    IdentificationTokenParams:
-      description: 'Token Identification Params
-
-
-        The params required to create an identification
-
-        '
-      properties:
-        edd_questionnaire:
-          $ref: '#/components/schemas/EddQuestionnaire'
-        intended_use:
-          $ref: '#/components/schemas/IntendedUse'
-        ip_address:
-          description: 'The IP address of the customer associated with the token
-
-            Not required if IP address is passed by token provided'
-          type: string
-        kyc_questionnaire:
-          $ref: '#/components/schemas/KycQuestionnaire'
-        token:
-          description: The shareable token generated by the third party provider
-          type: string
-      required:
-      - token
-      - intended_use
-      title: IdentificationTokenParams
-      type: object
-    PersonIdentificationStepStatus:
-      properties:
-        identity:
-          $ref: '#/components/schemas/VerificationStepDetail'
-        proof_of_residence:
-          $ref: '#/components/schemas/VerificationStepDetail'
-        questionnaire:
-          $ref: '#/components/schemas/VerificationStepDetail'
-        selfie:
-          $ref: '#/components/schemas/VerificationStepDetail'
-      title: PersonIdentificationStepStatus
-      type: object
-    MissingQuestion:
-      description: 'A required questionnaire question the customer has left unanswered, resolved
-
-        against the Sumsub questionnaire definition.'
-      properties:
-        id:
-          description: Sumsub questionnaire item id, e.g. `sourceOfFunds`.
-          type: string
-        section_id:
-          description: The questionnaire section the question belongs to, when known.
-          type: string
-        title:
-          description: Human-readable question text the applicant saw.
-          type: string
-      required:
-      - id
-      - title
-      title: MissingQuestion
-      type: object
-    CustomerType:
-      description: 'CustomerType
-
-
-        Customers can either be a commercial business or a natural person
-
-        '
-      enum:
-      - Business
-      - Person
-      type: string
-    IdentificationCreateParamsV2_IdentificationLinkparams:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Link
-            example: Link
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/IdentificationLinkparams'
-      description: 'Identification Create Params V2
-
-
-        The params required to create an identification v2, we support three types of identification:
-
-        - Link: where a link is provided to the customer for access to the identification process.
-
-        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
-
-        - Person: where the identification details of the person for which the identification process is being created are provided in the request
-
-        '
-    PersonBeneficiaryInfo:
-      description: 'Company Person Beneficiary Info
-
-
-        The beneficiary info of the person
-
-        '
-      properties:
-        address:
-          $ref: '#/components/schemas/Address'
-        birth_place:
-          $ref: '#/components/schemas/BirthPlace'
-        date_of_birth:
-          description: date of birth in YYYY-MM-DD format
-          type: string
-        email_address:
-          description: email address of the person
-          type: string
-        first_name:
-          description: first name
-          type: string
-        identity:
-          $ref: '#/components/schemas/BeneficiaryIdentity'
-        last_name:
-          description: last name
-          type: string
-        middle_name:
-          description: middle name
-          type: string
-        phone_number:
-          description: phone number of the person (international format with leading +)
-          type: string
-        proof_of_address:
-          description: 'Base64 encoded proof of address document (10MB max).
-
-            Optional at submission: where policy requires one, a missing POA returns the
-
-            identification as Pending with a resume URL to collect it via resubmission.'
-          type: string
-        tax_identification_number:
-          description: 'tax identification number (SSN for US residents, national TIN otherwise).
-
-            Required for the UltimateBeneficialOwner of a sole proprietorship regardless of country.'
-          type: string
-        tax_jurisdiction_country_code:
-          description: ISO 3166-1 alpha-2 country code of the person's tax jurisdiction
-          type: string
-      required:
-      - first_name
-      - last_name
-      - date_of_birth
-      - address
-      - email_address
-      - phone_number
-      - tax_jurisdiction_country_code
-      - birth_place
-      - identity
-      title: PersonBeneficiaryInfo
-      type: object
-    DocumentType:
-      description: 'Document Type
-
-
-        The type of document used in the KYB process
-
-        '
-      enum:
-      - BusinessRegistrationDocument
-      - MemorandumOfAssociation
-      - ShareholdersRegistry
-      - Other
-      - ProofOfAddress
-      type: string
-    RequirementCategory:
-      description: 'Coarse summary of which areas of the customer''s Sumsub KYC/KYB process
-
-        still need attention. Used as a quick filter — full detail lives in the
-
-        four `complete`/`pending`/`missing`/`issues` buckets.'
-      enum:
-      - kyc
-      - kyb
-      type: string
-    CustomerRequirements:
-      description: 'Bridge-style requirements view of a customer. All four buckets are
-
-        always present (may be empty). `requirements_due` is a quick coarse
-
-        summary — partners can use it to decide whether any action is needed
-
-        before drilling into the detail buckets.'
-      properties:
-        complete:
-          description: Requirements the customer has satisfied.
-          items:
-            $ref: '#/components/schemas/RequirementItem'
-          type: array
-        issues:
-          description: Terminal blockers the customer cannot self-remediate.
-          items:
-            $ref: '#/components/schemas/RequirementItem'
-          type: array
-        missing:
-          description: Requirements the customer can still satisfy (resubmittable).
-          items:
-            $ref: '#/components/schemas/RequirementItem'
-          type: array
-        pending:
-          description: Requirements the customer has submitted, awaiting review.
-          items:
-            $ref: '#/components/schemas/RequirementItem'
-          type: array
-        requirements_due:
-          description: 'Sorted, deduplicated set of categories that have at least one
-
-            non-complete item. Empty for fully-onboarded customers.'
-          items:
-            $ref: '#/components/schemas/RequirementCategory'
-          type: array
-      required:
-      - requirements_due
-      - complete
-      - pending
-      - missing
-      - issues
-      title: CustomerRequirements
-      type: object
-    CompanyDocType:
-      description: 'Company document type
-
-
-        The type of company document
-
-        '
-      enum:
-      - PowerOfAttorney
-      - TransparencyRegistryExtract
-      - DirectorsRegistry
-      - GoodStandingCert
-      - IncorporationArticles
-      - IncorporationCert
-      - IncumbencyCert
-      - InformationStatement
-      - PartnershipAgreement
-      - ProofOfAddress
-      - ProofOfNatureOfBusiness
-      - RegulatoryLicense
-      - SelfDeclarationForm
-      - ShareholderRegistry
-      - StateRegistry
-      - TradeLicense
-      - TrustAgreement
-      - Other
-      type: string
-    PersonProfileExpectedMonthlyTransactionVolumeV2:
-      enum:
-      - LessThan500
-      - MoreThan500LessThan2000
-      - MoreThan2000
-      type: string
-    GenericBusinessQuestionnaire:
-      description: 'KYB compliance questionnaire for standard company types
-
-        '
-      properties:
-        business_details:
-          $ref: '#/components/schemas/BusinessQuestionnaireBusinessDetails'
-        planned_activities:
-          $ref: '#/components/schemas/BusinessQuestionnairePlannedActivities'
-        source_of_funds:
-          $ref: '#/components/schemas/BusinessQuestionnaireSourceOfFunds'
-      required:
-      - planned_activities
-      - source_of_funds
-      - business_details
-      title: GenericBusinessQuestionnaire
-      type: object
-    Microdeposit:
-      description: 'Microdeposit
-
-
-        A microdeposit record for account verification
-
-        '
-      properties:
-        amount:
-          description: Amount of the microdeposit
-          format: decimal
-          type: string
-        counterparty_name:
-          description: Name of the counterparty
-          type: string
-        created_at:
-          description: When the microdeposit was created
-          format: date-time
-          type: string
-        currency_code:
-          description: Currency code of the microdeposit
-          type: string
-      required:
-      - amount
-      - currency_code
-      - created_at
-      title: Microdeposit
-      type: object
-    CompanyPrimaryBeneficiaryRole:
-      description: 'Beneficial Owner Role
-
-
-        The role of the beneficial owner in the company
-
-        '
-      enum:
-      - UltimateBeneficialOwner
-      - Representative
-      - Director
-      - Shareholder
-      type: string
-    PersonProfileSourceOfWealth:
-      description: 'Source of Wealth
-
-
-        The source of wealth of the person
-
-        '
-      enum:
-      - Salary
-      - Savings
-      - Investments
-      - CryptoTrading
-      - Other
-      type: string
-    VerificationStepDetail:
-      properties:
-        comment:
-          type: string
-        result:
-          $ref: '#/components/schemas/IdentificationStatus'
-        retry:
-          type: boolean
-      required:
-      - result
-      - retry
-      title: VerificationStepDetail
-      type: object
-    EurAbilities:
-      properties:
-        sepa:
-          $ref: '#/components/schemas/AbilityStatus'
-        sepa_thirdparty:
-          $ref: '#/components/schemas/AbilityStatus'
-        swift:
-          $ref: '#/components/schemas/AbilityStatus'
-        swift_thirdparty:
-          $ref: '#/components/schemas/AbilityStatus'
-      required:
-      - sepa
-      - sepa_thirdparty
-      - swift
-      - swift_thirdparty
-      title: EurAbilities
-      type: object
-    Address:
-      description: Address
-      properties:
-        city:
-          description: city
-          type: string
-        country:
-          description: country (2-character ISO 3166)
-          type: string
-        state:
-          description: state/province/region
-          type: string
-        street_1:
-          description: street address
-          type: string
-        street_2:
-          description: street address (additional)
-          type: string
-        zip_code:
-          description: zip code
-          type: string
-      required:
-      - street_1
-      - city
-      - zip_code
-      - country
-      title: Address
-      type: object
-    PagedList_Customer:
-      description: 'PagedList
-
-
-        A list of items with cursors used to fetch the next or previous page
-
-        '
-      properties:
-        cursor:
-          description: The cursor used to fetch the next page
-          format: uuid
-          type: string
-        items:
-          description: The list of items
-          items:
-            $ref: '#/components/schemas/Customer'
-          type: array
-        prev_cursor:
-          default: null
-          description: The cursor used to fetch the previous page
-          format: uuid
-          type: string
-      required:
-      - items
-      title: PagedList_Customer
-      type: object
-    AuthenticationCode:
-      description: 'An authentication code
-
-
-        used to confirm a 2FA action
-
-        '
-      properties:
-        attempts:
-          description: attempts to submit the authentication code
-          format: int32
-          type: integer
-        entity_id:
-          description: the ID of the entity the authentication is related to
-          format: uuid
-          type: string
-        expires_at:
-          description: the time of expiry for the authentication code
-          format: date-time
-          type: string
-        id:
-          description: The ID of the authentication code
-          format: uuid
-          type: string
-        status:
-          $ref: '#/components/schemas/AuthenticationCodeStatus'
-      required:
-      - id
-      - status
-      - expires_at
-      - attempts
-      - entity_id
-      title: AuthenticationCode
-      type: object
-    PersonProfileExpectedMonthlyTransactionCount:
-      description: 'Expected Monthly Transaction Count
-
-
-        The expected monthly transaction volume of the person
-
-        '
-      enum:
-      - LessThan5
-      - Between5And10
-      - MoreThan10
-      type: string
-    RejectReason:
-      description: 'A Sumsub rejection reason: the stable code paired with a human-readable
-
-        description, so partners can display the reason without maintaining their
-
-        own code→text mapping.'
-      properties:
-        code:
-          description: Stable Sumsub reject-label code, e.g. `UNSATISFACTORY_PHOTOS`.
-          type: string
-        description:
-          description: Human-readable description of the code.
-          type: string
-      required:
-      - code
-      - description
-      title: RejectReason
-      type: object
-    Fiat:
-      description: A fiat currency
-      example:
-        code: USD
-      properties:
-        code:
-          description: The code of the currency e.g. 'USD'
-          type: string
-      required:
-      - code
-      title: Fiat
-      type: object
-    SolePropBusinessDetails:
-      description: 'Sole Prop Business Details Section
-
-        '
-      properties:
-        business_model_description:
-          description: Description of business model and target clients
-          type: string
-        estimated_annual_revenue:
-          $ref: '#/components/schemas/BusinessEstimatedAnnualRevenue'
-        industry_type:
-          $ref: '#/components/schemas/BusinessIndustryType'
-        main_business_countries:
-          description: Main countries of business operation (ISO 3166-1 alpha-2 codes)
-          items:
-            type: string
-          type: array
-      required:
-      - industry_type
-      - business_model_description
-      - main_business_countries
-      - estimated_annual_revenue
-      title: SolePropBusinessDetails
-      type: object
-    BusinessIdentificationStepStatus:
-      properties:
-        company_beneficiaries:
-          $ref: '#/components/schemas/VerificationStepDetail'
-        company_data:
-          $ref: '#/components/schemas/VerificationStepDetail'
-        company_documents:
-          $ref: '#/components/schemas/VerificationStepDetail'
-        questionnaire:
-          $ref: '#/components/schemas/VerificationStepDetail'
-      title: BusinessIdentificationStepStatus
-      type: object
-    Identification:
-      description: 'Identification
-
-
-        The entity wrapping our KYC/KYB process and underlying providers
-
-        '
-      properties:
-        created_at:
-          format: date-time
-          type: string
-        customer_id:
-          description: Absent on a referral partner's identification (partner-keyed record)
-          format: uuid
-          type: string
-        id:
-          format: uuid
-          type: string
-        partner_id:
-          description: The owning partner for partner-keyed (referral) records
-          format: uuid
-          type: string
-        residence_country:
-          description: 'ISO 3166-1 alpha-2 (2 letter) country code of the verified residence
-
-            address; only set on the customer''s most recent identification while it
-
-            is approved'
-          type: string
-        review_comment:
-          type: string
-        status:
-          $ref: '#/components/schemas/IdentificationStatus'
-        step_status:
-          $ref: '#/components/schemas/IdentificationStepStatus'
-        updated_at:
-          format: date-time
-          type: string
-        url:
-          type: string
-        with_edd:
-          type: boolean
-      required:
-      - id
-      - status
-      - created_at
-      - updated_at
-      title: Identification
-      type: object
-    RequirementItem:
-      description: 'A single requirement entry returned in one of the four buckets on
-
-        `ApiCustomerRequirements`.'
-      properties:
-        code:
-          $ref: '#/components/schemas/RequirementCode'
-        description:
-          description: 'Human-readable reason from Sumsub — the moderation comment and the
-
-            applicant-facing client comment combined (moderator note first,
-
-            deduped), a list of the specific unanswered questionnaire questions, or
-
-            a synthesized note for the identification-level codes. May be `null`.
-
-            *IMPORTANT*: This field is subject to change without notice — switch
-
-            on `code` (and `reject_labels`), not on this string.'
-          type: string
-        identification_id:
-          description: The identification that produced this item, when applicable.
-          format: uuid
-          type: string
-        missing_questions:
-          description: 'Required questionnaire questions the customer left unanswered, resolved
-
-            against the Sumsub questionnaire definition (so `title` is the question
-
-            text the applicant saw). Only populated for the questionnaire codes
-
-            (`kyc_questionnaire` / `kyb_questionnaire`); empty otherwise.'
-          items:
-            $ref: '#/components/schemas/MissingQuestion'
-          type: array
-        reject_labels:
-          description: 'Coded Sumsub rejection reasons for this step (e.g. `SCREENSHOTS`,
-
-            `UNSATISFACTORY_PHOTOS`) — the pills shown in the Sumsub dashboard.
-
-            Empty when the step carries no labels.'
-          items:
-            type: string
-          type: array
-        reject_reasons:
-          description: 'Same reasons as `reject_labels`, each paired with a human-readable
-
-            description. Prefer this for display; `reject_labels` stays the stable
-
-            set of codes to switch on. Empty when the step carries no labels.'
-          items:
-            $ref: '#/components/schemas/RejectReason'
-          type: array
-        retryable:
-          description: '`true` if the customer can resubmit to clear this item
-
-            (Sumsub `reject_type == Retry`). `false` for terminal/Final
-
-            rejections. `null` for `complete`/`pending` items, where retry
-
-            semantics don''t apply.'
-          type: boolean
-      required:
-      - code
-      - reject_labels
-      - reject_reasons
-      - missing_questions
-      title: RequirementItem
-      type: object
-    ComplianceQuestionaire:
-      description: 'V1 Compliance Questionnaire
-
-
-        Legacy compliance questionnaire format
-
-        '
-      properties:
-        employment_status:
-          $ref: '#/components/schemas/EmploymentStatus'
-        expected_monthly_volume:
-          $ref: '#/components/schemas/PersonProfileExpectedMonthlyTransactionVolume'
-        id:
-          format: uuid
-          type: string
-        intended_use:
-          $ref: '#/components/schemas/IntendedUse'
-        monthly_income:
-          $ref: '#/components/schemas/PersonProfileMonthlyIncome'
-        occupation:
-          $ref: '#/components/schemas/Occupation'
-        source_of_funds:
-          $ref: '#/components/schemas/PersonProfileSourceOfFunds'
-        source_of_funds_proof:
-          type: string
-      required:
-      - id
-      - intended_use
-      title: ComplianceQuestionaire
-      type: object
-    CustomerAbilities:
-      description: 'Customer Abilities
-
-
-        Represents the abilities/capabilities that a customer has
-
-        '
-      properties:
-        currencies:
-          description: 'What the customer can do with each currency (mint / redeem / onramp /
-
-            offramp / swap). Only currencies the customer can currently use are listed.'
-          items:
-            $ref: '#/components/schemas/CurrencyAbility'
-          type: array
-        fiat_deposit:
-          $ref: '#/components/schemas/ApiFiatAbilities'
-        fiat_payout:
-          $ref: '#/components/schemas/ApiFiatAbilities'
-      required:
-      - fiat_deposit
-      - fiat_payout
-      - currencies
-      title: CustomerAbilities
-      type: object
-    CompanyBeneficiaryInfo:
-      anyOf:
-      - $ref: '#/components/schemas/PersonBeneficiaryInfo'
-      - $ref: '#/components/schemas/BusinessBeneficiaryInfo'
-      description: 'Company Beneficiary Info
-
-
-        The beneficiary info of the company
-
-        '
-      type: object
-    AuthenticationCodeStatus:
-      description: The status of the Authentication Code
-      enum:
-      - Pending
-      - Expired
-      - Confirmed
-      - Rejected
-      type: string
-    IdentificationCreateParamsV2_IdentificationPersonParams:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Person
-            example: Person
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/IdentificationPersonParams'
-      description: 'Identification Create Params V2
-
-
-        The params required to create an identification v2, we support three types of identification:
-
-        - Link: where a link is provided to the customer for access to the identification process.
-
-        - Token: where a token is provided in the request from which verification data can be extracted and where the token is generated by the third party provider
-
-        - Person: where the identification details of the person for which the identification process is being created are provided in the request
-
-        '
-    SolePropSourceOfFunds:
-      description: 'Sole Prop Source of Funds Section
-
-        '
-      properties:
-        source_of_funds:
-          $ref: '#/components/schemas/RevenueSource'
-      required:
-      - source_of_funds
-      title: SolePropSourceOfFunds
-      type: object
   parameters:
     XApiVersion:
-      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01, 2026-08-01, 2026-10-01, 2026-10-15.'
       in: header
       name: X-API-Version
       required: false

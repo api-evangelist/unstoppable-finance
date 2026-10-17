@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   description: The Stablecoin Payment Network
   title: Iron API - Sandbox Exchange Rate API
-  version: 1.0-16988
+  version: 1.0-19869
 servers:
 - url: https://api.sandbox.iron.xyz/api
 tags:
@@ -131,123 +131,21 @@ paths:
       - Exchange Rate
 components:
   schemas:
-    Currency_Crypto:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - Crypto
-            example: Crypto
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/Crypto'
-      description: 'Currency
+    ApiError:
+      description: 'Standard error response returned to API clients for server errors.
 
-
-        Can be either crypto or fiat
-
-        '
-    NetworkFee:
-      anyOf:
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      - $ref: '#/components/schemas/NetworkFee_Amount'
-      description: 'Network Fee
-
-
-        The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
-
-        '
-      discriminator:
-        mapping:
-          AchIn: '#/components/schemas/NetworkFee_Amount'
-          AchOut: '#/components/schemas/NetworkFee_Amount'
-          CitreaGas: '#/components/schemas/NetworkFee_Amount'
-          EthereumGas: '#/components/schemas/NetworkFee_Amount'
-          RailFee: '#/components/schemas/NetworkFee_Amount'
-          SepaIn: '#/components/schemas/NetworkFee_Amount'
-          SepaOut: '#/components/schemas/NetworkFee_Amount'
-          SolanaTransactionFee: '#/components/schemas/NetworkFee_Amount'
-          StellarTransactionFee: '#/components/schemas/NetworkFee_Amount'
-          SwiftIn: '#/components/schemas/NetworkFee_Amount'
-          SwiftOut: '#/components/schemas/NetworkFee_Amount'
-          WireIn: '#/components/schemas/NetworkFee_Amount'
-          WireOut: '#/components/schemas/NetworkFee_Amount'
-        propertyName: type
-      type: object
-    CurrencyType:
-      description: 'Currency Type
-
-
-        The type of currency
-
-        '
-      enum:
-      - fiat
-      - crypto
-      type: string
-    NetworkFeeType:
-      description: 'Network Fee Type
-
-
-        The type of network fee
-
-        '
-      enum:
-      - SepaIn
-      - SepaOut
-      - EthereumGas
-      - CitreaGas
-      - SolanaTransactionFee
-      - StellarTransactionFee
-      - PolygonGas
-      - BaseGas
-      - AvalancheGas
-      - TronGas
-      - BscGas
-      - RailFee
-      - AchIn
-      - AchOut
-      - WireIn
-      - WireOut
-      - SwiftIn
-      - SwiftOut
-      - FpsIn
-      - FpsOut
-      - ChapsIn
-      - ChapsOut
-      - RtpIn
-      - RtpOut
-      - FednowIn
-      - FednowOut
-      type: string
-    Crypto:
-      description: A cryptocurrency
-      example:
-        blockchain: Solana
-        token: USDC
+        Includes a trace_id that clients can reference when reporting issues.'
       properties:
-        blockchain:
-          $ref: '#/components/schemas/Blockchain'
-        token:
-          description: The ticker of the token e.g. 'USDC'
+        message:
+          description: Human-readable error message
+          type: string
+        trace_id:
+          description: Trace ID that can be used to look up request details in logs
           type: string
       required:
-      - token
-      - blockchain
-      title: Crypto
+      - message
+      - trace_id
+      title: ApiError
       type: object
     Fee:
       description: 'Fee
@@ -308,24 +206,162 @@ components:
       - network_fee
       title: Fee
       type: object
-    NetworkFee_Amount:
-      allOf:
-      - properties:
-          type:
-            enum:
-            - SwiftOut
-            example: SwiftOut
-            type: string
-        required:
-        - type
-        type: object
-      - $ref: '#/components/schemas/Amount'
+    Amount:
+      description: 'An amount of money
+
+        '
+      example:
+        amount: '100.5'
+        currency:
+          code: USD
+          type: Fiat
+      properties:
+        amount:
+          description: The amount, a decimal number
+          format: decimal
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+      required:
+      - amount
+      - currency
+      title: Amount
+      type: object
+    PartnerFee:
+      description: 'Partner Fee
+
+
+        A partner fee
+
+        '
+      properties:
+        fee:
+          $ref: '#/components/schemas/Amount'
+        label:
+          description: The label of the partner fee
+          type: string
+        settlement:
+          $ref: '#/components/schemas/FeeSettlement'
+      required:
+      - label
+      - fee
+      - settlement
+      title: PartnerFee
+      type: object
+    PaymentNetwork:
+      description: 'PaymentNetwork
+
+
+        A payment network
+
+        '
+      enum:
+      - Sepa
+      - Swift
+      - Fps
+      - Chats
+      - Ach
+      - Wire
+      - Rtp
+      - Fednow
+      - Pix
+      - Spei
+      - AfricanBankTransfer
+      - MobileMoney
+      - Chaps
+      type: string
+    NetworkFee:
+      anyOf:
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
+      - $ref: '#/components/schemas/NetworkFee_Amount'
       description: 'Network Fee
 
 
         The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
 
         '
+      discriminator:
+        mapping:
+          AchIn: '#/components/schemas/NetworkFee_Amount'
+          AchOut: '#/components/schemas/NetworkFee_Amount'
+          CitreaGas: '#/components/schemas/NetworkFee_Amount'
+          EthereumGas: '#/components/schemas/NetworkFee_Amount'
+          RailFee: '#/components/schemas/NetworkFee_Amount'
+          SepaIn: '#/components/schemas/NetworkFee_Amount'
+          SepaOut: '#/components/schemas/NetworkFee_Amount'
+          SolanaTransactionFee: '#/components/schemas/NetworkFee_Amount'
+          StellarTransactionFee: '#/components/schemas/NetworkFee_Amount'
+          SwiftIn: '#/components/schemas/NetworkFee_Amount'
+          SwiftOut: '#/components/schemas/NetworkFee_Amount'
+          WireIn: '#/components/schemas/NetworkFee_Amount'
+          WireOut: '#/components/schemas/NetworkFee_Amount'
+        propertyName: type
+      type: object
+    Currency_Fiat:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Fiat
+            example: Fiat
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+    NetworkFeeType:
+      description: 'Network Fee Type
+
+
+        The type of network fee
+
+        '
+      enum:
+      - SepaIn
+      - SepaOut
+      - EthereumGas
+      - CitreaGas
+      - SolanaTransactionFee
+      - StellarTransactionFee
+      - PolygonGas
+      - BaseGas
+      - AvalancheGas
+      - TronGas
+      - BscGas
+      - SeismicExecutionFee
+      - RailFee
+      - AchIn
+      - AchOut
+      - WireIn
+      - WireOut
+      - SwiftIn
+      - SwiftOut
+      - FpsIn
+      - FpsOut
+      - ChapsIn
+      - ChapsOut
+      - RtpIn
+      - RtpOut
+      - FednowIn
+      - FednowOut
+      type: string
     ExchangeRate:
       description: 'Exchange Rate
 
@@ -354,6 +390,59 @@ components:
       - fee
       title: ExchangeRate
       type: object
+    CurrencyType:
+      description: 'Currency Type
+
+
+        The type of currency
+
+        '
+      enum:
+      - fiat
+      - crypto
+      type: string
+    Blockchain:
+      description: 'Blockchain
+
+
+        A type of blockchain
+
+        '
+      enum:
+      - Solana
+      - Ethereum
+      - Polygon
+      - Arbitrum
+      - Base
+      - Stellar
+      - Citrea
+      - Plasma
+      - Avalanche
+      - Moca
+      - Monad
+      - Tempo
+      - Tron
+      - Bsc
+      - Seismic
+      - Arc
+      - Optimism
+      type: string
+    Currency:
+      anyOf:
+      - $ref: '#/components/schemas/Currency_Crypto'
+      - $ref: '#/components/schemas/Currency_Fiat'
+      description: 'Currency
+
+
+        Can be either crypto or fiat
+
+        '
+      discriminator:
+        mapping:
+          Crypto: '#/components/schemas/Currency_Crypto'
+          Fiat: '#/components/schemas/Currency_Fiat'
+        propertyName: type
+      type: object
     Fiat:
       description: A fiat currency
       example:
@@ -377,99 +466,57 @@ components:
       - deductedImmediately
       - settledLater
       type: string
-    PaymentNetwork:
-      description: 'PaymentNetwork
-
-
-        A payment network
-
-        '
-      enum:
-      - Sepa
-      - Swift
-      - Fps
-      - Chats
-      - Ach
-      - Wire
-      - Rtp
-      - Fednow
-      - Pix
-      - Spei
-      - AfricanBankTransfer
-      - MobileMoney
-      - Chaps
-      type: string
-    Currency:
-      anyOf:
-      - $ref: '#/components/schemas/Currency_Crypto'
-      - $ref: '#/components/schemas/Currency_Fiat'
-      description: 'Currency
-
-
-        Can be either crypto or fiat
-
-        '
-      discriminator:
-        mapping:
-          Crypto: '#/components/schemas/Currency_Crypto'
-          Fiat: '#/components/schemas/Currency_Fiat'
-        propertyName: type
-      type: object
-    Blockchain:
-      description: 'Blockchain
-
-
-        A type of blockchain
-
-        '
-      enum:
-      - Solana
-      - Ethereum
-      - Polygon
-      - Arbitrum
-      - Base
-      - Stellar
-      - Citrea
-      - Plasma
-      - Avalanche
-      - Moca
-      - Tempo
-      - Tron
-      - Bsc
-      type: string
-    Currency_Fiat:
+    NetworkFee_Amount:
       allOf:
       - properties:
           type:
             enum:
-            - Fiat
-            example: Fiat
+            - SwiftOut
+            example: SwiftOut
             type: string
         required:
         - type
         type: object
-      - $ref: '#/components/schemas/Fiat'
+      - $ref: '#/components/schemas/Amount'
+      description: 'Network Fee
+
+
+        The network fee for a given currency. This is deprecated and will be removed in the future. Use NetworkFeeWithSettlement instead.
+
+        '
+    Currency_Crypto:
+      allOf:
+      - properties:
+          type:
+            enum:
+            - Crypto
+            example: Crypto
+            type: string
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/Crypto'
       description: 'Currency
 
 
         Can be either crypto or fiat
 
         '
-    ApiError:
-      description: 'Standard error response returned to API clients for server errors.
-
-        Includes a trace_id that clients can reference when reporting issues.'
+    Crypto:
+      description: A cryptocurrency
+      example:
+        blockchain: Solana
+        token: USDC
       properties:
-        message:
-          description: Human-readable error message
-          type: string
-        trace_id:
-          description: Trace ID that can be used to look up request details in logs
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        token:
+          description: The ticker of the token e.g. 'USDC'
           type: string
       required:
-      - message
-      - trace_id
-      title: ApiError
+      - token
+      - blockchain
+      title: Crypto
       type: object
     NetworkFeeWithSettlement:
       description: 'Network Fee with Settlement
@@ -490,51 +537,9 @@ components:
       - fee_amount
       title: NetworkFeeWithSettlement
       type: object
-    PartnerFee:
-      description: 'Partner Fee
-
-
-        A partner fee
-
-        '
-      properties:
-        fee:
-          $ref: '#/components/schemas/Amount'
-        label:
-          description: The label of the partner fee
-          type: string
-        settlement:
-          $ref: '#/components/schemas/FeeSettlement'
-      required:
-      - label
-      - fee
-      - settlement
-      title: PartnerFee
-      type: object
-    Amount:
-      description: 'An amount of money
-
-        '
-      example:
-        amount: '100.5'
-        currency:
-          code: USD
-          type: Fiat
-      properties:
-        amount:
-          description: The amount, a decimal number
-          format: decimal
-          type: string
-        currency:
-          $ref: '#/components/schemas/Currency'
-      required:
-      - amount
-      - currency
-      title: Amount
-      type: object
   parameters:
     XApiVersion:
-      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01.'
+      description: 'Selects the API version for this request, as an ISO date (`YYYY-MM-DD`). Omit to use the default version (`2025-03-13`). Supported versions: 2025-03-13, 2026-07-01, 2026-08-01, 2026-10-01, 2026-10-15.'
       in: header
       name: X-API-Version
       required: false

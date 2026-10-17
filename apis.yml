@@ -191,24 +191,27 @@ common:
 apis:
 - aid: unstoppable-finance:unstoppable-finance-addresses-api
   name: Unstoppable Finance (Iron) Addresses API
-  description: 'Wallet and bank account registration
+  description: >-
+    Wallet and bank account registration
 
 
-    Every wallet address that interacts with Iron must be registered (linked) to a customer **before** it can be used in any flow — onramp, offramp,
-    or swap. This is a regulatory requirement under the **Travel Rule**, which obliges Virtual Asset Service Providers to exchange originator
-    and beneficiary information for crypto transfers.
+    Every wallet address that interacts with Iron must be registered (linked) to a customer **before**
+    it can be used in any flow — onramp, offramp, or swap. This is a regulatory requirement under the
+    **Travel Rule**, which obliges Virtual Asset Service Providers to exchange originator and beneficiary
+    information for crypto transfers.
 
 
     Iron supports two wallet types:
 
 
-    - **Self-hosted wallets** — the customer controls the private key. Registration requires a signed proof-of-ownership message.
+    - **Self-hosted wallets** — the customer controls the private key. Registration requires a signed
+    proof-of-ownership message.
 
-    - **Hosted wallets** — the wallet is custodied by another VASP (e.g. Coinbase, Kraken). Registration requires the VASP''s DID so Iron can
-    exchange travel-rule data with the custodian.
+    - **Hosted wallets** — the wallet is custodied by another VASP (e.g. Coinbase, Kraken). Registration
+    requires the VASP's DID so Iron can exchange travel-rule data with the custodian.
 
 
-    Similarly, fiat bank accounts must be registered before they can receive offramp payouts.'
+    Similarly, fiat bank accounts must be registered before they can receive offramp payouts.
   humanURL: https://docs.iron.xyz/overview
   baseURL: https://api.iron.xyz/api
   tags:
@@ -219,7 +222,8 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
   - type: JSONSchema
     url: json-schema/unstoppable-finance-fiat-address-schema.json
   - type: JSONSchema
@@ -245,7 +249,8 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
   - type: JSONSchema
     url: json-schema/unstoppable-finance-signed-autoramp-quote-schema.json
   - type: JSONSchema
@@ -273,7 +278,8 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
   - type: JSONSchema
     url: json-schema/unstoppable-finance-crypto-currency-schema.json
   - type: JSONSchema
@@ -293,7 +299,8 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
   - type: JSONSchema
     url: json-schema/unstoppable-finance-customer-schema.json
   - type: JSONSchema
@@ -319,7 +326,8 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
   - type: JSONSchema
     url: json-schema/unstoppable-finance-autoramp-schema.json
   - type: JSONSchema
@@ -347,7 +355,8 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
   - type: JSONSchema
     url: json-schema/unstoppable-finance-webhook-schema.json
   - type: JSONSchema
@@ -369,9 +378,18 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
   - type: JSONSchema
     url: json-schema/unstoppable-finance-exchange-rate-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-fee-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-create-partner-fee-profile-request-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-paged-list-fee-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-terms-and-conditions-link-schema.json
 - aid: unstoppable-finance:unstoppable-finance-fee-profiles-api
   name: Unstoppable Finance (Iron) Fee Profiles API
   description: Operations on Fee Profiles
@@ -385,13 +403,18 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-exchange-rate-schema.json
   - type: JSONSchema
     url: json-schema/unstoppable-finance-fee-profile-schema.json
   - type: JSONSchema
     url: json-schema/unstoppable-finance-create-partner-fee-profile-request-schema.json
   - type: JSONSchema
     url: json-schema/unstoppable-finance-paged-list-fee-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-terms-and-conditions-link-schema.json
 - aid: unstoppable-finance:unstoppable-finance-terms-and-conditions-api
   name: Unstoppable Finance (Iron) Terms And Conditions API
   description: Operations on Terms and Conditions
@@ -405,10 +428,18 @@ apis:
   - type: Documentation
     url: https://docs.iron.xyz/overview
   - type: APIReference
-    url: https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+    url: >-
+      https://docs.iron.xyz/reference-sandbox/addresses/register-a-self-attested-wallet-address
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-exchange-rate-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-fee-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-create-partner-fee-profile-request-schema.json
+  - type: JSONSchema
+    url: json-schema/unstoppable-finance-paged-list-fee-profile-schema.json
   - type: JSONSchema
     url: json-schema/unstoppable-finance-terms-and-conditions-link-schema.json
-
 x-enrichment:
   date: '2026-10-12'
   status: enriched
